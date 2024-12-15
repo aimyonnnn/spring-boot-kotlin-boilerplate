@@ -65,6 +65,18 @@
 - two types of tests
   - [mockito](src/test/kotlin/com/example/demo/mockito)
   - [kotest & mockk](src/test/kotlin/com/example/demo/kotest)
+    - **if you want to bypass Spring Security authentication issues.**
+      - [SecurityListerFactory](src/test/kotlin/com/example/demo/kotest/common/security/SecurityListerFactory.kt)
+      - [BaseIntegrationController](src/test/kotlin/com/example/demo/kotest/common/BaseIntegrationController.kt)
+        ```kotlin
+        // example
+
+        listeners(SecurityListerFactory())
+
+        Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+          // ...
+        }
+        ```
 
 ### Author
 
