@@ -18,20 +18,20 @@ class APIKeyAuthFilter(
     @NonNull httpServletResponse: HttpServletResponse,
     @NonNull filterChain: FilterChain
   ) {
-    try {
+    runCatching {
       authProvider.generateRequestAPIKey(httpServletRequest)?.let {
         if (!authProvider.validateApiKey(it)) {
           throw APIKeyNotFoundException(httpServletRequest.requestURI)
         }
       } ?: throw APIKeyNotFoundException(httpServletRequest.requestURI)
-
-      filterChain.doFilter(httpServletRequest, httpServletResponse)
-    } catch (exception: APIKeyNotFoundException) {
-      SecurityUtils.sendErrorResponse(
-        httpServletRequest,
-        httpServletResponse,
-        exception,
-      )
     }
+      .onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
+      .onFailure {
+        SecurityUtils.sendErrorResponse(
+          httpServletRequest,
+          httpServletResponse,
+          it,
+        )
+      }
   }
 }

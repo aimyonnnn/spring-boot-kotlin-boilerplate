@@ -20,7 +20,7 @@ class SecurityUtilsTest : DescribeSpec({
   val mockHttpServletResponse = mockk<MockHttpServletResponse>(relaxed = true)
 
   describe("Start Security Exception") {
-    val exception = Instancio.create(Exception::class.java)
+    val exception = Instancio.create(Throwable::class.java)
 
     context("Call sendErrorResponse method") {
 

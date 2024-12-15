@@ -2,7 +2,6 @@ package com.example.demo.security.component.filter
 
 import com.example.demo.security.component.provider.JWTProvider
 import com.example.demo.utils.SecurityUtils
-import io.jsonwebtoken.ExpiredJwtException
 import io.micrometer.common.lang.NonNull
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
@@ -20,35 +19,29 @@ class JWTAuthFilter(
     @NonNull httpServletResponse: HttpServletResponse,
     @NonNull filterChain: FilterChain
   ) {
-    try {
+    runCatching {
       jwtProvider.generateRequestToken(httpServletRequest)?.let {
-        if (jwtProvider.validateToken(it)) {
-          val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken = jwtProvider.getAuthentication(
-            it
-          )
+        jwtProvider.validateToken(it)
 
-          SecurityContextHolder
-            .getContext().authentication = usernamePasswordAuthenticationToken
-        } else {
-          SecurityContextHolder.clearContext()
-        }
+        val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken = jwtProvider.getAuthentication(
+          it
+        )
+
+        SecurityContextHolder
+          .getContext().authentication = usernamePasswordAuthenticationToken
+
       } ?: SecurityContextHolder.clearContext()
-
-      filterChain.doFilter(httpServletRequest, httpServletResponse)
-    } catch (exception: Exception) {
-      SecurityContextHolder.clearContext()
-      var message = "Invalid Token"
-
-      if (exception is ExpiredJwtException) {
-        message = "Expired Token"
-      }
-
-      SecurityUtils.sendErrorResponse(
-        httpServletRequest,
-        httpServletResponse,
-        exception,
-        message
-      )
     }
+      .onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
+      .onFailure {
+        SecurityContextHolder.clearContext()
+
+        SecurityUtils.sendErrorResponse(
+          httpServletRequest,
+          httpServletResponse,
+          it,
+          it.message ?: "Invalid Token"
+        )
+      }
   }
 }

@@ -1,15 +1,11 @@
 package com.example.demo.user.batch
 
+import org.slf4j.LoggerFactory
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
-import org.springframework.batch.core.JobParametersInvalidException
 import org.springframework.batch.core.configuration.JobRegistry
 import org.springframework.batch.core.launch.JobLauncher
-import org.springframework.batch.core.launch.NoSuchJobException
-import org.springframework.batch.core.repository.JobExecutionAlreadyRunningException
-import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException
-import org.springframework.batch.core.repository.JobRestartException
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
@@ -19,26 +15,20 @@ class UserScheduler(
   private val jobLauncher: JobLauncher,
   private val jobRegistry: JobRegistry
 ) {
+  private val logger = LoggerFactory.getLogger(this::class.java)
+
   // 1 am
   @Scheduled(cron = "0 0 01 * * ?")
   fun run() {
-    try {
+    runCatching {
       val job: Job = jobRegistry.getJob("deleteUserJob")
       val jobParameters: JobParameters = JobParametersBuilder()
         .addLocalDateTime("now", LocalDateTime.now())
         .toJobParameters()
 
       jobLauncher.run(job, jobParameters)
-    } catch (exception: Exception) {
-      when (exception) {
-        is NoSuchJobException,
-        is JobInstanceAlreadyCompleteException,
-        is JobExecutionAlreadyRunningException,
-        is JobParametersInvalidException,
-        is JobRestartException -> throw RuntimeException(exception)
-
-        else -> throw exception
-      }
     }
+      .onSuccess { logger.info("Success User Scheduler Job {} {} {}", it.jobId, it.startTime, it.endTime) }
+      .onFailure { logger.error("Error User Scheduler Job {}", it.message) }
   }
 }

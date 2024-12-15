@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
-import java.io.IOException
 
 object SecurityUtils {
   private val logger = LoggerFactory.getLogger(this::class.java)
@@ -16,13 +15,12 @@ object SecurityUtils {
   fun sendErrorResponse(
     httpServletRequest: HttpServletRequest,
     httpServletResponse: HttpServletResponse,
-    exception: Exception,
+    exception: Throwable,
     message: String = ""
   ) {
     val errorResponse = ErrorResponse.of(
       HttpStatus.UNAUTHORIZED.value(),
       message,
-      exception.message ?: "Security Filter Error"
     )
 
     logger.error(
@@ -37,11 +35,8 @@ object SecurityUtils {
       status = HttpStatus.UNAUTHORIZED.value()
       contentType = MediaType.APPLICATION_JSON_VALUE
 
-      try {
-        writer.write(objectMapper.writeValueAsString(errorResponse))
-      } catch (ioException: IOException) {
-        ioException.printStackTrace()
-      }
+      runCatching { writer.write(objectMapper.writeValueAsString(errorResponse)) }
+        .onFailure { logger.error(it.message) }
     }
   }
 }

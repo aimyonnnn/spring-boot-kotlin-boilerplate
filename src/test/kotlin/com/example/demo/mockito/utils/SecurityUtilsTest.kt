@@ -33,7 +33,7 @@ class SecurityUtilsTest {
   @DisplayName("Send Error Response Test")
   @Throws(Exception::class)
   fun should_VerifyCallMethodsOfHttpServletResponse_when_GivenServletAndException() {
-    val exception = Instancio.create(Exception::class.java)
+    val exception = Instancio.create(Throwable::class.java)
     val stringWriter = StringWriter()
     val printWriter = PrintWriter(stringWriter)
 
