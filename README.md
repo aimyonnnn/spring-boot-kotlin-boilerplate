@@ -27,6 +27,8 @@
   - Spring Batch
   - Junit 5
   - Mockito Kotlin
+  - Kotest
+  - Mockk
   - Instancio
   - h2 database (PostgreSQL mode)
   - Flyway
@@ -60,6 +62,9 @@
     - localhost & test environment,
       generating [batch-postgresql-metadata-schema.sql](src/main/resources/db/sql/batch-postgresql-metadata-schema.sql).
       - [application-test.yml](src/main/resources/application-test.yml)
+- two types of tests
+  - [mockito](src/test/kotlin/com/example/demo/mockito)
+  - [kotest & mockk](src/test/kotlin/com/example/demo/kotest)
 
 ### Author
 
