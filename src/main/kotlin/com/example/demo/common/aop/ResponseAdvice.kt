@@ -19,7 +19,6 @@ class ResponseAdvice(
   private val swaggerUtils: SwaggerUtils
 ) : ResponseBodyAdvice<Any> {
 
-
   override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean {
     return MappingJackson2HttpMessageConverter::class.java.isAssignableFrom(
       converterType
