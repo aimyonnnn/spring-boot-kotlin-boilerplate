@@ -2,8 +2,7 @@ package com.example.demo.user.batch.config
 
 import com.example.demo.user.batch.mapper.DeleteUserItem
 import com.example.demo.user.batch.mapper.DeleteUserItemRowMapper
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
 import org.springframework.batch.core.configuration.annotation.JobScope
@@ -28,12 +27,13 @@ import java.time.LocalDateTime
 import java.util.*
 import javax.sql.DataSource
 
+private val logger = KotlinLogging.logger {}
+
 @Configuration
 class DeleteUserConfig(
   private val jdbcTemplate: JdbcTemplate,
   private val dataSource: DataSource
 ) : DefaultBatchConfiguration() {
-  private val logger: Logger = LoggerFactory.getLogger(this::class.java)
   private val chunkSize = 10
 
   @Bean
@@ -89,13 +89,9 @@ class DeleteUserConfig(
   fun writer(): ItemWriter<DeleteUserItem> {
     return ItemWriter<DeleteUserItem> { items: Chunk<out DeleteUserItem> ->
       items.map {
-        logger.info(
-          "Hard Deleted User By = {} {} {} {} {}",
-          it.name,
-          it.email,
-          it.role,
-          it.deletedDt
-        )
+        logger.info {
+          "Hard Deleted User By = ${it.name} ${it.email} ${it.role} ${it.deletedDt}"
+        }
 
         jdbcTemplate.update(
           "DELETE FROM \"user\" WHERE user_id = ?",

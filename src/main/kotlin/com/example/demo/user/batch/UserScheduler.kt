@@ -1,6 +1,6 @@
 package com.example.demo.user.batch
 
-import org.slf4j.LoggerFactory
+import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.JobParameters
 import org.springframework.batch.core.JobParametersBuilder
@@ -10,12 +10,13 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
+private val logger = KotlinLogging.logger {}
+
 @Component
 class UserScheduler(
   private val jobLauncher: JobLauncher,
   private val jobRegistry: JobRegistry
 ) {
-  private val logger = LoggerFactory.getLogger(this::class.java)
 
   // 1 am
   @Scheduled(cron = "0 0 01 * * ?")
@@ -28,7 +29,7 @@ class UserScheduler(
 
       jobLauncher.run(job, jobParameters)
     }
-      .onSuccess { logger.info("Success User Scheduler Job {} {} {}", it.jobId, it.startTime, it.endTime) }
-      .onFailure { logger.error("Error User Scheduler Job {}", it.message) }
+      .onSuccess { logger.info { "Success User Scheduler Job ${it.jobId} ${it.startTime} ${it.endTime}" } }
+      .onFailure { logger.error { "Error User Scheduler Job ${it.message}" } }
   }
 }

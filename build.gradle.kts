@@ -77,6 +77,9 @@ dependencies {
   // h2
   runtimeOnly("com.h2database:h2")
 
+  // logger
+  implementation("io.github.oshai:kotlin-logging-jvm:7.0.0")
+
   // jackson
   implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
