@@ -66,14 +66,14 @@
   - [mockito](src/test/kotlin/com/example/demo/mockito)
   - [kotest & mockk](src/test/kotlin/com/example/demo/kotest)
     - **if you want to bypass Spring Security authentication issues.**
-      - [SecurityListerFactory](src/test/kotlin/com/example/demo/kotest/common/security/SecurityListerFactory.kt)
+      - [SecurityListenerFactory](src/test/kotlin/com/example/demo/kotest/common/security/SecurityListenerFactory.kt)
       - [BaseIntegrationController](src/test/kotlin/com/example/demo/kotest/common/BaseIntegrationController.kt)
         ```kotlin
         // example
 
-        listeners(SecurityListerFactory())
+        listeners(SecurityListenerFactory())
 
-        Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           // ...
         }
         ```

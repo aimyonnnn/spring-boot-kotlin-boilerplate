@@ -1,6 +1,6 @@
 package com.example.demo.kotest.common
 
-import com.example.demo.kotest.common.security.SecurityListerFactory
+import com.example.demo.kotest.common.security.SecurityListenerFactory
 import com.example.demo.utils.SwaggerUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
@@ -39,7 +39,7 @@ abstract class BaseIntegrationController : BehaviorSpec() {
   protected val commonMessage: String = HttpStatus.OK.name
 
   fun initialize() {
-    listeners(SecurityListerFactory())
+    listeners(SecurityListenerFactory())
 
     beforeSpec {
       mockMvc =

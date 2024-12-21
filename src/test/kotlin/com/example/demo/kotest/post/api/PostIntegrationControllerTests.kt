@@ -1,7 +1,7 @@
 package com.example.demo.kotest.post.api
 
 import com.example.demo.kotest.common.BaseIntegrationController
-import com.example.demo.kotest.common.security.SecurityListerFactory
+import com.example.demo.kotest.common.security.SecurityListenerFactory
 import com.example.demo.post.api.PostController
 import com.example.demo.post.application.ChangePostService
 import com.example.demo.post.application.GetPostService
@@ -412,7 +412,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("UnAuthorized Exception GET /api/v1/posts/{postId}") {
 
-        Then("Call GET /api/v1/posts/{postId}").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call GET /api/v1/posts/{postId}").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
@@ -427,7 +427,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("UnAuthorized Exception GET /api/v1/posts") {
 
-        Then("Call GET /api/v1/posts").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call GET /api/v1/posts").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
@@ -442,7 +442,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("UnAuthorized Exception GET /api/v1/posts/exclude-users") {
 
-        Then("Call GET /api/v1/posts/exclude-users").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call GET /api/v1/posts/exclude-users").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
@@ -457,7 +457,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("UnAuthorized Exception PUT /api/v1/posts") {
 
-        Then("Call PUT /api/v1/posts").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call PUT /api/v1/posts").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
@@ -472,7 +472,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("UnAuthorized Exception PATCH /api/v1/posts/{postId}") {
 
-        Then("Call PATCH /api/v1/posts/{postId}").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call PATCH /api/v1/posts/{postId}").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
@@ -487,7 +487,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("UnAuthorized Exception DELETE /api/v1/posts/{postId}") {
 
-        Then("Call DELETE /api/v1/posts/{postId}").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call DELETE /api/v1/posts/{postId}").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders

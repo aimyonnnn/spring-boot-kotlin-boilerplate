@@ -2,7 +2,7 @@ package com.example.demo.kotest.post.repository
 
 import com.example.demo.common.config.JpaAuditConfig
 import com.example.demo.common.config.QueryDslConfig
-import com.example.demo.kotest.common.security.SecurityListerFactory
+import com.example.demo.kotest.common.security.SecurityListenerFactory
 import com.example.demo.post.dto.serve.request.UpdatePostRequest
 import com.example.demo.post.entity.Post
 import com.example.demo.post.repository.PostRepository
@@ -35,7 +35,7 @@ class PostRepositoryTests(
   val defaultUserName = "Hyunwoo Park"
   val defaultUserRole = UserRole.USER
 
-  listeners(SecurityListerFactory())
+  listeners(SecurityListenerFactory())
 
   beforeContainer {
     postEntity =

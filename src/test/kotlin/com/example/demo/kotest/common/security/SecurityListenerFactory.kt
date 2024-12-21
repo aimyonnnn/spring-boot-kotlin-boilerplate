@@ -12,7 +12,7 @@ import org.instancio.Instancio
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 
-class SecurityListerFactory(
+class SecurityListenerFactory(
   private val userId: Long = 1L,
   private val userEmail: String = "awakelife93@gmail.com",
   private val userName: String = "Hyunwoo Park",

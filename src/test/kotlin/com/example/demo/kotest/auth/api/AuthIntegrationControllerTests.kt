@@ -6,7 +6,7 @@ import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
 import com.example.demo.auth.dto.serve.response.SignInResponse
 import com.example.demo.kotest.common.BaseIntegrationController
-import com.example.demo.kotest.common.security.SecurityListerFactory
+import com.example.demo.kotest.common.security.SecurityListenerFactory
 import com.example.demo.security.SecurityUserItem
 import com.example.demo.security.exception.RefreshTokenNotFoundException
 import com.example.demo.user.entity.User
@@ -262,7 +262,7 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
 
       When("Unauthorized Exception POST /api/v1/auth/signOut") {
 
-        Then("Call POST /api/v1/auth/signOut").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call POST /api/v1/auth/signOut").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
@@ -277,7 +277,7 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
 
       When("Unauthorized Exception POST /api/v1/auth/refresh") {
 
-        Then("Call POST /api/v1/auth/refresh").config(tags = setOf(SecurityListerFactory.NonSecurityOption)) {
+        Then("Call POST /api/v1/auth/refresh").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
           mockMvc
             .perform(
               MockMvcRequestBuilders
