@@ -18,7 +18,7 @@
   - Jwt
   - Validation
   - Sentry
-  - LogBack
+  - Kotlin Logging
   - Flyway
 
 - Test
