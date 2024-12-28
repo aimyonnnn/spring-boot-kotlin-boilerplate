@@ -21,12 +21,12 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -41,7 +41,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 )
 @ExtendWith(MockitoExtension::class)
 class AuthIntegrationControllerTests : SecurityItem() {
-  @MockBean
+  @MockitoBean
   private lateinit var authService: AuthService
 
   private val defaultUserEmail = "awakelife93@gmail.com"

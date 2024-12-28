@@ -20,7 +20,6 @@ import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
-import org.springframework.boot.test.mock.mockito.MockBean
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
@@ -28,6 +27,7 @@ import org.springframework.http.MediaType
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
 import org.springframework.test.context.ActiveProfiles
+import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
@@ -42,10 +42,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 )
 @ExtendWith(MockitoExtension::class)
 class PostIntegrationControllerTests : SecurityItem() {
-  @MockBean
+  @MockitoBean
   private lateinit var getPostServiceImpl: GetPostServiceImpl
 
-  @MockBean
+  @MockitoBean
   private lateinit var changePostServiceImpl: ChangePostServiceImpl
 
   private val defaultPageable = Pageable.ofSize(1)
