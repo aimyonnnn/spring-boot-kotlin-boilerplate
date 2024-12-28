@@ -17,10 +17,12 @@ class WithMockCustomUserSecurityContextFactory
     val securityContext = SecurityContextHolder.createEmptyContext()
     val user = Instancio.create(User::class.java)
     val securityUserItem = SecurityUserItem.of(user.also {
-      it.id = annotation.id.toLong()
-      it.email = annotation.email
-      it.name = annotation.name
-      it.role = UserRole.valueOf(annotation.role)
+      with(annotation) {
+        it.id = id.toLong()
+        it.email = email
+        it.name = name
+        it.role = UserRole.valueOf(role)
+      }
     })
 
     val userAdapter = UserAdapter(securityUserItem)
