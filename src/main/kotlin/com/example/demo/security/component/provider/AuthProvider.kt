@@ -5,7 +5,6 @@ import com.example.demo.security.component.filter.JWTAuthFilter
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.builders.WebSecurity
 import org.springframework.security.config.annotation.web.configurers.*
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
@@ -43,7 +42,7 @@ class AuthProvider(
   fun validateApiKey(requestAPIKey: String): Boolean {
     return apiKey == requestAPIKey
   }
-  
+
   fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): HttpSecurity {
     return httpSecurity
       .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.disable() }
@@ -56,7 +55,7 @@ class AuthProvider(
       }
       .authorizeHttpRequests { request ->
         request
-          .requestMatchers(*whiteListDefaultEndpoints())
+          .requestMatchers(*whiteListDefaultEndpoints(), *ignoreListDefaultEndpoints())
           .permitAll()
           .anyRequest()
           .authenticated()

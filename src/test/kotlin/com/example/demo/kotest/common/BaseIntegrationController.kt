@@ -1,11 +1,8 @@
 package com.example.demo.kotest.common
 
 import com.example.demo.kotest.common.security.SecurityListenerFactory
-import com.example.demo.utils.SwaggerUtils
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
-import io.mockk.every
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers
@@ -24,9 +21,6 @@ abstract class BaseIntegrationController : BehaviorSpec() {
 
   @Autowired
   protected lateinit var objectMapper: ObjectMapper
-
-  @MockkBean
-  private lateinit var swaggerUtils: SwaggerUtils
 
   /**
    * ResponseAdvice Status
@@ -48,12 +42,6 @@ abstract class BaseIntegrationController : BehaviorSpec() {
           .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
           .alwaysDo<DefaultMockMvcBuilder>(MockMvcResultHandlers.print())
           .build()
-    }
-
-    beforeTest {
-      every {
-        swaggerUtils.confirmPathEqualsSwaggerConfig(any<String>())
-      } returns false
     }
   }
 }
