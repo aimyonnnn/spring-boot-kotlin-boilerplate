@@ -3,9 +3,9 @@
 ### Environment & Skills
 
 - Application
-  - Kotlin 2.0
+  - Kotlin 2.1
   - Jdk 21
-  - Spring boot 3.3.0
+  - Spring boot 3.4.0
   - Gradle 8.10
   - Spring Security
   - Spring Batch

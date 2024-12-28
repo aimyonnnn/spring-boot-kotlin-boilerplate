@@ -2,12 +2,12 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-  id("org.springframework.boot") version "3.3.0"
+  id("org.springframework.boot") version "3.4.0"
   id("io.spring.dependency-management") version "1.1.3"
-  kotlin("jvm") version "2.0.0"
-  kotlin("kapt") version "2.0.0"
-  kotlin("plugin.spring") version "2.0.0"
-  kotlin("plugin.jpa") version "2.0.0"
+  kotlin("jvm") version "2.1.0"
+  kotlin("kapt") version "2.1.0"
+  kotlin("plugin.spring") version "2.1.0"
+  kotlin("plugin.jpa") version "2.1.0"
 }
 
 group = "com.example"
@@ -68,7 +68,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
   // swagger
-  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0")
+  implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
   // sentry
   implementation("io.sentry:sentry-spring-boot-starter-jakarta:7.9.0")
@@ -105,8 +105,8 @@ tasks.withType<KotlinCompile> {
     compilerOptions {
       jvmTarget.set(JvmTarget.JVM_21)
       freeCompilerArgs.add("-Xjsr305=strict")
-      languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
-      apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_0)
+      languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+      apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
     }
     jvmToolchain(JvmTarget.JVM_21.target.toInt())
   }
