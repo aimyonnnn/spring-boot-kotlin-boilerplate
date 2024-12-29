@@ -24,7 +24,7 @@ class CorsConfig {
     configuration.allowCredentials = true
 
     source.registerCorsConfiguration("/**", configuration)
-    
+
     return source
   }
 }

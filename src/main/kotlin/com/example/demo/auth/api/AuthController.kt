@@ -65,7 +65,7 @@ class AuthController(
     @CurrentUser securityUserItem: SecurityUserItem
   ): ResponseEntity<Void> {
     authService.signOut(securityUserItem.userId)
-    
+
     return ResponseEntity.ok().build()
   }
 
