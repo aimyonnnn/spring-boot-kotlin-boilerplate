@@ -1,21 +1,28 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
+val kotlinVersion: String by project
+val javaVersion: String by project
+
+val currentJavaVersion = JavaVersion.toVersion(javaVersion)
+val currentJvmVersion = JvmTarget.fromTarget(javaVersion)
+val currentKotlinVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(kotlinVersion.dropLast(2))
+
 plugins {
-  id("org.springframework.boot") version "3.4.0"
-  id("io.spring.dependency-management") version "1.1.3"
-  kotlin("jvm") version "2.1.0"
-  kotlin("kapt") version "2.1.0"
-  kotlin("plugin.spring") version "2.1.0"
-  kotlin("plugin.jpa") version "2.1.0"
+  id("org.springframework.boot")
+  id("io.spring.dependency-management")
+  kotlin("jvm")
+  kotlin("kapt")
+  kotlin("plugin.spring")
+  kotlin("plugin.jpa")
 }
 
 group = "com.example"
 version = "0.0.1-SNAPSHOT"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_21
-  targetCompatibility = JavaVersion.VERSION_21
+  sourceCompatibility = currentJavaVersion
+  targetCompatibility = currentJavaVersion
 }
 
 repositories {
@@ -103,12 +110,12 @@ dependencies {
 tasks.withType<KotlinCompile> {
   kotlin {
     compilerOptions {
-      jvmTarget.set(JvmTarget.JVM_21)
+      jvmTarget.set(currentJvmVersion)
       freeCompilerArgs.add("-Xjsr305=strict")
-      languageVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
-      apiVersion.set(org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_2_1)
+      languageVersion.set(currentKotlinVersion)
+      apiVersion.set(currentKotlinVersion)
     }
-    jvmToolchain(JvmTarget.JVM_21.target.toInt())
+    jvmToolchain(currentJvmVersion.target.toInt())
   }
 }
 
