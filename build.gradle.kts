@@ -1,16 +1,20 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jlleitschuh.gradle.ktlint.reporter.ReporterType
 
 val kotlinVersion: String by project
 val javaVersion: String by project
+val ktLintVersion: String by project
 
 val currentJavaVersion = JavaVersion.toVersion(javaVersion)
 val currentJvmVersion = JvmTarget.fromTarget(javaVersion)
-val currentKotlinVersion = org.jetbrains.kotlin.gradle.dsl.KotlinVersion.fromVersion(kotlinVersion.dropLast(2))
+val currentKotlinVersion = KotlinVersion.fromVersion(kotlinVersion.dropLast(2))
 
 plugins {
   id("org.springframework.boot")
   id("io.spring.dependency-management")
+  id("org.jlleitschuh.gradle.ktlint")
   kotlin("jvm")
   kotlin("kapt")
   kotlin("plugin.spring")
@@ -119,6 +123,14 @@ tasks.withType<KotlinCompile> {
   }
 }
 
-tasks.withType<Test>().configureEach() {
+tasks.withType<Test>().configureEach {
   useJUnitPlatform()
+}
+
+ktlint {
+  version.set(ktLintVersion)
+
+  reporters {
+    reporter(ReporterType.JSON)
+  }
 }
