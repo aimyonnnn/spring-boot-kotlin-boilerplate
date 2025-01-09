@@ -1,8 +1,10 @@
-### Spring Boot Boilerplate (Kotlin)
+## Spring Boot Boilerplate (Kotlin)
+
+---
 
 ### Environment & Skills
 
-- Application
+- `Application`
   - Kotlin 2.1
   - Jdk 21
   - Spring boot 3.4.0
@@ -21,7 +23,7 @@
   - Kotlin Logging
   - Flyway
 
-- Test
+- `Test`
   - Spring Boot Starter Test
   - Spring Security
   - Spring Batch
@@ -33,8 +35,11 @@
   - h2 database (PostgreSQL mode)
   - Flyway
 
-- Tools
+- `Etc`
   - Pgadmin
+  - Ktlint
+
+---
 
 ### Project Guide
 
@@ -49,15 +54,23 @@
     - test: Create the variables needed for your test environment.
     - secret-{environment}: auth (jwt, api key), database information
 
+---
+
 ### Description
 
+- lint
+  - ktlint
+    - [using the official lint rules by default.](gradle.properties)
+      - [Please refer to the lint rules for this project here.](.editorconfig)
+    - report output
+      - build/reports/ktlint
 - cors
   - This project used **spring security** rather than WebMvcConfigurer for the cors environment.
 - docker-compose
   - If you plan to use it, you need to check the environment variables.
 - create spring batch metadata table (localhost, development and production environments.)
   - Run your ddl script or Please refer
-    to [github - spring batch ](https://github.com/spring-projects/spring-batch/blob/5.0.x/spring-batch-core/src/main/resources/org/springframework/batch/core/schema-postgresql.sql)
+    to [github - spring batch](https://github.com/spring-projects/spring-batch/blob/5.0.x/spring-batch-core/src/main/resources/org/springframework/batch/core/schema-postgresql.sql)
     - Since this project uses postgresql, the spring.batch.jdbc.initialize-schema: always option does not work.
     - localhost & test environment,
       generating [batch-postgresql-metadata-schema.sql](src/main/resources/db/sql/batch-postgresql-metadata-schema.sql).
