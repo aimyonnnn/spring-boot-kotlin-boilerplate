@@ -1,7 +1,5 @@
 ## Spring Boot Boilerplate (Kotlin)
 
----
-
 ### Environment & Skills
 
 - `Application`
@@ -39,8 +37,6 @@
   - Pgadmin
   - Ktlint
 
----
-
 ### Project Guide
 
 - common
@@ -54,8 +50,6 @@
     - test: Create the variables needed for your test environment.
     - secret-{environment}: auth (jwt, api key), database information
 
----
-
 ### Description
 
 - lint
@@ -64,8 +58,6 @@
       - [Please refer to the lint rules for this project here.](.editorconfig)
     - report output
       - build/reports/ktlint
-- cors
-  - This project used **spring security** rather than WebMvcConfigurer for the cors environment.
 - docker-compose
   - If you plan to use it, you need to check the environment variables.
 - create spring batch metadata table (localhost, development and production environments.)
