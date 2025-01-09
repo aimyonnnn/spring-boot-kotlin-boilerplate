@@ -28,64 +28,38 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
-class UserControllerTests : FunSpec({
-  val userController = mockk<UserController>()
-  val getUserService = mockk<GetUserService>()
-  val changeUserService = mockk<ChangeUserService>()
+class UserControllerTests :
+  FunSpec({
+    val userController = mockk<UserController>()
+    val getUserService = mockk<GetUserService>()
+    val changeUserService = mockk<ChangeUserService>()
 
-  val user: User = Instancio.create(User::class.java)
-  val defaultPageable = Pageable.ofSize(1)
-  val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    val user: User = Instancio.create(User::class.java)
+    val defaultPageable = Pageable.ofSize(1)
+    val defaultAccessToken =
+      """
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+      eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      """
 
-  test("Get User By Id") {
+    test("Get User By Id") {
 
-    every { getUserService.getUserById(any<Long>()) } returns GetUserResponse.of(user)
+      every { getUserService.getUserById(any<Long>()) } returns GetUserResponse.of(user)
 
-    every {
-      userController.getUserById(
-        any<Long>()
-      )
-    } returns ResponseEntity.ok(GetUserResponse.of(user))
+      every {
+        userController.getUserById(
+          any<Long>()
+        )
+      } returns ResponseEntity.ok(GetUserResponse.of(user))
 
-    val response = userController.getUserById(
-      user.id
-    )
+      val response =
+        userController.getUserById(
+          user.id
+        )
 
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.OK
-      body shouldNotBeNull {
-        userId shouldBe user.id
-        email shouldBe user.email
-        name shouldBe user.name
-        role shouldBe user.role
-      }
-    }
-  }
-
-  test("Get User List") {
-
-    every { getUserService.getUserList(any<Pageable>()) } returns PageImpl(
-      listOf(GetUserResponse.of(user)),
-      defaultPageable,
-      1
-    )
-
-    every {
-      userController.getUserList(
-        any<Pageable>()
-      )
-    } returns ResponseEntity.ok(PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1))
-
-    val response = userController.getUserList(
-      defaultPageable
-    )
-
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.OK
-      body shouldNotBeNull {
-        content[0] shouldNotBeNull {
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.OK
+        body shouldNotBeNull {
           userId shouldBe user.id
           email shouldBe user.email
           name shouldBe user.name
@@ -93,120 +67,162 @@ class UserControllerTests : FunSpec({
         }
       }
     }
-  }
 
-  test("Create User") {
-    val createUserRequest = Instancio.create(
-      CreateUserRequest::class.java
-    )
+    test("Get User List") {
 
-    every { changeUserService.createUser(any<CreateUserRequest>()) } returns of(user, defaultAccessToken)
+      every { getUserService.getUserList(any<Pageable>()) } returns
+        PageImpl(
+          listOf(GetUserResponse.of(user)),
+          defaultPageable,
+          1
+        )
 
-    every { userController.createUser(any<CreateUserRequest>()) } returns ResponseEntity.status(HttpStatus.CREATED)
-      .body(
-        of(
+      every {
+        userController.getUserList(
+          any<Pageable>()
+        )
+      } returns ResponseEntity.ok(PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1))
+
+      val response =
+        userController.getUserList(
+          defaultPageable
+        )
+
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.OK
+        body shouldNotBeNull {
+          content[0] shouldNotBeNull {
+            userId shouldBe user.id
+            email shouldBe user.email
+            name shouldBe user.name
+            role shouldBe user.role
+          }
+        }
+      }
+    }
+
+    test("Create User") {
+      val createUserRequest =
+        Instancio.create(
+          CreateUserRequest::class.java
+        )
+
+      every { changeUserService.createUser(any<CreateUserRequest>()) } returns of(user, defaultAccessToken)
+
+      every { userController.createUser(any<CreateUserRequest>()) } returns
+        ResponseEntity
+          .status(HttpStatus.CREATED)
+          .body(
+            of(
+              user,
+              defaultAccessToken
+            )
+          )
+
+      val response =
+        userController.createUser(
+          createUserRequest
+        )
+
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.CREATED
+        body shouldNotBeNull {
+          email shouldBe user.email
+          name shouldBe user.name
+          role shouldBe user.role
+          accessToken shouldBe defaultAccessToken
+        }
+      }
+    }
+
+    test("Update User") {
+      val updateUserRequest =
+        Instancio.create(
+          UpdateUserRequest::class.java
+        )
+
+      every {
+        changeUserService.updateUser(
+          any<Long>(),
+          any<UpdateUserRequest>()
+        )
+      } returns UpdateUserResponse.of(user)
+
+      every {
+        userController.updateUser(
+          any<UpdateUserRequest>(),
+          any<Long>()
+        )
+      } returns ResponseEntity.ok(UpdateUserResponse.of(user))
+
+      val response =
+        userController.updateUser(
+          updateUserRequest,
+          user.id
+        )
+
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.OK
+        body shouldNotBeNull {
+          email shouldBe user.email
+          name shouldBe user.name
+          role shouldBe user.role
+        }
+      }
+    }
+
+    test("Update Me") {
+      val updateUserRequest =
+        Instancio.create(
+          UpdateUserRequest::class.java
+        )
+      val securityUserItem =
+        Instancio.create(
+          SecurityUserItem::class.java
+        )
+
+      every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns
+        UpdateMeResponse.of(
           user,
           defaultAccessToken
         )
-      )
 
-    val response = userController.createUser(
-      createUserRequest
-    )
+      every { userController.updateMe(any<UpdateUserRequest>(), any<SecurityUserItem>()) } returns
+        ResponseEntity.ok(
+          UpdateMeResponse.of(
+            user,
+            defaultAccessToken
+          )
+        )
 
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.CREATED
-      body shouldNotBeNull {
-        email shouldBe user.email
-        name shouldBe user.name
-        role shouldBe user.role
-        accessToken shouldBe defaultAccessToken
+      val response =
+        userController.updateMe(
+          updateUserRequest,
+          securityUserItem
+        )
+
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.OK
+        body shouldNotBeNull {
+          email shouldBe user.email
+          name shouldBe user.name
+          role shouldBe user.role
+          accessToken shouldBe defaultAccessToken
+        }
       }
     }
-  }
 
-  test("Update User") {
-    val updateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
+    test("Delete User") {
 
-    every {
-      changeUserService.updateUser(
-        any<Long>(),
-        any<UpdateUserRequest>()
-      )
-    } returns UpdateUserResponse.of(user)
+      justRun { changeUserService.deleteUser(any<Long>()) }
 
-    every {
-      userController.updateUser(
-        any<UpdateUserRequest>(),
-        any<Long>(),
-      )
-    } returns ResponseEntity.ok(UpdateUserResponse.of(user))
+      every { userController.deleteUser(any<Long>()) } returns ResponseEntity.noContent().build()
 
+      val response = userController.deleteUser(user.id)
 
-    val response = userController.updateUser(
-      updateUserRequest,
-      user.id
-    )
-
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.OK
-      body shouldNotBeNull {
-        email shouldBe user.email
-        name shouldBe user.name
-        role shouldBe user.role
+      response shouldNotBeNull {
+        body.shouldBeNull()
+        statusCode shouldBe HttpStatus.NO_CONTENT
       }
     }
-  }
-
-  test("Update Me") {
-    val updateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
-    val securityUserItem = Instancio.create(
-      SecurityUserItem::class.java
-    )
-
-    every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns UpdateMeResponse.of(
-      user,
-      defaultAccessToken
-    )
-
-    every { userController.updateMe(any<UpdateUserRequest>(), any<SecurityUserItem>()) } returns ResponseEntity.ok(
-      UpdateMeResponse.of(
-        user,
-        defaultAccessToken
-      )
-    )
-
-    val response = userController.updateMe(
-      updateUserRequest,
-      securityUserItem
-    )
-
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.OK
-      body shouldNotBeNull {
-        email shouldBe user.email
-        name shouldBe user.name
-        role shouldBe user.role
-        accessToken shouldBe defaultAccessToken
-      }
-    }
-  }
-
-  test("Delete User") {
-
-    justRun { changeUserService.deleteUser(any<Long>()) }
-
-    every { userController.deleteUser(any<Long>()) } returns ResponseEntity.noContent().build()
-
-    val response = userController.deleteUser(user.id)
-
-    response shouldNotBeNull {
-      body.shouldBeNull()
-      statusCode shouldBe HttpStatus.NO_CONTENT
-    }
-  }
-})
+  })

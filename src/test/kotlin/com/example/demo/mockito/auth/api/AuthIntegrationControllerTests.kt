@@ -15,7 +15,11 @@ import com.example.demo.user.exception.UserUnAuthorizedException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
@@ -47,8 +51,10 @@ class AuthIntegrationControllerTests : SecurityItem() {
   private val defaultUserEmail = "awakelife93@gmail.com"
   private val defaultUserPassword = "test_password_123!@"
   private val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    """
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+    eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    """
 
   private val user: User = Instancio.create(User::class.java)
 
@@ -66,10 +72,11 @@ class AuthIntegrationControllerTests : SecurityItem() {
   @DisplayName("POST /api/v1/auth/signIn Test")
   inner class SignInTest {
     private val mockSignInRequest = Instancio.create(SignInRequest::class.java)
-    private val signInRequest: SignInRequest = mockSignInRequest.copy(
-      email = defaultUserEmail,
-      password = defaultUserPassword
-    )
+    private val signInRequest: SignInRequest =
+      mockSignInRequest.copy(
+        email = defaultUserEmail,
+        password = defaultUserPassword
+      )
 
     @Test
     @DisplayName("POST /api/v1/auth/signIn Response")
@@ -78,7 +85,8 @@ class AuthIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToSignInResponse_when_GivenSignInRequest() {
-      Mockito.`when`(authService.signIn(any<SignInRequest>()))
+      Mockito
+        .`when`(authService.signIn(any<SignInRequest>()))
         .thenReturn(of(user, defaultAccessToken))
 
       mockMvc
@@ -89,8 +97,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(signInRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -106,10 +113,11 @@ class AuthIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToValidException_when_GivenWrongSignInRequest() {
-      val wrongSignInRequest: SignInRequest = signInRequest.copy(
-        email = "wrong_email_format",
-        password = "1234"
-      )
+      val wrongSignInRequest: SignInRequest =
+        signInRequest.copy(
+          email = "wrong_email_format",
+          password = "1234"
+        )
 
       mockMvc
         .perform(
@@ -119,8 +127,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(wrongSignInRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
         ) // email:field email is not email format, password:field password is min size 8 and max size 20,
@@ -135,11 +142,13 @@ class AuthIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToUserUnAuthorizedException_when_GivenSignInRequest() {
-      val userUnAuthorizedException = UserUnAuthorizedException(
-        user.id
-      )
+      val userUnAuthorizedException =
+        UserUnAuthorizedException(
+          user.id
+        )
 
-      Mockito.`when`(authService.signIn(any<SignInRequest>()))
+      Mockito
+        .`when`(authService.signIn(any<SignInRequest>()))
         .thenThrow(userUnAuthorizedException)
 
       mockMvc
@@ -150,12 +159,10 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(signInRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(userUnAuthorizedException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
 
     @Test
@@ -165,11 +172,13 @@ class AuthIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToUserNotFoundException_when_GivenSignInRequest() {
-      val userNotFoundException = UserNotFoundException(
-        user.id
-      )
+      val userNotFoundException =
+        UserNotFoundException(
+          user.id
+        )
 
-      Mockito.`when`(authService.signIn(any<SignInRequest>()))
+      Mockito
+        .`when`(authService.signIn(any<SignInRequest>()))
         .thenThrow(userNotFoundException)
 
       mockMvc
@@ -180,12 +189,10 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(signInRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNotFound)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
   }
 
@@ -206,8 +213,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
     }
@@ -225,8 +231,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
@@ -240,7 +245,8 @@ class AuthIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToRefreshAccessTokenResponse_when_GivenSecurityUserItemAndUserIsAuthenticated() {
-      Mockito.`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
+      Mockito
+        .`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
         .thenReturn(RefreshAccessTokenResponse.of(defaultAccessToken))
 
       mockMvc
@@ -250,8 +256,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isCreated)
+        ).andExpect(MockMvcResultMatchers.status().isCreated)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken").value(defaultAccessToken))
     }
@@ -263,11 +268,13 @@ class AuthIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToRefreshTokenNotFoundException_when_GivenSecurityUserItemAndUserIsAuthenticated() {
-      val refreshTokenNotFoundException = RefreshTokenNotFoundException(
-        user.id
-      )
+      val refreshTokenNotFoundException =
+        RefreshTokenNotFoundException(
+          user.id
+        )
 
-      Mockito.`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
+      Mockito
+        .`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
         .thenThrow(refreshTokenNotFoundException)
 
       mockMvc
@@ -277,13 +284,12 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         .andExpect(
-          MockMvcResultMatchers.jsonPath("$.message")
+          MockMvcResultMatchers
+            .jsonPath("$.message")
             .value(refreshTokenNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
 
     @Test
@@ -295,13 +301,15 @@ class AuthIntegrationControllerTests : SecurityItem() {
     fun should_ExpectErrorResponseToExpiredJwtException_when_GivenSecurityUserItemAndUserIsAuthenticated() {
       val claims = Instancio.create(Claims::class.java)
 
-      val expiredJwtException = ExpiredJwtException(
-        null,
-        claims,
-        "JWT expired at ?. Current time: ?, a difference of ? milliseconds.  Allowed clock skew: ? milliseconds."
-      )
+      val expiredJwtException =
+        ExpiredJwtException(
+          null,
+          claims,
+          "JWT expired at ?. Current time: ?, a difference of ? milliseconds.  Allowed clock skew: ? milliseconds."
+        )
 
-      Mockito.`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
+      Mockito
+        .`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
         .thenThrow(expiredJwtException)
 
       mockMvc
@@ -311,12 +319,10 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(expiredJwtException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
 
     @Test
@@ -332,8 +338,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 }

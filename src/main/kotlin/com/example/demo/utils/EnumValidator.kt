@@ -11,7 +11,10 @@ class EnumValidator : ConstraintValidator<ValidEnum?, Enum<*>> {
     this.annotation = constraintAnnotation
   }
 
-  override fun isValid(value: Enum<*>, context: ConstraintValidatorContext): Boolean {
+  override fun isValid(
+    value: Enum<*>,
+    context: ConstraintValidatorContext
+  ): Boolean {
     var result = false
     val enumValues: Array<out Enum<*>>? = annotation!!.enumClass.java.enumConstants
 

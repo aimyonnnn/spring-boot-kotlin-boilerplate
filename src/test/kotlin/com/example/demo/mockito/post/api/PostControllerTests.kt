@@ -13,7 +13,9 @@ import com.example.demo.post.entity.Post
 import com.example.demo.security.SecurityUserItem
 import org.assertj.core.api.Assertions.assertThat
 import org.instancio.Instancio
-import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
@@ -51,20 +53,23 @@ class PostControllerTests {
   @Test
   @DisplayName("Get post by id")
   fun should_AssertGetPostResponse_when_GivenPostId() {
-    Mockito.`when`(getPostServiceImpl.getPostById(any<Long>()))
+    Mockito
+      .`when`(getPostServiceImpl.getPostById(any<Long>()))
       .thenReturn(GetPostResponse.of(post))
 
-    val response = postController.getPostById(
-      post.id
-    )
+    val response =
+      postController.getPostById(
+        post.id
+      )
 
     assertNotNull(response)
     assertNotNull(response.body)
     assertEquals(HttpStatus.OK, response.statusCode)
 
-    val body = requireNotNull(response.body) {
-      "Response body must not be null"
-    }
+    val body =
+      requireNotNull(response.body) {
+        "Response body must not be null"
+      }
 
     assertEquals(post.id, body.postId)
     assertEquals(post.title, body.title)
@@ -76,20 +81,23 @@ class PostControllerTests {
   @Test
   @DisplayName("Get post list")
   fun should_AssertPageOfGetPostResponse_when_GivenDefaultPageable() {
-    Mockito.`when`(getPostServiceImpl.getPostList(any<Pageable>()))
+    Mockito
+      .`when`(getPostServiceImpl.getPostList(any<Pageable>()))
       .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
 
-    val response = postController.getPostList(
-      defaultPageable
-    )
+    val response =
+      postController.getPostList(
+        defaultPageable
+      )
 
     assertNotNull(response)
     assertNotNull(response.body)
     assertEquals(HttpStatus.OK, response.statusCode)
 
-    val body = requireNotNull(response.body) {
-      "Response body must not be null"
-    }
+    val body =
+      requireNotNull(response.body) {
+        "Response body must not be null"
+      }
 
     assertThat(body).isNotEmpty()
     assertEquals(post.id, body.content[0].postId)
@@ -102,25 +110,29 @@ class PostControllerTests {
   @Test
   @DisplayName("Get exclude users post list")
   fun should_AssertPageOfGetPostResponse_when_GivenDefaultPageableAndGetExcludeUsersPostsRequest() {
-    val getExcludeUsersPostsRequest = Instancio.create(
-      GetExcludeUsersPostsRequest::class.java
-    )
+    val getExcludeUsersPostsRequest =
+      Instancio.create(
+        GetExcludeUsersPostsRequest::class.java
+      )
 
-    Mockito.`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
+    Mockito
+      .`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
       .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
 
-    val response = postController.getExcludeUsersPostList(
-      getExcludeUsersPostsRequest,
-      defaultPageable
-    )
+    val response =
+      postController.getExcludeUsersPostList(
+        getExcludeUsersPostsRequest,
+        defaultPageable
+      )
 
     assertNotNull(response)
     assertNotNull(response.body)
     assertEquals(HttpStatus.OK, response.statusCode)
 
-    val body = requireNotNull(response.body) {
-      "Response body must not be null"
-    }
+    val body =
+      requireNotNull(response.body) {
+        "Response body must not be null"
+      }
 
     assertThat(body).isNotEmpty()
     assertEquals(post.id, body.content[0].postId)
@@ -133,28 +145,33 @@ class PostControllerTests {
   @Test
   @DisplayName("Create post")
   fun should_AssertCreatePostResponse_when_GivenUserIdAndCreatePostRequest() {
-    val createPostRequest = Instancio.create(
-      CreatePostRequest::class.java
-    )
-    val securityUserItem = Instancio.create(
-      SecurityUserItem::class.java
-    )
+    val createPostRequest =
+      Instancio.create(
+        CreatePostRequest::class.java
+      )
+    val securityUserItem =
+      Instancio.create(
+        SecurityUserItem::class.java
+      )
 
-    Mockito.`when`(changePostServiceImpl.createPost(any<Long>(), any<CreatePostRequest>()))
+    Mockito
+      .`when`(changePostServiceImpl.createPost(any<Long>(), any<CreatePostRequest>()))
       .thenReturn(CreatePostResponse.of(post))
 
-    val response = postController.createPost(
-      createPostRequest,
-      securityUserItem
-    )
+    val response =
+      postController.createPost(
+        createPostRequest,
+        securityUserItem
+      )
 
     assertNotNull(response)
     assertNotNull(response.body)
     assertEquals(HttpStatus.CREATED, response.statusCode)
 
-    val body = requireNotNull(response.body) {
-      "Response body must not be null"
-    }
+    val body =
+      requireNotNull(response.body) {
+        "Response body must not be null"
+      }
 
     assertEquals(post.id, body.postId)
     assertEquals(post.title, body.title)
@@ -166,25 +183,29 @@ class PostControllerTests {
   @Test
   @DisplayName("Update post")
   fun should_AssertUpdatePostResponse_when_GivenPostIdAndUpdatePostRequest() {
-    val updatePostRequest = Instancio.create(
-      UpdatePostRequest::class.java
-    )
+    val updatePostRequest =
+      Instancio.create(
+        UpdatePostRequest::class.java
+      )
 
-    Mockito.`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
+    Mockito
+      .`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
       .thenReturn(UpdatePostResponse.of(post))
 
-    val response = postController.updatePost(
-      updatePostRequest,
-      post.id
-    )
+    val response =
+      postController.updatePost(
+        updatePostRequest,
+        post.id
+      )
 
     assertNotNull(response)
     assertNotNull(response.body)
     assertEquals(HttpStatus.OK, response.statusCode)
 
-    val body = requireNotNull(response.body) {
-      "Response body must not be null"
-    }
+    val body =
+      requireNotNull(response.body) {
+        "Response body must not be null"
+      }
 
     assertEquals(post.id, body.postId)
     assertEquals(post.title, body.title)

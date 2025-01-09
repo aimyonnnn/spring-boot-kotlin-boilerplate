@@ -17,19 +17,18 @@ class UserScheduler(
   private val jobLauncher: JobLauncher,
   private val jobRegistry: JobRegistry
 ) {
-
   // 1 am
   @Scheduled(cron = "0 0 01 * * ?")
   fun run() {
     runCatching {
       val job: Job = jobRegistry.getJob("deleteUserJob")
-      val jobParameters: JobParameters = JobParametersBuilder()
-        .addLocalDateTime("now", LocalDateTime.now())
-        .toJobParameters()
+      val jobParameters: JobParameters =
+        JobParametersBuilder()
+          .addLocalDateTime("now", LocalDateTime.now())
+          .toJobParameters()
 
       jobLauncher.run(job, jobParameters)
-    }
-      .onSuccess { logger.info { "Success User Scheduler Job ${it.jobId} ${it.startTime} ${it.endTime}" } }
+    }.onSuccess { logger.info { "Success User Scheduler Job ${it.jobId} ${it.startTime} ${it.endTime}" } }
       .onFailure { logger.error { "Error User Scheduler Job ${it.message}" } }
   }
 }

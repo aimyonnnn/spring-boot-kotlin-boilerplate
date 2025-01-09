@@ -4,13 +4,9 @@ import java.time.LocalDateTime
 
 class DeleteUserItem(
   val id: Long,
-
   val email: String,
-
   val name: String,
-
   val role: String,
-
   val deletedDt: LocalDateTime
 ) {
   companion object {
@@ -20,14 +16,13 @@ class DeleteUserItem(
       name: String,
       role: String,
       deletedDt: LocalDateTime
-    ): DeleteUserItem {
-      return DeleteUserItem(
+    ): DeleteUserItem =
+      DeleteUserItem(
         id = id,
         email = email,
         name = name,
         role = role,
         deletedDt = deletedDt
       )
-    }
   }
 }

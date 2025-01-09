@@ -28,20 +28,17 @@ class OkResponse {
   }
 
   companion object {
-    fun of(code: Int): OkResponse {
-      return OkResponse(code)
-    }
+    fun of(code: Int): OkResponse = OkResponse(code)
 
-    fun of(code: Int, message: String): OkResponse {
-      return OkResponse(code, message)
-    }
+    fun of(
+      code: Int,
+      message: String
+    ): OkResponse = OkResponse(code, message)
 
     fun of(
       code: Int,
       message: String,
       data: Any?
-    ): OkResponse {
-      return OkResponse(code, message, data)
-    }
+    ): OkResponse = OkResponse(code, message, data)
   }
 }

@@ -24,121 +24,126 @@ class UserRepositoryTests(
   @Autowired
   private val userRepository: UserRepository
 ) : DescribeSpec({
-  lateinit var userEntity: User
-  val defaultUserEmail = "awakelife93@gmail.com"
-  val defaultUserPassword = "test_password_123!@"
-  val defaultUserName = "Hyunwoo Park"
-  val defaultUserRole = UserRole.USER
+    lateinit var userEntity: User
+    val defaultUserEmail = "awakelife93@gmail.com"
+    val defaultUserPassword = "test_password_123!@"
+    val defaultUserName = "Hyunwoo Park"
+    val defaultUserRole = UserRole.USER
 
-  beforeContainer {
-    userEntity =
-      User(
-        name = defaultUserName,
-        email = defaultUserEmail,
-        password = defaultUserPassword,
-        role = defaultUserRole
-      )
-  }
-
-  describe("Create user") {
-
-    context("Save user") {
-      val createUser = userRepository.save(userEntity)
-
-      it("Assert User Entity") {
-        createUser.id shouldBe userEntity.id
-        createUser.email shouldBe userEntity.email
-        createUser.name shouldBe userEntity.name
-        createUser.role shouldBe userEntity.role
-      }
-    }
-  }
-
-  describe("Update user") {
-
-    context("Save user") {
-      val updateUserRequest = Instancio.create(
-        UpdateUserRequest::class.java
-      )
-
-      val beforeUpdateUser = userRepository.save(userEntity)
-
-      userRepository.save(
-        beforeUpdateUser.update(
-          updateUserRequest.name,
-          updateUserRequest.role
+    beforeContainer {
+      userEntity =
+        User(
+          name = defaultUserName,
+          email = defaultUserEmail,
+          password = defaultUserPassword,
+          role = defaultUserRole
         )
-      )
+    }
 
-      val afterUpdateUser: User = requireNotNull(
-        userRepository
-          .findOneById(beforeUpdateUser.id)
-      ) {
-        "User must not be null"
-      }
+    describe("Create user") {
 
-      it("Assert User Entity") {
-        afterUpdateUser.name shouldBe updateUserRequest.name
-        afterUpdateUser.role shouldBe updateUserRequest.role
+      context("Save user") {
+        val createUser = userRepository.save(userEntity)
+
+        it("Assert User Entity") {
+          createUser.id shouldBe userEntity.id
+          createUser.email shouldBe userEntity.email
+          createUser.name shouldBe userEntity.name
+          createUser.role shouldBe userEntity.role
+        }
       }
     }
-  }
 
-  describe("Delete User") {
+    describe("Update user") {
 
-    context("Call deleteById") {
-      val beforeDeleteUser = userRepository.save(userEntity)
+      context("Save user") {
+        val updateUserRequest =
+          Instancio.create(
+            UpdateUserRequest::class.java
+          )
 
-      userRepository.deleteById(beforeDeleteUser.id)
+        val beforeUpdateUser = userRepository.save(userEntity)
 
-      val afterDeleteUser: User? = userRepository
-        .findOneById(beforeDeleteUser.id)
+        userRepository.save(
+          beforeUpdateUser.update(
+            updateUserRequest.name,
+            updateUserRequest.role
+          )
+        )
 
-      it("Assert Null") {
-        afterDeleteUser.shouldBeNull()
+        val afterUpdateUser: User =
+          requireNotNull(
+            userRepository
+              .findOneById(beforeUpdateUser.id)
+          ) {
+            "User must not be null"
+          }
+
+        it("Assert User Entity") {
+          afterUpdateUser.name shouldBe updateUserRequest.name
+          afterUpdateUser.role shouldBe updateUserRequest.role
+        }
       }
     }
-  }
 
-  describe("Find User By Id") {
+    describe("Delete User") {
 
-    context("Call findOneById") {
-      val beforeFindUser = userRepository.save(userEntity)
+      context("Call deleteById") {
+        val beforeDeleteUser = userRepository.save(userEntity)
 
-      val afterFindUser: User = requireNotNull(
-        userRepository
-          .findOneById(beforeFindUser.id)
-      ) {
-        "User must not be null"
-      }
+        userRepository.deleteById(beforeDeleteUser.id)
 
-      it("Assert User Entity") {
-        afterFindUser.id shouldBe beforeFindUser.id
-        afterFindUser.email shouldBe beforeFindUser.email
-        afterFindUser.name shouldBe beforeFindUser.name
-        afterFindUser.role shouldBe beforeFindUser.role
+        val afterDeleteUser: User? =
+          userRepository
+            .findOneById(beforeDeleteUser.id)
+
+        it("Assert Null") {
+          afterDeleteUser.shouldBeNull()
+        }
       }
     }
-  }
 
-  describe("Find User By Email") {
+    describe("Find User By Id") {
 
-    context("Call findOneByEmail") {
-      val beforeFindUser = userRepository.save(userEntity)
+      context("Call findOneById") {
+        val beforeFindUser = userRepository.save(userEntity)
 
-      val afterFindUser: User = requireNotNull(
-        userRepository
-          .findOneByEmail(beforeFindUser.email)
-      ) {
-        "User must not be null"
-      }
+        val afterFindUser: User =
+          requireNotNull(
+            userRepository
+              .findOneById(beforeFindUser.id)
+          ) {
+            "User must not be null"
+          }
 
-      it("Assert User Entity") {
-        afterFindUser.id shouldBe beforeFindUser.id
-        afterFindUser.email shouldBe beforeFindUser.email
-        afterFindUser.name shouldBe beforeFindUser.name
-        afterFindUser.role shouldBe beforeFindUser.role
+        it("Assert User Entity") {
+          afterFindUser.id shouldBe beforeFindUser.id
+          afterFindUser.email shouldBe beforeFindUser.email
+          afterFindUser.name shouldBe beforeFindUser.name
+          afterFindUser.role shouldBe beforeFindUser.role
+        }
       }
     }
-  }
-})
+
+    describe("Find User By Email") {
+
+      context("Call findOneByEmail") {
+        val beforeFindUser = userRepository.save(userEntity)
+
+        val afterFindUser: User =
+          requireNotNull(
+            userRepository
+              .findOneByEmail(beforeFindUser.email)
+          ) {
+            "User must not be null"
+          }
+
+        it("Assert User Entity") {
+          afterFindUser.id shouldBe beforeFindUser.id
+          afterFindUser.email shouldBe beforeFindUser.email
+          afterFindUser.name shouldBe beforeFindUser.name
+          afterFindUser.role shouldBe beforeFindUser.role
+        }
+      }
+    }
+  })

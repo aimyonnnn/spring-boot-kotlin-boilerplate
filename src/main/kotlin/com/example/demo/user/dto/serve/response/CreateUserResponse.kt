@@ -7,16 +7,12 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class CreateUserResponse(
   @field:Schema(description = "User Id", nullable = false)
   val userId: Long,
-
   @field:Schema(description = "User Role", nullable = false, implementation = UserRole::class)
   val role: UserRole,
-
   @field:Schema(description = "User Name", nullable = false)
   val name: String,
-
   @field:Schema(description = "User Email", nullable = false, format = "email")
   val email: String,
-
   @field:Schema(
     description = "User AccessToken",
     nullable = false
@@ -24,8 +20,11 @@ data class CreateUserResponse(
   val accessToken: String
 ) {
   companion object {
-    fun of(user: User, accessToken: String): CreateUserResponse {
-      return with(user) {
+    fun of(
+      user: User,
+      accessToken: String
+    ): CreateUserResponse =
+      with(user) {
         CreateUserResponse(
           userId = id,
           role = role,
@@ -34,6 +33,5 @@ data class CreateUserResponse(
           accessToken = accessToken
         )
       }
-    }
   }
 }

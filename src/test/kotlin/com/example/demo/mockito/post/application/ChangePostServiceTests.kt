@@ -11,9 +11,13 @@ import com.example.demo.user.application.impl.UserServiceImpl
 import com.example.demo.user.entity.User
 import com.example.demo.user.exception.UserNotFoundException
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -59,19 +63,21 @@ class ChangePostServiceTests {
   @Nested
   @DisplayName("Update Post Test")
   inner class UpdateTest {
-    private val updatePostRequest: UpdatePostRequest = Instancio.create(
-      UpdatePostRequest::class.java
-    )
+    private val updatePostRequest: UpdatePostRequest =
+      Instancio.create(
+        UpdatePostRequest::class.java
+      )
 
     @Test
     @DisplayName("Success update post")
     fun should_AssertUpdatePostResponse_when_GivenPostIdAndUpdatePostRequest() {
       Mockito.`when`(postServiceImpl.validateReturnPost(any<Long>())).thenReturn(post)
 
-      val updatePostResponse = changePostServiceImpl.updatePost(
-        post.id,
-        updatePostRequest
-      )
+      val updatePostResponse =
+        changePostServiceImpl.updatePost(
+          post.id,
+          updatePostRequest
+        )
 
       assertNotNull(updatePostResponse)
       assertEquals(post.id, updatePostResponse.postId)
@@ -87,7 +93,8 @@ class ChangePostServiceTests {
     @Test
     @DisplayName("Not found post")
     fun should_AssertPostNotFoundException_when_GivenPostIdAndUpdatePostRequest() {
-      Mockito.`when`(postServiceImpl.validateReturnPost(any<Long>()))
+      Mockito
+        .`when`(postServiceImpl.validateReturnPost(any<Long>()))
         .thenThrow(PostNotFoundException(post.id))
 
       Assertions.assertThrows(
@@ -99,9 +106,10 @@ class ChangePostServiceTests {
   @Nested
   @DisplayName("Create Post Test")
   inner class CreatePostTest {
-    private val createPostRequest: CreatePostRequest = Instancio.create(
-      CreatePostRequest::class.java
-    )
+    private val createPostRequest: CreatePostRequest =
+      Instancio.create(
+        CreatePostRequest::class.java
+      )
 
     @Test
     @DisplayName("Success create post")
@@ -110,10 +118,11 @@ class ChangePostServiceTests {
 
       Mockito.`when`(postRepository.save(any<Post>())).thenReturn(post)
 
-      val createPostResponse = changePostServiceImpl.createPost(
-        user.id,
-        createPostRequest,
-      )
+      val createPostResponse =
+        changePostServiceImpl.createPost(
+          user.id,
+          createPostRequest
+        )
 
       assertNotNull(createPostResponse)
       assertEquals(post.id, createPostResponse.postId)
@@ -129,7 +138,8 @@ class ChangePostServiceTests {
     @Test
     @DisplayName("Not found user")
     fun should_AssertUserNotFoundException_when_GivenUserIdAndCreatePostRequest() {
-      Mockito.`when`(userServiceImpl.validateReturnUser(any<Long>()))
+      Mockito
+        .`when`(userServiceImpl.validateReturnUser(any<Long>()))
         .thenThrow(UserNotFoundException(user.id))
 
       Assertions.assertThrows(

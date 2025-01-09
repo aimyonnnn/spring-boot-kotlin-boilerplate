@@ -12,9 +12,13 @@ import com.example.demo.user.exception.UserUnAuthorizedException
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.ExpiredJwtException
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -40,8 +44,10 @@ class AuthServiceTests {
   private lateinit var authService: AuthService
 
   private val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    """
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+    eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    """
 
   private val user: User = Instancio.create(User::class.java)
 
@@ -53,10 +59,12 @@ class AuthServiceTests {
     @Test
     @DisplayName("Success sign in")
     fun should_AssertSignInResponse_when_GivenSignInRequest() {
-      Mockito.`when`(userServiceImpl.validateAuthReturnUser(any<SignInRequest>()))
+      Mockito
+        .`when`(userServiceImpl.validateAuthReturnUser(any<SignInRequest>()))
         .thenReturn(user)
 
-      Mockito.`when`(tokenProvider.createFullTokens(any<User>()))
+      Mockito
+        .`when`(tokenProvider.createFullTokens(any<User>()))
         .thenReturn(defaultAccessToken)
 
       val signInResponse = authService.signIn(signInRequest)
@@ -70,7 +78,8 @@ class AuthServiceTests {
     @Test
     @DisplayName("User not found")
     fun should_AssertUserNotFoundException_when_GivenSignInRequest() {
-      Mockito.`when`(userServiceImpl.validateAuthReturnUser(any<SignInRequest>()))
+      Mockito
+        .`when`(userServiceImpl.validateAuthReturnUser(any<SignInRequest>()))
         .thenThrow(UserNotFoundException(user.id))
 
       Assertions.assertThrows(
@@ -81,7 +90,8 @@ class AuthServiceTests {
     @Test
     @DisplayName("User unauthorized")
     fun should_AssertUserUnAuthorizedException_when_GivenSignInRequest() {
-      Mockito.`when`(userServiceImpl.validateAuthReturnUser(any<SignInRequest>()))
+      Mockito
+        .`when`(userServiceImpl.validateAuthReturnUser(any<SignInRequest>()))
         .thenThrow(UserUnAuthorizedException(user.email))
 
       Assertions.assertThrows(
@@ -105,19 +115,22 @@ class AuthServiceTests {
   @Nested
   @DisplayName("Refresh Access Token Test")
   inner class RefreshTokenTest {
-    private val securityUserItem: SecurityUserItem = Instancio.create(
-      SecurityUserItem::class.java
-    )
+    private val securityUserItem: SecurityUserItem =
+      Instancio.create(
+        SecurityUserItem::class.java
+      )
 
     @Test
     @DisplayName("Success refresh access token")
     fun should_AssertRefreshAccessTokenResponse_when_GivenSecurityUserItem() {
-      Mockito.`when`(tokenProvider.refreshAccessToken(any<SecurityUserItem>()))
+      Mockito
+        .`when`(tokenProvider.refreshAccessToken(any<SecurityUserItem>()))
         .thenReturn(defaultAccessToken)
 
-      val refreshAccessTokenResponse = authService.refreshAccessToken(
-        securityUserItem
-      )
+      val refreshAccessTokenResponse =
+        authService.refreshAccessToken(
+          securityUserItem
+        )
 
       assertNotNull(refreshAccessTokenResponse)
       assertEquals(
@@ -131,10 +144,10 @@ class AuthServiceTests {
     fun should_AssertExpiredJwtException_when_GivenSecurityUserItem() {
       val claims = Instancio.create(Claims::class.java)
 
-      Mockito.`when`(
-        tokenProvider.refreshAccessToken(any<SecurityUserItem>())
-      )
-        .thenThrow(
+      Mockito
+        .`when`(
+          tokenProvider.refreshAccessToken(any<SecurityUserItem>())
+        ).thenThrow(
           ExpiredJwtException(
             null,
             claims,
@@ -150,7 +163,8 @@ class AuthServiceTests {
     @Test
     @DisplayName("Refresh token is not found")
     fun should_AssertRefreshTokenNotFoundException_when_GivenSecurityUserItem() {
-      Mockito.`when`(tokenProvider.refreshAccessToken(any<SecurityUserItem>()))
+      Mockito
+        .`when`(tokenProvider.refreshAccessToken(any<SecurityUserItem>()))
         .thenThrow(RefreshTokenNotFoundException(user.id))
 
       Assertions.assertThrows(

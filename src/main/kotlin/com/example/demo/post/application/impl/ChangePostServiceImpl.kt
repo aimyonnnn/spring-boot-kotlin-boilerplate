@@ -20,20 +20,20 @@ class ChangePostServiceImpl(
   private val postService: PostService,
   private val userService: UserService
 ) : ChangePostService {
-
   override fun createPost(
     userId: Long,
-    createPostRequest: CreatePostRequest,
+    createPostRequest: CreatePostRequest
   ): CreatePostResponse {
     val user: User = userService.validateReturnUser(userId)
-    val post = postRepository.save(
-      Post(
-        title = createPostRequest.title,
-        subTitle = createPostRequest.subTitle,
-        content = createPostRequest.content,
-        user = user
+    val post =
+      postRepository.save(
+        Post(
+          title = createPostRequest.title,
+          subTitle = createPostRequest.subTitle,
+          content = createPostRequest.content,
+          user = user
+        )
       )
-    )
 
     return post.let(CreatePostResponse::of)
   }
@@ -42,13 +42,14 @@ class ChangePostServiceImpl(
     postId: Long,
     updatePostRequest: UpdatePostRequest
   ): UpdatePostResponse {
-    val post: Post = postService
-      .validateReturnPost(postId)
-      .update(
-        title = updatePostRequest.title,
-        subTitle = updatePostRequest.subTitle,
-        content = updatePostRequest.content
-      )
+    val post: Post =
+      postService
+        .validateReturnPost(postId)
+        .update(
+          title = updatePostRequest.title,
+          subTitle = updatePostRequest.subTitle,
+          content = updatePostRequest.content
+        )
 
     return post.let(UpdatePostResponse::of)
   }

@@ -14,22 +14,24 @@ class UserServiceImpl(
   private val userRepository: UserRepository,
   private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
-
   override fun validateReturnUser(userId: Long): User {
-    val user: User = userRepository
-      .findOneById(userId) ?: throw UserNotFoundException(userId)
+    val user: User =
+      userRepository
+        .findOneById(userId) ?: throw UserNotFoundException(userId)
 
     return user
   }
 
   override fun validateAuthReturnUser(signInRequest: SignInRequest): User {
-    val user: User = userRepository
-      .findOneByEmail(signInRequest.email) ?: throw UserNotFoundException(signInRequest.email)
+    val user: User =
+      userRepository
+        .findOneByEmail(signInRequest.email) ?: throw UserNotFoundException(signInRequest.email)
 
-    val isValidate = user.validatePassword(
-      signInRequest.password,
-      bCryptPasswordEncoder
-    )
+    val isValidate =
+      user.validatePassword(
+        signInRequest.password,
+        bCryptPasswordEncoder
+      )
 
     if (!isValidate) {
       throw UserUnAuthorizedException(signInRequest.email)

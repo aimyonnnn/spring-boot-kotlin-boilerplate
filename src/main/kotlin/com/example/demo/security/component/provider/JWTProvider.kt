@@ -11,14 +11,13 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.stereotype.Component
-import java.util.*
+import java.util.Date
 import java.util.concurrent.TimeUnit
 
 @Component
 class JWTProvider(
   private val userDetailsServiceImpl: UserDetailsServiceImpl
 ) {
-
   @Value("\${auth.jwt.secret}")
   lateinit var secretKey: String
 
@@ -28,21 +27,18 @@ class JWTProvider(
   @Value("\${auth.jwt.refresh-expire}")
   val refreshExpireTime: Long = 0L
 
-  fun createAccessToken(securityUserItem: SecurityUserItem): String {
-    return createToken(securityUserItem, true)
-  }
+  fun createAccessToken(securityUserItem: SecurityUserItem): String = createToken(securityUserItem, true)
 
-  fun createRefreshToken(securityUserItem: SecurityUserItem): String {
-    return createToken(securityUserItem, false)
-  }
+  fun createRefreshToken(securityUserItem: SecurityUserItem): String = createToken(securityUserItem, false)
 
   fun createToken(
     securityUserItem: SecurityUserItem,
     isAccessToken: Boolean
   ): String {
-    val claims: Claims = Jwts
-      .claims()
-      .setSubject(securityUserItem.userId.toString())
+    val claims: Claims =
+      Jwts
+        .claims()
+        .setSubject(securityUserItem.userId.toString())
     claims["email"] = securityUserItem.email
     claims["role"] = securityUserItem.role
 
@@ -73,18 +69,21 @@ class JWTProvider(
   }
 
   fun generateRequestToken(request: HttpServletRequest): String? {
-    val token = request.getHeader(HttpHeaders.AUTHORIZATION)
-      ?.takeIf { it.startsWith("Bearer") }
-      ?.substring(7)
+    val token =
+      request
+        .getHeader(HttpHeaders.AUTHORIZATION)
+        ?.takeIf { it.startsWith("Bearer") }
+        ?.substring(7)
 
     return token
   }
 
   fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
     val claims: Claims = generateClaims(token)
-    val userAdapter: UserAdapter = userDetailsServiceImpl.loadUserByUsername(
-      claims.subject
-    ) as UserAdapter
+    val userAdapter: UserAdapter =
+      userDetailsServiceImpl.loadUserByUsername(
+        claims.subject
+      ) as UserAdapter
 
     return UsernamePasswordAuthenticationToken(
       userAdapter,
@@ -93,11 +92,10 @@ class JWTProvider(
     )
   }
 
-  private fun generateClaims(token: String): Claims {
-    return Jwts
+  private fun generateClaims(token: String): Claims =
+    Jwts
       .parser()
       .setSigningKey(secretKey)
       .parseClaimsJws(token)
       .body
-  }
 }

@@ -15,11 +15,10 @@ import org.springframework.transaction.annotation.Transactional
 class GetUserServiceImpl(
   private val userRepository: UserRepository
 ) : GetUserService {
-
-
   override fun getUserById(userId: Long): GetUserResponse {
-    val user: User = userRepository
-      .findOneById(userId) ?: throw UserNotFoundException(userId)
+    val user: User =
+      userRepository
+        .findOneById(userId) ?: throw UserNotFoundException(userId)
 
     return user.let(GetUserResponse::of)
   }
@@ -30,9 +29,8 @@ class GetUserServiceImpl(
     return user.let(GetUserResponse::of)
   }
 
-  override fun getUserList(pageable: Pageable): Page<GetUserResponse> {
-    return userRepository
+  override fun getUserList(pageable: Pageable): Page<GetUserResponse> =
+    userRepository
       .findAll(pageable)
       .map(GetUserResponse::of)
-  }
 }

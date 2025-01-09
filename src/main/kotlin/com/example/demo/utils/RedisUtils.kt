@@ -15,7 +15,12 @@ class RedisUtils(
     return valueOperations.get(key)
   }
 
-  fun set(key: String, value: String, duration: Long, timeUnit: TimeUnit) {
+  fun set(
+    key: String,
+    value: String,
+    duration: Long,
+    timeUnit: TimeUnit
+  ) {
     val valueOperations: ValueOperations<String, String> = stringRedisTemplate.opsForValue()
     val expireDuration = Duration.ofSeconds(duration).seconds
 

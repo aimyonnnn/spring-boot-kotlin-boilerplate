@@ -20,14 +20,13 @@ class RedisConfig {
   lateinit var host: String
 
   @Bean
-  fun redisConnectionFactory(): LettuceConnectionFactory = LettuceConnectionFactory(
-    RedisStandaloneConfiguration(host, port)
-  )
+  fun redisConnectionFactory(): LettuceConnectionFactory =
+    LettuceConnectionFactory(
+      RedisStandaloneConfiguration(host, port)
+    )
 
   @Bean
-  fun redisTemplate(
-    redisConnectionFactory: RedisConnectionFactory?
-  ): RedisTemplate<String, Any> {
+  fun redisTemplate(redisConnectionFactory: RedisConnectionFactory?): RedisTemplate<String, Any> {
     val redisTemplate = RedisTemplate<String, Any>()
 
     redisTemplate.keySerializer = StringRedisSerializer()
@@ -38,9 +37,7 @@ class RedisConfig {
   }
 
   @Bean
-  fun stringRedisTemplate(
-    redisConnectionFactory: RedisConnectionFactory?
-  ): StringRedisTemplate {
+  fun stringRedisTemplate(redisConnectionFactory: RedisConnectionFactory?): StringRedisTemplate {
     val stringRedisTemplate = StringRedisTemplate()
     stringRedisTemplate.connectionFactory = redisConnectionFactory
     return stringRedisTemplate

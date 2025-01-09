@@ -1,4 +1,3 @@
-package com.example.demo.user.repository;
+package com.example.demo.user.repository
 
-interface CustomUserRepository {
-}
+interface CustomUserRepository

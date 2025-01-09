@@ -12,7 +12,6 @@ class TokenProvider(
   private val jwtProvider: JWTProvider,
   private val redisUtils: RedisUtils
 ) {
-
   fun getRefreshToken(userId: Long): String {
     val redisKey: String = redisUtils.generateSessionKey(userId)
     val refreshToken: String = redisUtils.get(redisKey) ?: throw RefreshTokenNotFoundException(userId)
@@ -39,10 +38,11 @@ class TokenProvider(
 
   fun createAccessToken(user: User): String = jwtProvider.createAccessToken(SecurityUserItem.of(user))
 
-  fun refreshAccessToken(securityUserItem: SecurityUserItem): String = jwtProvider.refreshAccessToken(
-    securityUserItem,
-    getRefreshToken(securityUserItem.userId)
-  )
+  fun refreshAccessToken(securityUserItem: SecurityUserItem): String =
+    jwtProvider.refreshAccessToken(
+      securityUserItem,
+      getRefreshToken(securityUserItem.userId)
+    )
 
   fun createFullTokens(user: User): String {
     createRefreshToken(user)

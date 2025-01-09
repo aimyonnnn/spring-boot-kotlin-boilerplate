@@ -7,22 +7,18 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class CreatePostResponse(
   @field:Schema(description = "Post Id", nullable = false)
   val postId: Long,
-
   @field:Schema(description = "Post Title", nullable = false)
   val title: String,
-
   @field:Schema(description = "Post Sub Title", nullable = false)
   val subTitle: String,
-
   @field:Schema(description = "Post Content", nullable = false)
   val content: String,
-
   @field:Schema(description = "Post Writer", nullable = false, implementation = Writer::class)
   val writer: Writer
 ) {
   companion object {
-    fun of(post: Post): CreatePostResponse {
-      return with(post) {
+    fun of(post: Post): CreatePostResponse =
+      with(post) {
         CreatePostResponse(
           postId = id,
           title = title,
@@ -31,6 +27,5 @@ data class CreatePostResponse(
           writer = Writer.of(user)
         )
       }
-    }
   }
 }

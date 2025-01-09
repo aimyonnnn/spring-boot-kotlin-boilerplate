@@ -9,9 +9,12 @@ import com.example.demo.post.repository.PostRepository
 import com.example.demo.user.constant.UserRole
 import com.example.demo.user.entity.User
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -23,7 +26,7 @@ import org.springframework.test.context.ActiveProfiles
 @Import(value = [QueryDslConfig::class, JpaAuditConfig::class])
 @DataJpaTest
 class PostRepositoryTests(
-  @Autowired private val postRepository: PostRepository,
+  @Autowired private val postRepository: PostRepository
 ) {
   private val defaultPostTitle = "unit test"
   private val defaultPostSubTitle = "Post Repository Test"
@@ -69,9 +72,10 @@ class PostRepositoryTests(
   @DisplayName("Update post")
   @WithMockCustomUser
   fun should_AssertUpdatedPostEntity_when_GivenPostIdAndUpdatePostRequest() {
-    val updatePostRequest = Instancio.create(
-      UpdatePostRequest::class.java
-    )
+    val updatePostRequest =
+      Instancio.create(
+        UpdatePostRequest::class.java
+      )
 
     val beforeUpdatePost = postRepository.save(postEntity)
 
@@ -83,12 +87,13 @@ class PostRepositoryTests(
       )
     )
 
-    val afterUpdatePost: Post = requireNotNull(
-      postRepository
-        .findOneById(beforeUpdatePost.id)
-    ) {
-      "Post must not be null"
-    }
+    val afterUpdatePost: Post =
+      requireNotNull(
+        postRepository
+          .findOneById(beforeUpdatePost.id)
+      ) {
+        "Post must not be null"
+      }
 
     assertEquals(afterUpdatePost.title, updatePostRequest.title)
     assertEquals(
@@ -106,8 +111,9 @@ class PostRepositoryTests(
 
     postRepository.deleteById(beforeDeletePost.id)
 
-    val afterDeletePost: Post? = postRepository
-      .findOneById(beforeDeletePost.id)
+    val afterDeletePost: Post? =
+      postRepository
+        .findOneById(beforeDeletePost.id)
 
     assertNull(afterDeletePost)
   }
@@ -118,12 +124,13 @@ class PostRepositoryTests(
   fun should_AssertFindPostEntity_when_GivenPostId() {
     val beforeFindPost = postRepository.save(postEntity)
 
-    val afterFindPost: Post = requireNotNull(
-      postRepository
-        .findOneById(beforeFindPost.id)
-    ) {
-      "Post must not be null"
-    }
+    val afterFindPost: Post =
+      requireNotNull(
+        postRepository
+          .findOneById(beforeFindPost.id)
+      ) {
+        "Post must not be null"
+      }
 
     assertEquals(beforeFindPost.id, afterFindPost.id)
     assertEquals(beforeFindPost.title, afterFindPost.title)
@@ -141,12 +148,13 @@ class PostRepositoryTests(
   fun should_AssertFindPostEntity_when_GivenUser() {
     val beforeFindPost = postRepository.save(postEntity)
 
-    val afterFindPost: Post = requireNotNull(
-      postRepository
-        .findOneByUser(beforeFindPost.user)
-    ) {
-      "Post must not be null"
-    }
+    val afterFindPost: Post =
+      requireNotNull(
+        postRepository
+          .findOneByUser(beforeFindPost.user)
+      ) {
+        "Post must not be null"
+      }
 
     assertEquals(beforeFindPost.id, afterFindPost.id)
     assertEquals(beforeFindPost.title, afterFindPost.title)

@@ -15,7 +15,11 @@ import com.example.demo.user.entity.User
 import com.example.demo.user.exception.AlreadyUserExistException
 import com.example.demo.user.exception.UserNotFoundException
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
@@ -52,8 +56,10 @@ class UserIntegrationControllerTests : SecurityItem() {
   private val defaultUserEmail = "awakelife93@gmail.com"
   private val defaultUserPassword = "test_password_123!@"
   private val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    """
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+    eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    """
   private val defaultPageable = Pageable.ofSize(1)
 
   private val user: User = Instancio.create(User::class.java)
@@ -78,7 +84,8 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToGetUserResponse_when_GivenUserIdAndUserIsAuthenticated() {
-      Mockito.`when`(getUserServiceImpl.getUserById(any<Long>()))
+      Mockito
+        .`when`(getUserServiceImpl.getUserById(any<Long>()))
         .thenReturn(GetUserResponse.of(user))
 
       mockMvc
@@ -88,8 +95,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(user.email))
@@ -104,11 +110,13 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToUserNotFoundException_when_GivenUserIdAndUserIsAuthenticated() {
-      val userNotFoundException = UserNotFoundException(
-        user.id
-      )
+      val userNotFoundException =
+        UserNotFoundException(
+          user.id
+        )
 
-      Mockito.`when`(getUserServiceImpl.getUserById(any<Long>()))
+      Mockito
+        .`when`(getUserServiceImpl.getUserById(any<Long>()))
         .thenThrow(userNotFoundException)
 
       mockMvc
@@ -118,12 +126,10 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNotFound)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
 
     @Test
@@ -139,8 +145,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
@@ -154,7 +159,8 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToPageOfGetUserResponse_when_GivenDefaultPageableAndUserIsAuthenticated() {
-      Mockito.`when`(getUserServiceImpl.getUserList(any<Pageable>()))
+      Mockito
+        .`when`(getUserServiceImpl.getUserList(any<Pageable>()))
         .thenReturn(PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1))
 
       mockMvc
@@ -164,8 +170,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].userId").value(user.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].email").value(user.email))
@@ -180,7 +185,8 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToPageOfGetUserResponseIsEmpty_when_GivenDefaultPageableAndUserIsAuthenticated() {
-      Mockito.`when`(getUserServiceImpl.getUserList(any<Pageable>()))
+      Mockito
+        .`when`(getUserServiceImpl.getUserList(any<Pageable>()))
         .thenReturn(PageImpl(listOf(), defaultPageable, 0))
 
       mockMvc
@@ -190,8 +196,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty)
     }
@@ -209,21 +214,22 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
   @Nested
   @DisplayName("POST /api/v1/users/register Test")
   inner class CreateUserTest {
-    private val mockCreateUserRequest: CreateUserRequest = Instancio.create(
-      CreateUserRequest::class.java
-    )
-    private val createUserRequest: CreateUserRequest = mockCreateUserRequest.copy(
-      email = defaultUserEmail,
-      password = defaultUserPassword
-    )
+    private val mockCreateUserRequest: CreateUserRequest =
+      Instancio.create(
+        CreateUserRequest::class.java
+      )
+    private val createUserRequest: CreateUserRequest =
+      mockCreateUserRequest.copy(
+        email = defaultUserEmail,
+        password = defaultUserPassword
+      )
 
     @Test
     @DisplayName("POST /api/v1/users/register Response")
@@ -232,7 +238,8 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToCreateUserResponse_when_GivenCreateUserRequest() {
-      Mockito.`when`(changeUserServiceImpl.createUser(any<CreateUserRequest>()))
+      Mockito
+        .`when`(changeUserServiceImpl.createUser(any<CreateUserRequest>()))
         .thenReturn(of(user, defaultAccessToken))
 
       mockMvc
@@ -243,8 +250,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(createUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isCreated)
+        ).andExpect(MockMvcResultMatchers.status().isCreated)
         .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -261,10 +267,11 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToValidException_when_GivenWrongCreateUserRequest() {
-      val wrongCreateUserRequest = createUserRequest.copy(
-        email = "wrong_email",
-        password = "1234567"
-      )
+      val wrongCreateUserRequest =
+        createUserRequest.copy(
+          email = "wrong_email",
+          password = "1234567"
+        )
 
       mockMvc
         .perform(
@@ -274,8 +281,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(wrongCreateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
         ) // email:field email is not email format, password:field password is min size 8 and max size 20,
@@ -290,11 +296,13 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToAlreadyUserExistException_when_GivenCreateUserRequest() {
-      val alreadyUserExistException = AlreadyUserExistException(
-        createUserRequest.email
-      )
+      val alreadyUserExistException =
+        AlreadyUserExistException(
+          createUserRequest.email
+        )
 
-      Mockito.`when`(changeUserServiceImpl.createUser(any<CreateUserRequest>()))
+      Mockito
+        .`when`(changeUserServiceImpl.createUser(any<CreateUserRequest>()))
         .thenThrow(alreadyUserExistException)
 
       mockMvc
@@ -305,21 +313,20 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(createUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isConflict)
+        ).andExpect(MockMvcResultMatchers.status().isConflict)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(alreadyUserExistException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
   }
 
   @Nested
   @DisplayName("PATCH /api/v1/users/{userId} Test")
   inner class UpdateUserTest {
-    private val updateUserRequest: UpdateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
+    private val updateUserRequest: UpdateUserRequest =
+      Instancio.create(
+        UpdateUserRequest::class.java
+      )
 
     @Test
     @DisplayName("PATCH /api/v1/users/{userId} Response")
@@ -328,7 +335,8 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToUpdateUserResponse_when_GivenUserIdAndUpdateUserRequestAndUserIsAuthenticated() {
-      Mockito.`when`(changeUserServiceImpl.updateUser(any<Long>(), any<UpdateUserRequest>()))
+      Mockito
+        .`when`(changeUserServiceImpl.updateUser(any<Long>(), any<UpdateUserRequest>()))
         .thenReturn(UpdateUserResponse.of(user))
 
       mockMvc
@@ -339,8 +347,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -356,9 +363,10 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToValidException_when_GivenUserIdAndWrongUpdateUserRequestAndUserIsAuthenticated() {
-      val wrongUpdateUserRequest = updateUserRequest.copy(
-        name = "",
-      )
+      val wrongUpdateUserRequest =
+        updateUserRequest.copy(
+          name = ""
+        )
 
       mockMvc
         .perform(
@@ -368,8 +376,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(wrongUpdateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
         // name:field name is blank
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString)
         .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty)
@@ -389,8 +396,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
     @Test
@@ -400,11 +406,13 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToUserNotFoundException_when_GivenUserIdAndUpdateUserRequestAndUserIsAuthenticated() {
-      val userNotFoundException = UserNotFoundException(
-        user.id
-      )
+      val userNotFoundException =
+        UserNotFoundException(
+          user.id
+        )
 
-      Mockito.`when`(changeUserServiceImpl.updateUser(any<Long>(), any<UpdateUserRequest>()))
+      Mockito
+        .`when`(changeUserServiceImpl.updateUser(any<Long>(), any<UpdateUserRequest>()))
         .thenThrow(userNotFoundException)
 
       mockMvc
@@ -415,21 +423,20 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNotFound)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
   }
 
   @Nested
   @DisplayName("PATCH /api/v1/users Test")
   inner class UpdateMeTest {
-    private val updateUserRequest: UpdateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
+    private val updateUserRequest: UpdateUserRequest =
+      Instancio.create(
+        UpdateUserRequest::class.java
+      )
 
     @Test
     @DisplayName("PATCH /api/v1/users Response")
@@ -438,7 +445,8 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToUpdateMeResponse_when_GivenSecurityUserItemAndUpdateUserRequestAndUserIsAuthenticated() {
-      Mockito.`when`(changeUserServiceImpl.updateMe(any<Long>(), any<UpdateUserRequest>()))
+      Mockito
+        .`when`(changeUserServiceImpl.updateMe(any<Long>(), any<UpdateUserRequest>()))
         .thenReturn(UpdateMeResponse.of(user, defaultAccessToken))
 
       mockMvc
@@ -449,8 +457,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -466,9 +473,10 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToValidException_when_GivenSecurityUserItemAndWrongUpdateUserRequestAndUserIsAuthenticated() {
-      val wrongUpdateUserRequest = updateUserRequest.copy(
-        name = "",
-      )
+      val wrongUpdateUserRequest =
+        updateUserRequest.copy(
+          name = ""
+        )
 
       mockMvc
         .perform(
@@ -478,8 +486,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(wrongUpdateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
         ) // name:field name is blank
@@ -501,8 +508,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
     @Test
@@ -512,11 +518,13 @@ class UserIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToUserNotFoundException_when_GivenSecurityUserItemAndUpdateUserRequestAndUserIsAuthenticated() {
-      val userNotFoundException = UserNotFoundException(
-        user.id
-      )
+      val userNotFoundException =
+        UserNotFoundException(
+          user.id
+        )
 
-      Mockito.`when`(changeUserServiceImpl.updateMe(any<Long>(), any<UpdateUserRequest>()))
+      Mockito
+        .`when`(changeUserServiceImpl.updateMe(any<Long>(), any<UpdateUserRequest>()))
         .thenThrow(userNotFoundException)
 
       mockMvc
@@ -527,12 +535,10 @@ class UserIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updateUserRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNotFound)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
   }
 
@@ -553,8 +559,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNoContent)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
     }
 
@@ -571,8 +576,7 @@ class UserIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 }

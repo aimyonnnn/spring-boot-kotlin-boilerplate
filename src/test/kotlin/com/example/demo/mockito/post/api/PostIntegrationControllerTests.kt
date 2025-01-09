@@ -14,7 +14,11 @@ import com.example.demo.post.dto.serve.response.UpdatePostResponse
 import com.example.demo.post.entity.Post
 import com.example.demo.post.exception.PostNotFoundException
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
@@ -72,7 +76,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToGetPostResponse_when_GivenPostIdAndUserIsAuthenticated() {
-      Mockito.`when`(getPostServiceImpl.getPostById(any<Long>()))
+      Mockito
+        .`when`(getPostServiceImpl.getPostById(any<Long>()))
         .thenReturn(GetPostResponse.of(post))
 
       mockMvc
@@ -82,8 +87,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.postId").value(post.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(post.title))
@@ -101,11 +105,13 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToPostNotFoundException_when_GivenPostIdAndUserIsAuthenticated() {
-      val postNotFoundException = PostNotFoundException(
-        post.id
-      )
+      val postNotFoundException =
+        PostNotFoundException(
+          post.id
+        )
 
-      Mockito.`when`(getPostServiceImpl.getPostById(any<Long>()))
+      Mockito
+        .`when`(getPostServiceImpl.getPostById(any<Long>()))
         .thenThrow(postNotFoundException)
 
       mockMvc
@@ -115,12 +121,10 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNotFound)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(postNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
 
     @Test
@@ -136,8 +140,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
@@ -151,7 +154,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToPageOfGetPostResponse_when_GivenDefaultPageableAndUserIsAuthenticated() {
-      Mockito.`when`(getPostServiceImpl.getPostList(any<Pageable>()))
+      Mockito
+        .`when`(getPostServiceImpl.getPostList(any<Pageable>()))
         .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
 
       mockMvc
@@ -161,8 +165,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].postId").value(post.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value(post.title))
@@ -180,7 +183,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToPageOfGetPostResponseIsEmpty_when_GivenDefaultPageableAndUserIsAuthenticated() {
-      Mockito.`when`(getPostServiceImpl.getPostList(any<Pageable>()))
+      Mockito
+        .`when`(getPostServiceImpl.getPostList(any<Pageable>()))
         .thenReturn(PageImpl(listOf(), defaultPageable, 0))
 
       mockMvc
@@ -190,8 +194,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty)
     }
@@ -209,17 +212,17 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
   @Nested
   @DisplayName("GET /api/v1/posts/exclude-users Test")
   inner class GetExcludeUsersPostListTest {
-    private val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest = Instancio.create(
-      GetExcludeUsersPostsRequest::class.java
-    )
+    private val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest =
+      Instancio.create(
+        GetExcludeUsersPostsRequest::class.java
+      )
 
     @Test
     @DisplayName("GET /api/v1/posts/exclude-users Response")
@@ -228,7 +231,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToPageOfGetPostResponse_when_GivenDefaultPageableAndGetExcludeUsersPostsRequestAndUserIsAuthenticated() {
-      Mockito.`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
+      Mockito
+        .`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
         .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
 
       mockMvc
@@ -241,11 +245,9 @@ class PostIntegrationControllerTests : SecurityItem() {
               objectMapper.writeValueAsString(
                 getExcludeUsersPostsRequest.userIds[0]
               )
-            )
-            .contentType(MediaType.APPLICATION_JSON)
+            ).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].postId").value(post.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].title").value(post.title))
@@ -263,7 +265,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToPageOfGetPostResponseIsEmpty_when_GivenDefaultPageableAndGetExcludeUsersPostsRequestAndUserIsAuthenticated() {
-      Mockito.`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
+      Mockito
+        .`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
         .thenReturn(PageImpl(listOf(), defaultPageable, 0))
 
       mockMvc
@@ -276,11 +279,9 @@ class PostIntegrationControllerTests : SecurityItem() {
               objectMapper.writeValueAsString(
                 getExcludeUsersPostsRequest.userIds[0]
               )
-            )
-            .contentType(MediaType.APPLICATION_JSON)
+            ).contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty)
     }
@@ -298,17 +299,17 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
   @Nested
   @DisplayName("PUT /api/v1/posts Test")
   inner class CreatePostTest {
-    private val createPostRequest: CreatePostRequest = Instancio.create(
-      CreatePostRequest::class.java
-    )
+    private val createPostRequest: CreatePostRequest =
+      Instancio.create(
+        CreatePostRequest::class.java
+      )
 
     @Test
     @DisplayName("PUT /api/v1/posts Response")
@@ -317,7 +318,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToCreatePostResponse_when_GivenUserIdAndCreatePostRequestAndUserIsAuthenticated() {
-      Mockito.`when`(changePostServiceImpl.createPost(any<Long>(), any<CreatePostRequest>()))
+      Mockito
+        .`when`(changePostServiceImpl.createPost(any<Long>(), any<CreatePostRequest>()))
         .thenReturn(CreatePostResponse.of(post))
 
       mockMvc
@@ -328,8 +330,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(createPostRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isCreated)
+        ).andExpect(MockMvcResultMatchers.status().isCreated)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.postId").value(post.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(post.title))
@@ -347,10 +348,11 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToValidException_when_GivenUserIdAndWrongCreatePostRequestAndUserIsAuthenticated() {
-      val wrongCreatePostRequest = createPostRequest.copy(
-        title = "",
-        subTitle = ""
-      )
+      val wrongCreatePostRequest =
+        createPostRequest.copy(
+          title = "",
+          subTitle = ""
+        )
 
       mockMvc
         .perform(
@@ -360,8 +362,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(wrongCreatePostRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
         // title:field title is blank, subTitle:field subTitle is blank,
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString)
         .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty)
@@ -380,17 +381,17 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 
   @Nested
   @DisplayName("PATCH /api/v1/posts/{postId} Test")
   inner class UpdatePostTest {
-    private val updatePostRequest: UpdatePostRequest = Instancio.create(
-      UpdatePostRequest::class.java
-    )
+    private val updatePostRequest: UpdatePostRequest =
+      Instancio.create(
+        UpdatePostRequest::class.java
+      )
 
     @Test
     @DisplayName("PATCH /api/v1/posts/{postId} Response")
@@ -399,7 +400,8 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectOKResponseToUpdatePostResponse_when_GivenPostIdAndUpdatePostRequestAndUserIsAuthenticated() {
-      Mockito.`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
+      Mockito
+        .`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
         .thenReturn(UpdatePostResponse.of(post))
 
       mockMvc
@@ -410,8 +412,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updatePostRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isOk)
+        ).andExpect(MockMvcResultMatchers.status().isOk)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.postId").value(post.id))
         .andExpect(MockMvcResultMatchers.jsonPath("$.data.title").value(post.title))
@@ -429,10 +430,11 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToValidException_when_GivenPostIdAndWrongUpdatePostRequestAndUserIsAuthenticated() {
-      val wrongUpdatePostRequest = updatePostRequest.copy(
-        title = "",
-        subTitle = ""
-      )
+      val wrongUpdatePostRequest =
+        updatePostRequest.copy(
+          title = "",
+          subTitle = ""
+        )
 
       mockMvc
         .perform(
@@ -442,8 +444,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(wrongUpdatePostRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isBadRequest)
+        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
         ) // subTitle:field subTitle is blank, title:field title is blank,
@@ -465,8 +466,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updatePostRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
 
     @Test
@@ -476,11 +476,13 @@ class PostIntegrationControllerTests : SecurityItem() {
       Exception::class
     )
     fun should_ExpectErrorResponseToPostNotFoundException_when_GivenPostIdAndUpdatePostRequestAndUserIsAuthenticated() {
-      val postNotFoundException = PostNotFoundException(
-        post.id
-      )
+      val postNotFoundException =
+        PostNotFoundException(
+          post.id
+        )
 
-      Mockito.`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
+      Mockito
+        .`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
         .thenThrow(postNotFoundException)
 
       mockMvc
@@ -491,12 +493,10 @@ class PostIntegrationControllerTests : SecurityItem() {
             .content(objectMapper.writeValueAsString(updatePostRequest))
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNotFound)
+        ).andExpect(MockMvcResultMatchers.status().isNotFound)
         .andExpect(
           MockMvcResultMatchers.jsonPath("$.message").value(postNotFoundException.message)
-        )
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
     }
   }
 
@@ -517,8 +517,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isNoContent)
+        ).andExpect(MockMvcResultMatchers.status().isNoContent)
         .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
     }
 
@@ -535,8 +534,7 @@ class PostIntegrationControllerTests : SecurityItem() {
             .with(SecurityMockMvcRequestPostProcessors.csrf())
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-        )
-        .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
     }
   }
 }

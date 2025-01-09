@@ -5,8 +5,11 @@ import com.example.demo.user.batch.config.DeleteUserConfig
 import com.example.demo.user.batch.mapper.DeleteUserItemRowMapper
 import com.example.demo.user.constant.UserRole
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.springframework.batch.core.BatchStatus
 import org.springframework.batch.core.ExitStatus
 import org.springframework.batch.core.JobParametersBuilder
@@ -30,8 +33,9 @@ class DeleteUserConfigIntegrationTests(
   @Autowired private val jobRepositoryTestUtils: JobRepositoryTestUtils
 ) {
   private val defaultUserEmail = "awakelife93@gmail.com"
-  private val defaultUserEncodePassword = "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" +  //
-    ""
+  private val defaultUserEncodePassword =
+    "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" + //
+      ""
   private val defaultUserName = "Hyunwoo Park"
   private val defaultUserRole = UserRole.USER
 
@@ -59,17 +63,19 @@ class DeleteUserConfigIntegrationTests(
       defaultUserRole.name
     )
 
-    val jobParameters = JobParametersBuilder()
-      .addLocalDateTime("now", LocalDateTime.now())
-      .toJobParameters()
+    val jobParameters =
+      JobParametersBuilder()
+        .addLocalDateTime("now", LocalDateTime.now())
+        .toJobParameters()
 
     val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
 
-    val deleteUserItemList = jdbcTemplate.query(
-      "select * from \"user\" where deleted_dt <= ?",
-      DeleteUserItemRowMapper(),
-      now.minusYears(1)
-    )
+    val deleteUserItemList =
+      jdbcTemplate.query(
+        "select * from \"user\" where deleted_dt <= ?",
+        DeleteUserItemRowMapper(),
+        now.minusYears(1)
+      )
 
     assertEquals(BatchStatus.COMPLETED, jobExecution.status)
     assertEquals(ExitStatus.COMPLETED, jobExecution.exitStatus)

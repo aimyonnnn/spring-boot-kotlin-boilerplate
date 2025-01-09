@@ -10,28 +10,30 @@ import org.springframework.security.core.context.SecurityContext
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.test.context.support.WithSecurityContextFactory
 
-class WithMockCustomUserSecurityContextFactory
-  : WithSecurityContextFactory<WithMockCustomUser> {
-
+class WithMockCustomUserSecurityContextFactory : WithSecurityContextFactory<WithMockCustomUser> {
   override fun createSecurityContext(annotation: WithMockCustomUser): SecurityContext {
     val securityContext = SecurityContextHolder.createEmptyContext()
     val user = Instancio.create(User::class.java)
-    val securityUserItem = SecurityUserItem.of(user.also {
-      with(annotation) {
-        it.id = id.toLong()
-        it.email = email
-        it.name = name
-        it.role = UserRole.valueOf(role)
-      }
-    })
+    val securityUserItem =
+      SecurityUserItem.of(
+        user.also {
+          with(annotation) {
+            it.id = id.toLong()
+            it.email = email
+            it.name = name
+            it.role = UserRole.valueOf(role)
+          }
+        }
+      )
 
     val userAdapter = UserAdapter(securityUserItem)
 
-    val usernamePasswordAuthenticationToken = UsernamePasswordAuthenticationToken(
-      userAdapter,
-      null,
-      userAdapter.authorities
-    )
+    val usernamePasswordAuthenticationToken =
+      UsernamePasswordAuthenticationToken(
+        userAdapter,
+        null,
+        userAdapter.authorities
+      )
 
     securityContext.authentication = usernamePasswordAuthenticationToken
     return securityContext

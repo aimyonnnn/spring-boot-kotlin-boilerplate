@@ -28,20 +28,17 @@ class ErrorResponse {
   }
 
   companion object {
-    fun of(code: Int): ErrorResponse {
-      return ErrorResponse(code)
-    }
+    fun of(code: Int): ErrorResponse = ErrorResponse(code)
 
-    fun of(code: Int, message: String): ErrorResponse {
-      return ErrorResponse(code, message)
-    }
+    fun of(
+      code: Int,
+      message: String
+    ): ErrorResponse = ErrorResponse(code, message)
 
     fun of(
       code: Int,
       message: String,
       errors: Any
-    ): ErrorResponse {
-      return ErrorResponse(code, message, errors)
-    }
+    ): ErrorResponse = ErrorResponse(code, message, errors)
   }
 }

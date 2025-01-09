@@ -5,9 +5,13 @@ import com.example.demo.post.entity.Post
 import com.example.demo.post.exception.PostNotFoundException
 import com.example.demo.post.repository.PostRepository
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock

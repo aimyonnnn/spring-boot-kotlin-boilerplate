@@ -21,53 +21,57 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
-class AuthControllerTests : FunSpec({
-  val authController = mockk<AuthController>()
-  val authService = mockk<AuthService>()
+class AuthControllerTests :
+  FunSpec({
+    val authController = mockk<AuthController>()
+    val authService = mockk<AuthService>()
 
-  val user: User = Instancio.create(User::class.java)
-  val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    val user: User = Instancio.create(User::class.java)
+    val defaultAccessToken =
+      """
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+      eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      """
 
-  test("Sign In") {
-    val signInRequest = Instancio.create(SignInRequest::class.java)
+    test("Sign In") {
+      val signInRequest = Instancio.create(SignInRequest::class.java)
 
-    every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.of(user, defaultAccessToken)
+      every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.of(user, defaultAccessToken)
 
-    every { authController.signIn(any<SignInRequest>()) } returns ResponseEntity.ok(
-      SignInResponse.of(
-        user,
-        defaultAccessToken
-      )
-    )
+      every { authController.signIn(any<SignInRequest>()) } returns
+        ResponseEntity.ok(
+          SignInResponse.of(
+            user,
+            defaultAccessToken
+          )
+        )
 
-    val response = authController.signIn(signInRequest)
+      val response = authController.signIn(signInRequest)
 
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.OK
-      body shouldNotBeNull {
-        userId shouldBe user.id
-        email shouldBe user.email
-        name shouldBe user.name
-        role shouldBe user.role
-        accessToken shouldBe defaultAccessToken
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.OK
+        body shouldNotBeNull {
+          userId shouldBe user.id
+          email shouldBe user.email
+          name shouldBe user.name
+          role shouldBe user.role
+          accessToken shouldBe defaultAccessToken
+        }
       }
     }
-  }
 
-  test("Sign Out") {
-    val securityUserItem = Instancio.create(SecurityUserItem::class.java)
+    test("Sign Out") {
+      val securityUserItem = Instancio.create(SecurityUserItem::class.java)
 
-    justRun { authService.signOut(any<Long>()) }
+      justRun { authService.signOut(any<Long>()) }
 
-    every { authController.signOut(any<SecurityUserItem>()) } returns ResponseEntity.ok().build()
+      every { authController.signOut(any<SecurityUserItem>()) } returns ResponseEntity.ok().build()
 
-    val response = authController.signOut(securityUserItem)
+      val response = authController.signOut(securityUserItem)
 
-    response shouldNotBeNull {
-      statusCode shouldBe HttpStatus.OK
-      body.shouldBeNull()
+      response shouldNotBeNull {
+        statusCode shouldBe HttpStatus.OK
+        body.shouldBeNull()
+      }
     }
-  }
-})
+  })

@@ -5,7 +5,11 @@ import com.example.demo.security.component.filter.JWTAuthFilter
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configurers.*
+import org.springframework.security.config.annotation.web.configurers.CorsConfigurer
+import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer
+import org.springframework.security.config.annotation.web.configurers.FormLoginConfigurer
+import org.springframework.security.config.annotation.web.configurers.HttpBasicConfigurer
+import org.springframework.security.config.annotation.web.configurers.SessionManagementConfigurer
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 import org.springframework.stereotype.Component
@@ -15,36 +19,29 @@ class AuthProvider(
   private val corsConfig: CorsConfig,
   private val jwtProvider: JWTProvider
 ) {
-
   @Value("\${auth.x-api-key}")
   lateinit var apiKey: String
 
-  fun ignoreListDefaultEndpoints(): Array<String> {
-    return arrayOf(
+  fun ignoreListDefaultEndpoints(): Array<String> =
+    arrayOf(
       "/api-docs/**",
       "/swagger-ui/**",
       "/swagger.html",
-      "/h2-console/**",
+      "/h2-console/**"
     )
-  }
 
-  fun whiteListDefaultEndpoints(): Array<String> {
-    return arrayOf(
+  fun whiteListDefaultEndpoints(): Array<String> =
+    arrayOf(
       "/api/v1/auth/signIn",
-      "/api/v1/users/register",
+      "/api/v1/users/register"
     )
-  }
 
-  fun generateRequestAPIKey(request: HttpServletRequest): String? {
-    return request.getHeader("X-API-KEY")
-  }
+  fun generateRequestAPIKey(request: HttpServletRequest): String? = request.getHeader("X-API-KEY")
 
-  fun validateApiKey(requestAPIKey: String): Boolean {
-    return apiKey == requestAPIKey
-  }
+  fun validateApiKey(requestAPIKey: String): Boolean = apiKey == requestAPIKey
 
-  fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): HttpSecurity {
-    return httpSecurity
+  fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): HttpSecurity =
+    httpSecurity
       .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.disable() }
       .httpBasic { httpBasic: HttpBasicConfigurer<HttpSecurity?> -> httpBasic.disable() }
       .formLogin { formLogin: FormLoginConfigurer<HttpSecurity?> -> formLogin.disable() }
@@ -52,22 +49,18 @@ class AuthProvider(
         cors.configurationSource(
           corsConfig.corsConfigurationSource()
         )
-      }
-      .authorizeHttpRequests { request ->
+      }.authorizeHttpRequests { request ->
         request
           .requestMatchers(*whiteListDefaultEndpoints(), *ignoreListDefaultEndpoints())
           .permitAll()
           .anyRequest()
           .authenticated()
-      }
-      .sessionManagement { httpSecuritySessionManagementConfigurer: SessionManagementConfigurer<HttpSecurity?> ->
+      }.sessionManagement { httpSecuritySessionManagementConfigurer: SessionManagementConfigurer<HttpSecurity?> ->
         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
           SessionCreationPolicy.STATELESS
         )
-      }
-      .addFilterBefore(
+      }.addFilterBefore(
         JWTAuthFilter(jwtProvider),
         UsernamePasswordAuthenticationFilter::class.java
       )
-  }
 }

@@ -7,21 +7,16 @@ import io.swagger.v3.oas.annotations.media.Schema
 data class GetUserResponse(
   @field:Schema(description = "User Id", nullable = false)
   val userId: Long,
-
   @field:Schema(description = "User Role", nullable = false, implementation = UserRole::class)
   val role: UserRole,
-
   @field:Schema(description = "User Name", nullable = false)
   val name: String,
-
   @field:Schema(description = "User Email", nullable = false, format = "email")
-  val email: String,
+  val email: String
 ) {
-
-
   companion object {
-    fun of(user: User): GetUserResponse {
-      return with(user) {
+    fun of(user: User): GetUserResponse =
+      with(user) {
         GetUserResponse(
           userId = id,
           role = role,
@@ -29,6 +24,5 @@ data class GetUserResponse(
           email = email
         )
       }
-    }
   }
 }

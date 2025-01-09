@@ -7,9 +7,12 @@ import com.example.demo.user.dto.serve.request.UpdateUserRequest
 import com.example.demo.user.entity.User
 import com.example.demo.user.repository.UserRepository
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.context.annotation.Import
@@ -21,7 +24,7 @@ import org.springframework.test.context.ActiveProfiles
 @Import(value = [QueryDslConfig::class, JpaAuditConfig::class])
 @DataJpaTest
 class UserRepositoryTests(
-  @Autowired private val userRepository: UserRepository,
+  @Autowired private val userRepository: UserRepository
 ) {
   private val defaultUserEmail = "awakelife93@gmail.com"
   private val defaultUserPassword = "test_password_123!@"
@@ -56,9 +59,10 @@ class UserRepositoryTests(
   @Test
   @DisplayName("Update user")
   fun should_AssertUpdatedUserEntity_when_GivenUserIdAndUpdateUserRequest() {
-    val updateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
+    val updateUserRequest =
+      Instancio.create(
+        UpdateUserRequest::class.java
+      )
 
     val beforeUpdateUser = userRepository.save(userEntity)
 
@@ -69,12 +73,13 @@ class UserRepositoryTests(
       )
     )
 
-    val afterUpdateUser: User = requireNotNull(
-      userRepository
-        .findOneById(beforeUpdateUser.id)
-    ) {
-      "User must not be null"
-    }
+    val afterUpdateUser: User =
+      requireNotNull(
+        userRepository
+          .findOneById(beforeUpdateUser.id)
+      ) {
+        "User must not be null"
+      }
 
     assertEquals(afterUpdateUser.name, updateUserRequest.name)
     assertEquals(afterUpdateUser.role, updateUserRequest.role)
@@ -87,8 +92,9 @@ class UserRepositoryTests(
 
     userRepository.deleteById(beforeDeleteUser.id)
 
-    val afterDeleteUser: User? = userRepository
-      .findOneById(beforeDeleteUser.id)
+    val afterDeleteUser: User? =
+      userRepository
+        .findOneById(beforeDeleteUser.id)
 
     assertNull(afterDeleteUser)
   }
@@ -98,12 +104,13 @@ class UserRepositoryTests(
   fun should_AssertFindUserEntity_when_GivenUserId() {
     val beforeFindUser = userRepository.save(userEntity)
 
-    val afterFindUser: User = requireNotNull(
-      userRepository
-        .findOneById(beforeFindUser.id)
-    ) {
-      "User must not be null"
-    }
+    val afterFindUser: User =
+      requireNotNull(
+        userRepository
+          .findOneById(beforeFindUser.id)
+      ) {
+        "User must not be null"
+      }
 
     assertEquals(beforeFindUser.id, afterFindUser.id)
     assertEquals(beforeFindUser.email, afterFindUser.email)
@@ -116,12 +123,13 @@ class UserRepositoryTests(
   fun should_AssertFindUserEntity_when_GivenUserEmail() {
     val beforeFindUser = userRepository.save(userEntity)
 
-    val afterFindUser: User = requireNotNull(
-      userRepository
-        .findOneByEmail(beforeFindUser.email)
-    ) {
-      "User must not be null"
-    }
+    val afterFindUser: User =
+      requireNotNull(
+        userRepository
+          .findOneByEmail(beforeFindUser.email)
+      ) {
+        "User must not be null"
+      }
 
     assertEquals(beforeFindUser.id, afterFindUser.id)
     assertEquals(beforeFindUser.email, afterFindUser.email)

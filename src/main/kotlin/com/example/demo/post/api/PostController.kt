@@ -23,7 +23,14 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PutMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "Post", description = "Post API")
 @RestController
@@ -32,22 +39,23 @@ class PostController(
   private val getPostService: GetPostService,
   private val changePostService: ChangePostService
 ) {
-
   @Operation(operationId = "createPost", summary = "Create Post", description = "Create Post API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "201",
-      description = "Create Post",
-      content = arrayOf(Content(schema = Schema(implementation = CreatePostResponse::class)))
-    ), ApiResponse(
-      responseCode = "400",
-      description = "Request Body Valid Error",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "201",
+        description = "Create Post",
+        content = arrayOf(Content(schema = Schema(implementation = CreatePostResponse::class)))
+      ), ApiResponse(
+        responseCode = "400",
+        description = "Request Body Valid Error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @PutMapping
   fun createPost(
@@ -57,24 +65,27 @@ class PostController(
     ResponseEntity.status(HttpStatus.CREATED).body(
       changePostService.createPost(
         securityUserItem.userId,
-        createPostRequest,
+        createPostRequest
       )
     )
 
   @Operation(operationId = "getPostList", summary = "Get Post List", description = "Get Post List API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(array = ArraySchema(schema = Schema(implementation = GetPostResponse::class))))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(array = ArraySchema(schema = Schema(implementation = GetPostResponse::class))))
+      )
+    ]
   )
   @GetMapping
-  fun getPostList(pageable: Pageable): ResponseEntity<Page<GetPostResponse>> = ResponseEntity.ok(
-    getPostService.getPostList(
-      pageable
+  fun getPostList(pageable: Pageable): ResponseEntity<Page<GetPostResponse>> =
+    ResponseEntity.ok(
+      getPostService.getPostList(
+        pageable
+      )
     )
-  )
 
   @Operation(
     operationId = "getExcludeUsersPosts",
@@ -82,19 +93,21 @@ class PostController(
     description = "Get Exclude Users By Post List API"
   )
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(array = ArraySchema(schema = Schema(implementation = GetPostResponse::class))))
-    ), ApiResponse(
-      responseCode = "400",
-      description = "Request Body Valid Error",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(array = ArraySchema(schema = Schema(implementation = GetPostResponse::class))))
+      ), ApiResponse(
+        responseCode = "400",
+        description = "Request Body Valid Error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @GetMapping("/exclude-users")
   fun getExcludeUsersPostList(
@@ -110,19 +123,21 @@ class PostController(
 
   @Operation(operationId = "getPostById", summary = "Get Post", description = "Get Post By Post Id API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(schema = Schema(implementation = GetPostResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "404",
-      description = "Post Not Found postId = {postId}",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(schema = Schema(implementation = GetPostResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "404",
+        description = "Post Not Found postId = {postId}",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @GetMapping("/{postId}")
   fun getPostById(
@@ -131,48 +146,55 @@ class PostController(
 
   @Operation(operationId = "updatePost", summary = "Update Post", description = "Update Post API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(schema = Schema(implementation = UpdatePostResponse::class)))
-    ), ApiResponse(
-      responseCode = "400",
-      description = "Request Body Valid Error",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "404",
-      description = "Post Not Found postId = {postId}",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(schema = Schema(implementation = UpdatePostResponse::class)))
+      ), ApiResponse(
+        responseCode = "400",
+        description = "Request Body Valid Error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "404",
+        description = "Post Not Found postId = {postId}",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @PatchMapping("/{postId}")
   fun updatePost(
     @RequestBody @Valid updatePostRequest: UpdatePostRequest,
     @PathVariable("postId", required = true) postId: Long
-  ): ResponseEntity<UpdatePostResponse> = ResponseEntity.ok(
-    changePostService.updatePost(
-      postId,
-      updatePostRequest
+  ): ResponseEntity<UpdatePostResponse> =
+    ResponseEntity.ok(
+      changePostService.updatePost(
+        postId,
+        updatePostRequest
+      )
     )
-  )
 
   @Operation(operationId = "deletePost", summary = "Delete Post", description = "Delete Post API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "204",
-      description = "Delete Post"
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "204",
+        description = "Delete Post"
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @DeleteMapping("/{postId}")
-  fun deletePost(@PathVariable("postId", required = true) postId: Long): ResponseEntity<Void> {
+  fun deletePost(
+    @PathVariable("postId", required = true) postId: Long
+  ): ResponseEntity<Void> {
     changePostService.deletePost(postId)
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build()

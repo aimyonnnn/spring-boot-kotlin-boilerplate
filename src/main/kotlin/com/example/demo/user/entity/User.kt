@@ -3,7 +3,14 @@ package com.example.demo.user.entity
 import com.example.demo.common.entity.BaseSoftDeleteEntity
 import com.example.demo.post.entity.Post
 import com.example.demo.user.constant.UserRole
-import jakarta.persistence.*
+import jakarta.persistence.AttributeOverride
+import jakarta.persistence.CascadeType
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.OneToMany
+import jakarta.persistence.Table
 import org.hibernate.annotations.SQLDelete
 import org.hibernate.annotations.SQLRestriction
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
@@ -16,26 +23,24 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 data class User(
   @Column(nullable = false)
   var name: String,
-
   @Column(
     unique = true,
     nullable = false,
     updatable = false
   )
   var email: String,
-
   @Column(nullable = false)
   var password: String,
-
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
   var role: UserRole = UserRole.USER,
-
   @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", orphanRemoval = true)
   var posts: List<Post> = ArrayList()
 ) : BaseSoftDeleteEntity() {
-
-  fun update(name: String, role: UserRole): User {
+  fun update(
+    name: String,
+    role: UserRole
+  ): User {
     this.name = name
     this.role = role
     return this
@@ -49,7 +54,5 @@ data class User(
   fun validatePassword(
     password: String?,
     bCryptPasswordEncoder: BCryptPasswordEncoder
-  ): Boolean {
-    return bCryptPasswordEncoder.matches(password, this.password)
-  }
+  ): Boolean = bCryptPasswordEncoder.matches(password, this.password)
 }

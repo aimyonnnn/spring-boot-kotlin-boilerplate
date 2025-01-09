@@ -3,7 +3,7 @@ package com.example.demo.security.service.impl
 import com.example.demo.security.UserAdapter
 import org.springframework.data.domain.AuditorAware
 import org.springframework.security.core.context.SecurityContextHolder
-import java.util.*
+import java.util.Optional
 
 class AuditorAwareImpl : AuditorAware<Long> {
   override fun getCurrentAuditor(): Optional<Long> {

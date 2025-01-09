@@ -13,28 +13,28 @@ import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional(readOnly = true)
-class GetPostServiceImpl(private val postRepository: PostRepository) : GetPostService {
-
+class GetPostServiceImpl(
+  private val postRepository: PostRepository
+) : GetPostService {
   override fun getPostById(postId: Long): GetPostResponse {
-    val post: Post = postRepository
-      .findOneById(postId) ?: throw PostNotFoundException(postId)
+    val post: Post =
+      postRepository
+        .findOneById(postId) ?: throw PostNotFoundException(postId)
 
     return post.let(GetPostResponse::of)
   }
 
-  override fun getPostList(pageable: Pageable): Page<GetPostResponse> {
-    return postRepository
+  override fun getPostList(pageable: Pageable): Page<GetPostResponse> =
+    postRepository
       .findAll(pageable)
       .map(GetPostResponse::of)
-  }
 
   override fun getExcludeUsersPostList(
     getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
     pageable: Pageable
-  ): Page<GetPostResponse> {
-    return postRepository.getExcludeUsersPosts(
+  ): Page<GetPostResponse> =
+    postRepository.getExcludeUsersPosts(
       getExcludeUsersPostsRequest,
       pageable
     )
-  }
 }

@@ -10,9 +10,13 @@ import com.example.demo.user.exception.AlreadyUserExistException
 import com.example.demo.user.exception.UserNotFoundException
 import com.example.demo.user.repository.UserRepository
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -44,10 +48,11 @@ class ChangeUserServiceTests {
   @InjectMocks
   private lateinit var changeUserServiceImpl: ChangeUserServiceImpl
 
-  private val defaultUserEncodePassword = "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" +  //
-    ""
+  private val defaultUserEncodePassword =
+    "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" + //
+      ""
   private val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" + //
       ""
 
   private val user: User = Instancio.create(User::class.java)
@@ -68,19 +73,21 @@ class ChangeUserServiceTests {
   @Nested
   @DisplayName("Update User Test")
   inner class UpdateTest {
-    private val updateUserRequest: UpdateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
+    private val updateUserRequest: UpdateUserRequest =
+      Instancio.create(
+        UpdateUserRequest::class.java
+      )
 
     @Test
     @DisplayName("Success update user")
     fun should_AssertUpdateUserResponse_when_GivenUserIdAndUpdateUserRequest() {
       Mockito.`when`(userServiceImpl.validateReturnUser(any<Long>())).thenReturn(user)
 
-      val updateUserResponse = changeUserServiceImpl.updateUser(
-        user.id,
-        updateUserRequest
-      )
+      val updateUserResponse =
+        changeUserServiceImpl.updateUser(
+          user.id,
+          updateUserRequest
+        )
 
       assertNotNull(updateUserResponse)
       assertEquals(user.name, updateUserResponse.name)
@@ -90,7 +97,8 @@ class ChangeUserServiceTests {
     @Test
     @DisplayName("Not found user")
     fun should_AssertUserNotFoundException_when_GivenUserIdAndUpdateUserRequest() {
-      Mockito.`when`(userServiceImpl.validateReturnUser(any<Long>()))
+      Mockito
+        .`when`(userServiceImpl.validateReturnUser(any<Long>()))
         .thenThrow(UserNotFoundException(user.id))
 
       Assertions.assertThrows(
@@ -102,24 +110,28 @@ class ChangeUserServiceTests {
   @Nested
   @DisplayName("Create User Test")
   inner class RegisterTest {
-    private val createUserRequest: CreateUserRequest = Instancio.create(
-      CreateUserRequest::class.java
-    )
+    private val createUserRequest: CreateUserRequest =
+      Instancio.create(
+        CreateUserRequest::class.java
+      )
 
     @Test
     @DisplayName("Success create user")
     fun should_AssertCreateUserResponse_when_GivenCreateUserRequest() {
-      Mockito.`when`(bCryptPasswordEncoder.encode(any<String>()))
+      Mockito
+        .`when`(bCryptPasswordEncoder.encode(any<String>()))
         .thenReturn(defaultUserEncodePassword)
 
       Mockito.`when`(userRepository.save(any<User>())).thenReturn(user)
 
-      Mockito.`when`(tokenProvider.createFullTokens(any<User>()))
+      Mockito
+        .`when`(tokenProvider.createFullTokens(any<User>()))
         .thenReturn(defaultAccessToken)
 
-      val createUserResponse = changeUserServiceImpl.createUser(
-        createUserRequest
-      )
+      val createUserResponse =
+        changeUserServiceImpl.createUser(
+          createUserRequest
+        )
 
       assertNotNull(createUserResponse)
       assertEquals(user.email, createUserResponse.email)

@@ -28,9 +28,8 @@ class AuthService(
     SecurityContextHolder.clearContext()
   }
 
-  fun refreshAccessToken(
-    securityUserItem: SecurityUserItem
-  ): RefreshAccessTokenResponse = RefreshAccessTokenResponse.of(
-    tokenProvider.refreshAccessToken(securityUserItem)
-  )
+  fun refreshAccessToken(securityUserItem: SecurityUserItem): RefreshAccessTokenResponse =
+    RefreshAccessTokenResponse.of(
+      tokenProvider.refreshAccessToken(securityUserItem)
+    )
 }

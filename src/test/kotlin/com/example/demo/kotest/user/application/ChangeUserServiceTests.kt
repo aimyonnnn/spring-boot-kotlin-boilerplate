@@ -26,134 +26,143 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
-class ChangeUserServiceTests : BehaviorSpec({
-  val userRepository = mockk<UserRepository>()
-  val bCryptPasswordEncoder = mockk<BCryptPasswordEncoder>()
-  val tokenProvider = mockk<TokenProvider>()
-  val userService = mockk<UserService>()
-  val changeUserService = mockk<ChangeUserService>()
+class ChangeUserServiceTests :
+  BehaviorSpec({
+    val userRepository = mockk<UserRepository>()
+    val bCryptPasswordEncoder = mockk<BCryptPasswordEncoder>()
+    val tokenProvider = mockk<TokenProvider>()
+    val userService = mockk<UserService>()
+    val changeUserService = mockk<ChangeUserService>()
 
-  val user: User = Instancio.create(User::class.java)
-  val defaultUserEncodePassword = "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" +  //
-    ""
-  val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    val user: User = Instancio.create(User::class.java)
+    val defaultUserEncodePassword =
+      "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" + //
+        ""
+    val defaultAccessToken =
+      """
+      eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+      eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+      """
 
-  Given("Delete User") {
+    Given("Delete User") {
 
-    When("Success Delete User") {
+      When("Success Delete User") {
 
-      justRun {
-        userRepository.deleteById(any<Long>())
-        tokenProvider.deleteRefreshToken(any<Long>())
-        changeUserService.deleteUser(any<Long>())
-      }
+        justRun {
+          userRepository.deleteById(any<Long>())
+          tokenProvider.deleteRefreshToken(any<Long>())
+          changeUserService.deleteUser(any<Long>())
+        }
 
-      userRepository.deleteById(user.id)
-      tokenProvider.deleteRefreshToken(user.id)
-      changeUserService.deleteUser(user.id)
+        userRepository.deleteById(user.id)
+        tokenProvider.deleteRefreshToken(user.id)
+        changeUserService.deleteUser(user.id)
 
-      Then("Verify Call Method") {
-        verify(exactly = 1) {
-          userRepository.deleteById(user.id)
-          tokenProvider.deleteRefreshToken(user.id)
-          changeUserService.deleteUser(user.id)
+        Then("Verify Call Method") {
+          verify(exactly = 1) {
+            userRepository.deleteById(user.id)
+            tokenProvider.deleteRefreshToken(user.id)
+            changeUserService.deleteUser(user.id)
+          }
         }
       }
     }
-  }
 
-  Given("Update User") {
-    val updateUserRequest: UpdateUserRequest = Instancio.create(
-      UpdateUserRequest::class.java
-    )
-
-    When("Success Update User") {
-
-      every { userService.validateReturnUser(any<Long>()) } returns user
-
-      every {
-        changeUserService.updateUser(
-          any<Long>(),
-          any<UpdateUserRequest>()
+    Given("Update User") {
+      val updateUserRequest: UpdateUserRequest =
+        Instancio.create(
+          UpdateUserRequest::class.java
         )
-      } returns UpdateUserResponse.of(
-        user.apply {
-          name = updateUserRequest.name
-          role = updateUserRequest.role
-        }
-      )
 
-      val updateUserResponse = changeUserService.updateUser(
-        user.id,
-        updateUserRequest
-      )
+      When("Success Update User") {
 
-      Then("Assert User Entity") {
-        updateUserResponse shouldNotBeNull {
-          name shouldBe updateUserRequest.name
-          role shouldBe updateUserRequest.role
+        every { userService.validateReturnUser(any<Long>()) } returns user
+
+        every {
+          changeUserService.updateUser(
+            any<Long>(),
+            any<UpdateUserRequest>()
+          )
+        } returns
+          UpdateUserResponse.of(
+            user.apply {
+              name = updateUserRequest.name
+              role = updateUserRequest.role
+            }
+          )
+
+        val updateUserResponse =
+          changeUserService.updateUser(
+            user.id,
+            updateUserRequest
+          )
+
+        Then("Assert User Entity") {
+          updateUserResponse shouldNotBeNull {
+            name shouldBe updateUserRequest.name
+            role shouldBe updateUserRequest.role
+          }
         }
+      }
+
+      When("User Not Found Exception") {
+
+        every { userService.validateReturnUser(any<Long>()) } throws UserNotFoundException(user.id)
+
+        every {
+          changeUserService.updateUser(
+            any<Long>(),
+            any<UpdateUserRequest>()
+          )
+        } throws UserNotFoundException(user.id)
+
+        shouldThrowExactly<UserNotFoundException> { changeUserService.updateUser(user.id, updateUserRequest) }
       }
     }
 
-    When("User Not Found Exception") {
-
-      every { userService.validateReturnUser(any<Long>()) } throws UserNotFoundException(user.id)
-
-      every {
-        changeUserService.updateUser(
-          any<Long>(),
-          any<UpdateUserRequest>()
+    Given("Create User") {
+      val createUserRequest: CreateUserRequest =
+        Instancio.create(
+          CreateUserRequest::class.java
         )
-      } throws UserNotFoundException(user.id)
 
-      shouldThrowExactly<UserNotFoundException> { changeUserService.updateUser(user.id, updateUserRequest) }
-    }
-  }
+      When("Success Create User") {
 
-  Given("Create User") {
-    val createUserRequest: CreateUserRequest = Instancio.create(
-      CreateUserRequest::class.java
-    )
+        every { bCryptPasswordEncoder.encode(any<String>()) } returns defaultUserEncodePassword
 
-    When("Success Create User") {
+        every { userRepository.save(any<User>()) } returns user
 
-      every { bCryptPasswordEncoder.encode(any<String>()) } returns defaultUserEncodePassword
+        every { tokenProvider.createFullTokens(any<User>()) } returns defaultAccessToken
 
-      every { userRepository.save(any<User>()) } returns user
+        every {
+          changeUserService.createUser(
+            any<CreateUserRequest>()
+          )
+        } returns CreateUserResponse.of(user, defaultAccessToken)
 
-      every { tokenProvider.createFullTokens(any<User>()) } returns defaultAccessToken
+        val createUserResponse =
+          changeUserService.createUser(
+            createUserRequest
+          )
 
-      every {
-        changeUserService.createUser(
-          any<CreateUserRequest>()
-        )
-      } returns CreateUserResponse.of(user, defaultAccessToken)
+        Then("Assert User Entity") {
+          createUserResponse shouldNotBeNull {
+            email shouldBe user.email
+            name shouldBe user.name
+            role shouldBe user.role
+          }
+        }
+      }
 
-      val createUserResponse = changeUserService.createUser(
-        createUserRequest
-      )
+      When("Already User Exist Exception") {
 
-      Then("Assert User Entity") {
-        createUserResponse shouldNotBeNull {
-          email shouldBe user.email
-          name shouldBe user.name
-          role shouldBe user.role
+        every { userRepository.existsByEmail(any<String>()) } returns true
+
+        every { changeUserService.createUser(any<CreateUserRequest>()) } throws AlreadyUserExistException(user.id)
+
+        shouldThrowExactly<AlreadyUserExistException> {
+          changeUserService.createUser(createUserRequest)
         }
       }
     }
-
-    When("Already User Exist Exception") {
-
-      every { userRepository.existsByEmail(any<String>()) } returns true
-
-      every { changeUserService.createUser(any<CreateUserRequest>()) } throws AlreadyUserExistException(user.id)
-
-      shouldThrowExactly<AlreadyUserExistException> {
-        changeUserService.createUser(createUserRequest)
-      }
-    }
-  }
-})
+  })

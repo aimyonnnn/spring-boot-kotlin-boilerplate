@@ -26,116 +26,121 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
-class ChangePostServiceTests : BehaviorSpec({
-  val userService = mockk<UserService>()
-  val postService = mockk<PostService>()
-  val postRepository = mockk<PostRepository>()
-  val changePostService = mockk<ChangePostService>()
+class ChangePostServiceTests :
+  BehaviorSpec({
+    val userService = mockk<UserService>()
+    val postService = mockk<PostService>()
+    val postRepository = mockk<PostRepository>()
+    val changePostService = mockk<ChangePostService>()
 
-  val post: Post = Instancio.create(Post::class.java)
-  val user: User = Instancio.create(User::class.java)
+    val post: Post = Instancio.create(Post::class.java)
+    val user: User = Instancio.create(User::class.java)
 
-  Given("Delete Post") {
+    Given("Delete Post") {
 
-    When("Success Delete Post") {
+      When("Success Delete Post") {
 
-      justRun {
-        postRepository.deleteById(any<Long>())
-        changePostService.deletePost(any<Long>())
-      }
+        justRun {
+          postRepository.deleteById(any<Long>())
+          changePostService.deletePost(any<Long>())
+        }
 
-      postRepository.deleteById(post.id)
-      changePostService.deletePost(post.id)
+        postRepository.deleteById(post.id)
+        changePostService.deletePost(post.id)
 
-      Then("Verify Call Method") {
-        verify(exactly = 1) {
-          postRepository.deleteById(post.id)
-          changePostService.deletePost(post.id)
+        Then("Verify Call Method") {
+          verify(exactly = 1) {
+            postRepository.deleteById(post.id)
+            changePostService.deletePost(post.id)
+          }
         }
       }
     }
-  }
 
-  Given("Update Post") {
-    val updatePostRequest = Instancio.create(
-      UpdatePostRequest::class.java
-    )
-
-    When("Success Update Post") {
-
-      every { postService.validateReturnPost(any<Long>()) } returns post
-
-      every {
-        changePostService.updatePost(
-          any<Long>(),
-          any<UpdatePostRequest>()
+    Given("Update Post") {
+      val updatePostRequest =
+        Instancio.create(
+          UpdatePostRequest::class.java
         )
-      } returns UpdatePostResponse.of(
-        post.apply {
-          title = updatePostRequest.title
-          subTitle = updatePostRequest.subTitle
-          content = updatePostRequest.content
-        }
-      )
 
-      val updatePostResponse = changePostService.updatePost(
-        post.id,
-        updatePostRequest
-      )
+      When("Success Update Post") {
 
-      Then("Assert Post Entity") {
-        updatePostResponse shouldNotBeNull {
-          title shouldBe updatePostRequest.title
-          subTitle shouldBe updatePostRequest.subTitle
-          content shouldBe updatePostRequest.content
+        every { postService.validateReturnPost(any<Long>()) } returns post
+
+        every {
+          changePostService.updatePost(
+            any<Long>(),
+            any<UpdatePostRequest>()
+          )
+        } returns
+          UpdatePostResponse.of(
+            post.apply {
+              title = updatePostRequest.title
+              subTitle = updatePostRequest.subTitle
+              content = updatePostRequest.content
+            }
+          )
+
+        val updatePostResponse =
+          changePostService.updatePost(
+            post.id,
+            updatePostRequest
+          )
+
+        Then("Assert Post Entity") {
+          updatePostResponse shouldNotBeNull {
+            title shouldBe updatePostRequest.title
+            subTitle shouldBe updatePostRequest.subTitle
+            content shouldBe updatePostRequest.content
+          }
         }
+      }
+
+      When("Post Not Found Exception") {
+
+        every { postService.validateReturnPost(any<Long>()) } throws PostNotFoundException(post.id)
+
+        every {
+          changePostService.updatePost(
+            any<Long>(),
+            any<UpdatePostRequest>()
+          )
+        } throws PostNotFoundException(post.id)
+
+        shouldThrowExactly<PostNotFoundException> { changePostService.updatePost(post.id, updatePostRequest) }
       }
     }
 
-    When("Post Not Found Exception") {
-
-      every { postService.validateReturnPost(any<Long>()) } throws PostNotFoundException(post.id)
-
-      every {
-        changePostService.updatePost(
-          any<Long>(),
-          any<UpdatePostRequest>()
+    Given("Create Post") {
+      val createPostRequest: CreatePostRequest =
+        Instancio.create(
+          CreatePostRequest::class.java
         )
-      } throws PostNotFoundException(post.id)
 
-      shouldThrowExactly<PostNotFoundException> { changePostService.updatePost(post.id, updatePostRequest) }
-    }
-  }
+      When("Success Create Post") {
 
-  Given("Create Post") {
-    val createPostRequest: CreatePostRequest = Instancio.create(
-      CreatePostRequest::class.java
-    )
+        every { userService.validateReturnUser(any<Long>()) } returns user
 
-    When("Success Create Post") {
+        every { postRepository.save(any<Post>()) } returns post
 
-      every { userService.validateReturnUser(any<Long>()) } returns user
+        every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.of(post)
 
-      every { postRepository.save(any<Post>()) } returns post
+        val createPostResponse = changePostService.createPost(user.id, createPostRequest)
 
-      every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.of(post)
+        createPostResponse shouldNotBeNull {
+          postId shouldBe post.id
+          title shouldBe post.title
+          subTitle shouldBe post.subTitle
+          content shouldBe post.content
+          writer.userId shouldBe post.user.id
+        }
+      }
 
-      val createPostResponse = changePostService.createPost(user.id, createPostRequest)
+      When("User Not Found Exception") {
 
-      createPostResponse shouldNotBeNull {
-        postId shouldBe post.id
-        title shouldBe post.title
-        subTitle shouldBe post.subTitle
-        content shouldBe post.content
-        writer.userId shouldBe post.user.id
+        every { userService.validateReturnUser(any<Long>()) } throws UserNotFoundException(user.id)
+
+        shouldThrowExactly<UserNotFoundException> { userService.validateReturnUser(user.id) }
       }
     }
-
-    When("User Not Found Exception") {
-
-      every { userService.validateReturnUser(any<Long>()) } throws UserNotFoundException(user.id)
-
-      shouldThrowExactly<UserNotFoundException> { userService.validateReturnUser(user.id) }
-    }
-  }
-})
+  })

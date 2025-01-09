@@ -12,7 +12,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 class APIKeyAuthFilter(
   private val authProvider: AuthProvider
 ) : OncePerRequestFilter() {
-
   override fun doFilterInternal(
     @NonNull httpServletRequest: HttpServletRequest,
     @NonNull httpServletResponse: HttpServletResponse,
@@ -24,13 +23,12 @@ class APIKeyAuthFilter(
           throw APIKeyNotFoundException(httpServletRequest.requestURI)
         }
       } ?: throw APIKeyNotFoundException(httpServletRequest.requestURI)
-    }
-      .onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
+    }.onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
       .onFailure {
         SecurityUtils.sendErrorResponse(
           httpServletRequest,
           httpServletResponse,
-          it,
+          it
         )
       }
   }

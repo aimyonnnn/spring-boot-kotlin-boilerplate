@@ -23,7 +23,14 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.DeleteMapping
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 
 @Tag(name = "User", description = "User API")
 @RestController
@@ -32,22 +39,23 @@ class UserController(
   private val getUserService: GetUserService,
   private val changeUserService: ChangeUserService
 ) {
-
   @Operation(operationId = "getUserById", summary = "Get User", description = "Get User By User Id API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(schema = Schema(implementation = GetUserResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "404",
-      description = "User Not Found userId = {userId} or email = {email}",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(schema = Schema(implementation = GetUserResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "404",
+        description = "User Not Found userId = {userId} or email = {email}",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @GetMapping("/{userId}")
   fun getUserById(
@@ -56,18 +64,21 @@ class UserController(
 
   @Operation(operationId = "getUserList", summary = "Get User List", description = "Get User List API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(array = ArraySchema(schema = Schema(implementation = GetUserResponse::class))))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(array = ArraySchema(schema = Schema(implementation = GetUserResponse::class))))
+      )
+    ]
   )
   @GetMapping
-  fun getUserList(pageable: Pageable): ResponseEntity<Page<GetUserResponse>> = ResponseEntity.ok(
-    getUserService.getUserList(
-      pageable
+  fun getUserList(pageable: Pageable): ResponseEntity<Page<GetUserResponse>> =
+    ResponseEntity.ok(
+      getUserService.getUserList(
+        pageable
+      )
     )
-  )
 
   @Operation(operationId = "createUser", summary = "Create User", description = "Create User API")
   @ApiResponses(
@@ -86,67 +97,74 @@ class UserController(
         responseCode = "409",
         description = "Already User Exist userId = {userId} or email = {email}",
         content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-      )]
+      )
+    ]
   )
   @PostMapping("/register")
   fun createUser(
     @RequestBody @Valid createUserRequest: CreateUserRequest
-  ): ResponseEntity<CreateUserResponse> = ResponseEntity.status(HttpStatus.CREATED).body(
-    changeUserService.createUser(
-      createUserRequest
+  ): ResponseEntity<CreateUserResponse> =
+    ResponseEntity.status(HttpStatus.CREATED).body(
+      changeUserService.createUser(
+        createUserRequest
+      )
     )
-  )
 
   @Operation(operationId = "updateUser", summary = "Update User", description = "Update User API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(schema = Schema(implementation = UpdateUserResponse::class)))
-    ), ApiResponse(
-      responseCode = "400",
-      description = "Request Body Valid Error",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "404",
-      description = "User Not Found userId = {userId} or email = {email}",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(schema = Schema(implementation = UpdateUserResponse::class)))
+      ), ApiResponse(
+        responseCode = "400",
+        description = "Request Body Valid Error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "404",
+        description = "User Not Found userId = {userId} or email = {email}",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @PatchMapping("/{userId}")
   fun updateUser(
     @RequestBody @Valid updateUserRequest: UpdateUserRequest,
     @PathVariable("userId", required = true) userId: Long
-  ): ResponseEntity<UpdateUserResponse> = ResponseEntity.ok(
-    changeUserService.updateUser(
-      userId,
-      updateUserRequest
+  ): ResponseEntity<UpdateUserResponse> =
+    ResponseEntity.ok(
+      changeUserService.updateUser(
+        userId,
+        updateUserRequest
+      )
     )
-  )
 
   @Operation(operationId = "updateMe", summary = "Update Me", description = "Update Me API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "200",
-      description = "OK",
-      content = arrayOf(Content(schema = Schema(implementation = UpdateMeResponse::class)))
-    ), ApiResponse(
-      responseCode = "400",
-      description = "Request Body Valid Error",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    ), ApiResponse(
-      responseCode = "404",
-      description = "User Not Found userId = {userId} or email = {email}",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "200",
+        description = "OK",
+        content = arrayOf(Content(schema = Schema(implementation = UpdateMeResponse::class)))
+      ), ApiResponse(
+        responseCode = "400",
+        description = "Request Body Valid Error",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      ), ApiResponse(
+        responseCode = "404",
+        description = "User Not Found userId = {userId} or email = {email}",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @PatchMapping
   fun updateMe(
@@ -162,17 +180,21 @@ class UserController(
 
   @Operation(operationId = "deleteUser", summary = "Delete User", description = "Delete User API")
   @ApiResponses(
-    value = [ApiResponse(
-      responseCode = "204",
-      description = "No Content"
-    ), ApiResponse(
-      responseCode = "401",
-      description = "Full authentication is required to access this resource",
-      content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
-    )]
+    value = [
+      ApiResponse(
+        responseCode = "204",
+        description = "No Content"
+      ), ApiResponse(
+        responseCode = "401",
+        description = "Full authentication is required to access this resource",
+        content = arrayOf(Content(schema = Schema(implementation = ErrorResponse::class)))
+      )
+    ]
   )
   @DeleteMapping("/{userId}")
-  fun deleteUser(@PathVariable("userId", required = true) userId: Long): ResponseEntity<Void> {
+  fun deleteUser(
+    @PathVariable("userId", required = true) userId: Long
+  ): ResponseEntity<Void> {
     changeUserService.deleteUser(userId)
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).build()

@@ -24,19 +24,19 @@ class ChangeUserServiceImpl(
   private val userRepository: UserRepository,
   private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : ChangeUserService {
-
   override fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
     val isExist: Boolean = userRepository.existsByEmail(createUserRequest.email)
     if (isExist) {
       throw AlreadyUserExistException(createUserRequest.email)
     }
 
-    val user: User = User(
-      name = createUserRequest.name,
-      email = createUserRequest.email,
-      password = createUserRequest.password,
-      role = UserRole.USER
-    ).encodePassword(bCryptPasswordEncoder)
+    val user: User =
+      User(
+        name = createUserRequest.name,
+        email = createUserRequest.email,
+        password = createUserRequest.password,
+        role = UserRole.USER
+      ).encodePassword(bCryptPasswordEncoder)
 
     return CreateUserResponse.of(
       userRepository.save(user),
@@ -48,9 +48,10 @@ class ChangeUserServiceImpl(
     userId: Long,
     updateUserRequest: UpdateUserRequest
   ): UpdateUserResponse {
-    val user: User = userService
-      .validateReturnUser(userId)
-      .update(name = updateUserRequest.name, role = updateUserRequest.role)
+    val user: User =
+      userService
+        .validateReturnUser(userId)
+        .update(name = updateUserRequest.name, role = updateUserRequest.role)
 
     return user.let(UpdateUserResponse::of)
   }
@@ -59,9 +60,10 @@ class ChangeUserServiceImpl(
     userId: Long,
     updateUserRequest: UpdateUserRequest
   ): UpdateMeResponse {
-    val user: User = userService
-      .validateReturnUser(userId)
-      .update(name = updateUserRequest.name, role = updateUserRequest.role)
+    val user: User =
+      userService
+        .validateReturnUser(userId)
+        .update(name = updateUserRequest.name, role = updateUserRequest.role)
 
     return UpdateMeResponse.of(user, tokenProvider.createFullTokens(user))
   }

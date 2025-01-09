@@ -7,11 +7,9 @@ data class UpdatePostRequest(
   @field:Schema(description = "Post Title", nullable = false)
   @field:NotBlank(message = "field title is blank")
   val title: String,
-
   @field:Schema(description = "Post Sub Title", nullable = false)
   @field:NotBlank(message = "field subTitle is blank")
   val subTitle: String,
-
   @field:Schema(description = "Post Content", nullable = false)
   @field:NotBlank(message = "field content is blank")
   val content: String

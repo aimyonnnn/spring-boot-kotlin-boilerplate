@@ -19,10 +19,11 @@ object SecurityUtils {
     exception: Throwable,
     message: String = ""
   ) {
-    val errorResponse = ErrorResponse.of(
-      HttpStatus.UNAUTHORIZED.value(),
-      message,
-    )
+    val errorResponse =
+      ErrorResponse.of(
+        HttpStatus.UNAUTHORIZED.value(),
+        message
+      )
 
     logger.error {
       "Security Filter sendErrorResponse - ${httpServletRequest.method} ${httpServletRequest.requestURI} " +
@@ -34,7 +35,7 @@ object SecurityUtils {
       contentType = MediaType.APPLICATION_JSON_VALUE
 
       runCatching { writer.write(objectMapper.writeValueAsString(errorResponse)) }
-        .onFailure { logger.error(it.message) }
+        .onFailure { logger.error { it.message } }
     }
   }
 }

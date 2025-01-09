@@ -45,8 +45,10 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
   private val defaultUserEmail = "awakelife93@gmail.com"
   private val defaultUserPassword = "test_password_123!@"
   private val defaultAccessToken =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c\n" +  //
-      ""
+    """
+    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
+    eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
+    """
   private val defaultPageable = Pageable.ofSize(1)
 
   init {
@@ -66,8 +68,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -90,8 +91,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
@@ -103,13 +103,14 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 
       When("Success GET /api/v1/users") {
 
-        every { getUserService.getUserList(any<Pageable>()) } returns PageImpl(
-          listOf(
-            GetUserResponse.of(user),
-          ),
-          defaultPageable,
-          1
-        )
+        every { getUserService.getUserList(any<Pageable>()) } returns
+          PageImpl(
+            listOf(
+              GetUserResponse.of(user)
+            ),
+            defaultPageable,
+            1
+          )
 
         Then("Call GET /api/v1/users") {
           mockMvc
@@ -119,8 +120,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].userId").value(user.id))
@@ -132,11 +132,12 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 
       When("Empty GET /api/v1/users") {
 
-        every { getUserService.getUserList(any<Pageable>()) } returns PageImpl(
-          listOf(),
-          defaultPageable,
-          0
-        )
+        every { getUserService.getUserList(any<Pageable>()) } returns
+          PageImpl(
+            listOf(),
+            defaultPageable,
+            0
+          )
 
         Then("Call GET /api/v1/users") {
           mockMvc
@@ -146,8 +147,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty)
@@ -156,21 +156,24 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
     }
 
     Given("POST /api/v1/users/register") {
-      val mockCreateUserRequest: CreateUserRequest = Instancio.create(
-        CreateUserRequest::class.java
-      )
+      val mockCreateUserRequest: CreateUserRequest =
+        Instancio.create(
+          CreateUserRequest::class.java
+        )
 
-      val createUserRequest: CreateUserRequest = mockCreateUserRequest.copy(
-        email = defaultUserEmail,
-        password = defaultUserPassword
-      )
+      val createUserRequest: CreateUserRequest =
+        mockCreateUserRequest.copy(
+          email = defaultUserEmail,
+          password = defaultUserPassword
+        )
 
       When("Success POST /api/v1/users/register") {
 
-        every { changeUserService.createUser(any<CreateUserRequest>()) } returns CreateUserResponse.of(
-          user,
-          defaultAccessToken
-        )
+        every { changeUserService.createUser(any<CreateUserRequest>()) } returns
+          CreateUserResponse.of(
+            user,
+            defaultAccessToken
+          )
 
         Then("Call POST /api/v1/users/register") {
           mockMvc
@@ -181,8 +184,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(createUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isCreated)
+            ).andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -194,10 +196,11 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
       }
 
       When("Field Valid Exception POST /api/v1/users/register") {
-        val wrongCreateUserRequest = createUserRequest.copy(
-          email = "wrong_email",
-          password = "1234567"
-        )
+        val wrongCreateUserRequest =
+          createUserRequest.copy(
+            email = "wrong_email",
+            password = "1234567"
+          )
 
         Then("Call POST /api/v1/users/register") {
           mockMvc
@@ -208,8 +211,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(wrongCreateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            ).andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
             )
@@ -233,23 +235,21 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(createUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isConflict)
+            ).andExpect(MockMvcResultMatchers.status().isConflict)
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.CONFLICT.value())
-            )
-            .andExpect(
+            ).andExpect(
               MockMvcResultMatchers.jsonPath("$.message").value(alreadyUserExistException.message)
-            )
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
         }
       }
     }
 
     Given("PATCH /api/v1/users/{userId}") {
-      val updateUserRequest: UpdateUserRequest = Instancio.create(
-        UpdateUserRequest::class.java
-      )
+      val updateUserRequest: UpdateUserRequest =
+        Instancio.create(
+          UpdateUserRequest::class.java
+        )
 
       When("Success PATCH /api/v1/users/{userId}") {
 
@@ -269,8 +269,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(updateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -281,9 +280,10 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
       }
 
       When("Field Valid Exception PATCH /api/v1/users/{userId}") {
-        val wrongUpdateUserRequest = updateUserRequest.copy(
-          name = ""
-        )
+        val wrongUpdateUserRequest =
+          updateUserRequest.copy(
+            name = ""
+          )
 
         Then("Call PATCH /api/v1/users/{userId}") {
           mockMvc
@@ -294,8 +294,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(wrongUpdateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            ).andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
             )
@@ -319,30 +318,29 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(updateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value())
-            )
-            .andExpect(
+            ).andExpect(
               MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-            )
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
         }
       }
     }
 
     Given("PATCH /api/v1/users") {
-      val updateUserRequest: UpdateUserRequest = Instancio.create(
-        UpdateUserRequest::class.java
-      )
+      val updateUserRequest: UpdateUserRequest =
+        Instancio.create(
+          UpdateUserRequest::class.java
+        )
 
       When("Success PATCH /api/v1/users") {
 
-        every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns UpdateMeResponse.of(
-          user,
-          defaultAccessToken
-        )
+        every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns
+          UpdateMeResponse.of(
+            user,
+            defaultAccessToken
+          )
 
         Then("Call PATCH /api/v1/users") {
           mockMvc
@@ -353,8 +351,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(updateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
@@ -365,9 +362,10 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
       }
 
       When("Field Valid Exception PATCH /api/v1/users") {
-        val wrongUpdateUserRequest = updateUserRequest.copy(
-          name = ""
-        )
+        val wrongUpdateUserRequest =
+          updateUserRequest.copy(
+            name = ""
+          )
 
         Then("Call PATCH /api/v1/users") {
           mockMvc
@@ -378,8 +376,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(wrongUpdateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            ).andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value()))
             // name:field name is blank
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString)
@@ -401,13 +398,11 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(updateUserRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-            )
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
         }
       }
     }
@@ -426,8 +421,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNoContent)
+            ).andExpect(MockMvcResultMatchers.status().isNoContent)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         }
@@ -446,8 +440,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -461,8 +454,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -476,8 +468,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -491,8 +482,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -506,11 +496,9 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
     }
   }
 }
-

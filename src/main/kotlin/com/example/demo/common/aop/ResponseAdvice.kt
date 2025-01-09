@@ -15,12 +15,13 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 @RestControllerAdvice(basePackages = ["com.example.demo"])
 class ResponseAdvice : ResponseBodyAdvice<Any> {
-
-  override fun supports(returnType: MethodParameter, converterType: Class<out HttpMessageConverter<*>>): Boolean {
-    return MappingJackson2HttpMessageConverter::class.java.isAssignableFrom(
+  override fun supports(
+    returnType: MethodParameter,
+    converterType: Class<out HttpMessageConverter<*>>
+  ): Boolean =
+    MappingJackson2HttpMessageConverter::class.java.isAssignableFrom(
       converterType
     )
-  }
 
   override fun beforeBodyWrite(
     @Nullable body: Any?,
@@ -29,10 +30,9 @@ class ResponseAdvice : ResponseBodyAdvice<Any> {
     selectedConverterType: Class<out HttpMessageConverter<*>>,
     request: ServerHttpRequest,
     response: ServerHttpResponse
-  ): Any? {
-    return when (body) {
+  ): Any? =
+    when (body) {
       is ErrorResponse -> body
       else -> body.let { OkResponse.of(HttpStatus.OK.value(), HttpStatus.OK.name, it) }
     }
-  }
 }

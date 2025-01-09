@@ -24,7 +24,7 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.PlatformTransactionManager
 import java.time.LocalDateTime
-import java.util.*
+import java.util.Collections
 import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {}
@@ -40,12 +40,11 @@ class DeleteUserConfig(
   fun deleteUser(
     jobRepository: JobRepository,
     transactionManager: PlatformTransactionManager
-  ): Job {
-    return JobBuilder("deleteUserJob", jobRepository)
+  ): Job =
+    JobBuilder("deleteUserJob", jobRepository)
       .flow(generateStep(jobRepository, transactionManager))
       .end()
       .build()
-  }
 
   @Bean
   @JobScope
@@ -55,14 +54,13 @@ class DeleteUserConfig(
   fun generateStep(
     jobRepository: JobRepository,
     transactionManager: PlatformTransactionManager
-  ): Step {
-    return StepBuilder("deleteUserStep", jobRepository)
+  ): Step =
+    StepBuilder("deleteUserStep", jobRepository)
       .chunk<DeleteUserItem, DeleteUserItem>(chunkSize, transactionManager)
       .allowStartIfComplete(true)
       .reader(reader(null))
       .writer(writer())
       .build()
-  }
 
   @Bean
   @StepScope
@@ -79,15 +77,14 @@ class DeleteUserConfig(
       .queryProvider(pagingQueryProvider())
       .parameterValues(
         Collections.singletonMap<String, Any>("oneYearBeforeNow", nowDateTime.minusYears(1))
-      )
-      .rowMapper(DeleteUserItemRowMapper())
+      ).rowMapper(DeleteUserItemRowMapper())
       .build()
   }
 
   @Bean
   @StepScope
-  fun writer(): ItemWriter<DeleteUserItem> {
-    return ItemWriter<DeleteUserItem> { items: Chunk<out DeleteUserItem> ->
+  fun writer(): ItemWriter<DeleteUserItem> =
+    ItemWriter<DeleteUserItem> { items: Chunk<out DeleteUserItem> ->
       items.map {
         logger.info {
           "Hard Deleted User By = ${it.name} ${it.email} ${it.role} ${it.deletedDt}"
@@ -99,7 +96,6 @@ class DeleteUserConfig(
         )
       }
     }
-  }
 
   @Bean
   @Throws(Exception::class)

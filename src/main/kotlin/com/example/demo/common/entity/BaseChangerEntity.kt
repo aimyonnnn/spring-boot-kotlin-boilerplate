@@ -13,7 +13,6 @@ abstract class BaseChangerEntity(
   @CreatedBy
   @Column(nullable = false, updatable = false)
   var createdBy: Long? = null,
-
   @LastModifiedBy
   @Column(nullable = false)
   var updatedBy: Long? = null

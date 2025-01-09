@@ -13,7 +13,7 @@ interface ChangePostService {
 
   fun createPost(
     userId: Long,
-    createPostRequest: CreatePostRequest,
+    createPostRequest: CreatePostRequest
   ): CreatePostResponse
 
   fun deletePost(postId: Long)

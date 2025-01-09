@@ -60,8 +60,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.postId").value(post.id))
@@ -85,8 +84,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(postNotFoundException.message))
             .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
@@ -98,13 +96,14 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("Success GET /api/v1/posts") {
 
-        every { getPostService.getPostList(any<Pageable>()) } returns PageImpl(
-          listOf(
-            GetPostResponse.of(post)
-          ),
-          defaultPageable,
-          1
-        )
+        every { getPostService.getPostList(any<Pageable>()) } returns
+          PageImpl(
+            listOf(
+              GetPostResponse.of(post)
+            ),
+            defaultPageable,
+            1
+          )
 
         Then("Call GET /api/v1/posts") {
           mockMvc
@@ -114,8 +113,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].postId").value(post.id))
@@ -128,11 +126,12 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("Empty GET /api/v1/posts") {
 
-        every { getPostService.getPostList(any<Pageable>()) } returns PageImpl(
-          listOf(),
-          defaultPageable,
-          0
-        )
+        every { getPostService.getPostList(any<Pageable>()) } returns
+          PageImpl(
+            listOf(),
+            defaultPageable,
+            0
+          )
 
         Then("Call GET /api/v1/posts") {
           mockMvc
@@ -142,8 +141,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty)
@@ -152,9 +150,10 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
     }
 
     Given("GET /api/v1/posts/exclude-users") {
-      val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest = Instancio.create(
-        GetExcludeUsersPostsRequest::class.java
-      )
+      val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest =
+        Instancio.create(
+          GetExcludeUsersPostsRequest::class.java
+        )
 
       When("Success GET /api/v1/posts/exclude-users") {
 
@@ -163,11 +162,12 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
             any<GetExcludeUsersPostsRequest>(),
             any<Pageable>()
           )
-        } returns PageImpl(
-          listOf(GetPostResponse.of(post)),
-          defaultPageable,
-          1
-        )
+        } returns
+          PageImpl(
+            listOf(GetPostResponse.of(post)),
+            defaultPageable,
+            1
+          )
 
         Then("Call GET /api/v1/posts/exclude-users") {
           mockMvc
@@ -180,11 +180,9 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                   objectMapper.writeValueAsString(
                     getExcludeUsersPostsRequest.userIds[0]
                   )
-                )
-                .contentType(MediaType.APPLICATION_JSON)
+                ).contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.content[0].postId").value(post.id))
@@ -204,11 +202,12 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
             any<GetExcludeUsersPostsRequest>(),
             any<Pageable>()
           )
-        } returns PageImpl(
-          listOf(),
-          defaultPageable,
-          0
-        )
+        } returns
+          PageImpl(
+            listOf(),
+            defaultPageable,
+            0
+          )
 
         Then("Call GET /api/v1/posts/exclude-users") {
           mockMvc
@@ -221,11 +220,9 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                   objectMapper.writeValueAsString(
                     getExcludeUsersPostsRequest.userIds[0]
                   )
-                )
-                .contentType(MediaType.APPLICATION_JSON)
+                ).contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.content").isEmpty)
@@ -234,9 +231,10 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
     }
 
     Given("PUT /api/v1/posts") {
-      val createPostRequest: CreatePostRequest = Instancio.create(
-        CreatePostRequest::class.java
-      )
+      val createPostRequest: CreatePostRequest =
+        Instancio.create(
+          CreatePostRequest::class.java
+        )
 
       When("Success PUT /api/v1/posts") {
 
@@ -256,8 +254,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(createPostRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isCreated)
+            ).andExpect(MockMvcResultMatchers.status().isCreated)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.postId").value(post.id))
@@ -271,10 +268,11 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
       }
 
       When("Field Valid Exception PUT /api/v1/posts") {
-        val wrongCreatePostRequest = createPostRequest.copy(
-          title = "",
-          subTitle = ""
-        )
+        val wrongCreatePostRequest =
+          createPostRequest.copy(
+            title = "",
+            subTitle = ""
+          )
 
         Then("Call PUT /api/v1/posts") {
           mockMvc
@@ -285,8 +283,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(wrongCreatePostRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            ).andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
             )
@@ -298,9 +295,10 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
     }
 
     Given("PATCH /api/v1/posts/{postId}") {
-      val updatePostRequest: UpdatePostRequest = Instancio.create(
-        UpdatePostRequest::class.java
-      )
+      val updatePostRequest: UpdatePostRequest =
+        Instancio.create(
+          UpdatePostRequest::class.java
+        )
 
       When("Success PATCH /api/v1/posts/{postId}") {
 
@@ -320,8 +318,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(updatePostRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isOk)
+            ).andExpect(MockMvcResultMatchers.status().isOk)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
             .andExpect(MockMvcResultMatchers.jsonPath("$.data.postId").value(post.id))
@@ -335,10 +332,11 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
       }
 
       When("Field Valid Exception PATCH /api/v1/posts/{postId}") {
-        val wrongUpdatePostRequest = updatePostRequest.copy(
-          title = "",
-          subTitle = ""
-        )
+        val wrongUpdatePostRequest =
+          updatePostRequest.copy(
+            title = "",
+            subTitle = ""
+          )
 
         Then("Call PATCH /api/v1/posts/{postId}") {
           mockMvc
@@ -349,8 +347,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(wrongUpdatePostRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isBadRequest)
+            ).andExpect(MockMvcResultMatchers.status().isBadRequest)
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
             ) // subTitle:field subTitle is blank, title:field title is blank,
@@ -360,9 +357,10 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
       }
 
       When("Not Found Exception PATCH /api/v1/posts/{postId}") {
-        val postNotFoundException = PostNotFoundException(
-          post.id
-        )
+        val postNotFoundException =
+          PostNotFoundException(
+            post.id
+          )
 
         every { changePostService.updatePost(any<Long>(), any<UpdatePostRequest>()) } throws postNotFoundException
 
@@ -375,13 +373,11 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .content(objectMapper.writeValueAsString(updatePostRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNotFound)
+            ).andExpect(MockMvcResultMatchers.status().isNotFound)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.NOT_FOUND.value()))
             .andExpect(
               MockMvcResultMatchers.jsonPath("$.message").value(postNotFoundException.message)
-            )
-            .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+            ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
         }
       }
     }
@@ -400,8 +396,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isNoContent)
+            ).andExpect(MockMvcResultMatchers.status().isNoContent)
             .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
             .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
         }
@@ -420,8 +415,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -435,8 +429,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -450,8 +443,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -465,8 +457,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -480,8 +471,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
 
@@ -495,8 +485,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-            )
-            .andExpect(MockMvcResultMatchers.status().isUnauthorized)
+            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
         }
       }
     }

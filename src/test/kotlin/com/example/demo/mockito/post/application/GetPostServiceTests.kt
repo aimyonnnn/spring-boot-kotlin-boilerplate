@@ -8,9 +8,13 @@ import com.example.demo.post.exception.PostNotFoundException
 import com.example.demo.post.repository.PostRepository
 import org.assertj.core.api.Assertions.assertThat
 import org.instancio.Instancio
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.Nested
+import org.junit.jupiter.api.Tag
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.InjectMocks
 import org.mockito.Mock
@@ -46,9 +50,10 @@ class GetPostServiceTests {
     fun should_AssertGetPostResponse_when_GivenPostId() {
       Mockito.`when`(postRepository.findOneById(any<Long>())).thenReturn(post)
 
-      val getPostResponse = getPostServiceImpl.getPostById(
-        post.id
-      )
+      val getPostResponse =
+        getPostServiceImpl.getPostById(
+          post.id
+        )
 
       assertNotNull(getPostResponse)
       assertEquals(post.id, getPostResponse.postId)
@@ -64,7 +69,8 @@ class GetPostServiceTests {
     @Test
     @DisplayName("Not found post")
     fun should_AssertPostNotFoundException_when_GivenPostId() {
-      Mockito.`when`(postRepository.findOneById(any<Long>()))
+      Mockito
+        .`when`(postRepository.findOneById(any<Long>()))
         .thenThrow(PostNotFoundException(post.id))
 
       Assertions.assertThrows(
@@ -79,13 +85,15 @@ class GetPostServiceTests {
     @Test
     @DisplayName("Success get post list")
     fun should_AssertPageOfGetPostResponse_when_GivenDefaultPageable() {
-      Mockito.`when`(
-        postRepository.findAll(any<Pageable>())
-      ).thenReturn(PageImpl(listOf(post), defaultPageable, 1))
+      Mockito
+        .`when`(
+          postRepository.findAll(any<Pageable>())
+        ).thenReturn(PageImpl(listOf(post), defaultPageable, 1))
 
-      val getPostResponseList = getPostServiceImpl.getPostList(
-        defaultPageable
-      )
+      val getPostResponseList =
+        getPostServiceImpl.getPostList(
+          defaultPageable
+        )
 
       assertThat(getPostResponseList).isNotEmpty()
       assertEquals(post.id, getPostResponseList.content[0].postId)
@@ -104,16 +112,17 @@ class GetPostServiceTests {
     @Test
     @DisplayName("Get post list is empty")
     fun should_AssertPageOfGetPostResponseIsEmpty_when_GivenDefaultPageable() {
-      Mockito.`when`(
-        postRepository.findAll(
-          any<Pageable>()
-        )
-      )
-        .thenReturn(PageImpl(listOf(), defaultPageable, 0))
+      Mockito
+        .`when`(
+          postRepository.findAll(
+            any<Pageable>()
+          )
+        ).thenReturn(PageImpl(listOf(), defaultPageable, 0))
 
-      val getPostResponseList = getPostServiceImpl.getPostList(
-        defaultPageable
-      )
+      val getPostResponseList =
+        getPostServiceImpl.getPostList(
+          defaultPageable
+        )
 
       assertThat(getPostResponseList).isEmpty()
       assertEquals(getPostResponseList.totalElements, 0)
@@ -123,25 +132,27 @@ class GetPostServiceTests {
   @Nested
   @DisplayName("Get Exclude Users Post List Test")
   inner class GetExcludeUsersPostsTest {
-    private val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest = Instancio.create(
-      GetExcludeUsersPostsRequest::class.java
-    )
+    private val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest =
+      Instancio.create(
+        GetExcludeUsersPostsRequest::class.java
+      )
 
     @Test
     @DisplayName("Success get exclude users post list")
     fun should_AssertPageOfGetPostResponse_when_GivenDefaultPageableAndGetExcludeUsersPostsRequest() {
-      Mockito.`when`(
-        postRepository.getExcludeUsersPosts(
-          any<GetExcludeUsersPostsRequest>(),
-          any<Pageable>()
-        )
-      )
-        .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+      Mockito
+        .`when`(
+          postRepository.getExcludeUsersPosts(
+            any<GetExcludeUsersPostsRequest>(),
+            any<Pageable>()
+          )
+        ).thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
 
-      val getPostResponseList = getPostServiceImpl.getExcludeUsersPostList(
-        getExcludeUsersPostsRequest,
-        defaultPageable
-      )
+      val getPostResponseList =
+        getPostServiceImpl.getExcludeUsersPostList(
+          getExcludeUsersPostsRequest,
+          defaultPageable
+        )
 
       assertThat(getPostResponseList).isNotEmpty()
       assertEquals(post.id, getPostResponseList.content[0].postId)
@@ -160,18 +171,19 @@ class GetPostServiceTests {
     @Test
     @DisplayName("Get get exclude users post list is empty")
     fun should_AssertPageOfGetPostResponseIsEmpty_when_GivenDefaultPageableAndGetExcludeUsersPostsRequest() {
-      Mockito.`when`(
-        postRepository.getExcludeUsersPosts(
-          any<GetExcludeUsersPostsRequest>(),
-          any<Pageable>()
-        )
-      )
-        .thenReturn(PageImpl(listOf(), defaultPageable, 0))
+      Mockito
+        .`when`(
+          postRepository.getExcludeUsersPosts(
+            any<GetExcludeUsersPostsRequest>(),
+            any<Pageable>()
+          )
+        ).thenReturn(PageImpl(listOf(), defaultPageable, 0))
 
-      val getPostResponseList = getPostServiceImpl.getExcludeUsersPostList(
-        getExcludeUsersPostsRequest,
-        defaultPageable
-      )
+      val getPostResponseList =
+        getPostServiceImpl.getExcludeUsersPostList(
+          getExcludeUsersPostsRequest,
+          defaultPageable
+        )
 
       assertThat(getPostResponseList.content).isEmpty()
       assertEquals(getPostResponseList.totalElements, 0)

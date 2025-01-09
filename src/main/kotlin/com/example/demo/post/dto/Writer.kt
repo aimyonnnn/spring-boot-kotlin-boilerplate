@@ -4,20 +4,17 @@ import com.example.demo.user.entity.User
 
 data class Writer(
   val userId: Long,
-
   val email: String,
-
   val name: String
 ) {
   companion object {
-    fun of(user: User): Writer {
-      return with(user) {
+    fun of(user: User): Writer =
+      with(user) {
         Writer(
           userId = id,
           email = email,
           name = name
         )
       }
-    }
   }
 }

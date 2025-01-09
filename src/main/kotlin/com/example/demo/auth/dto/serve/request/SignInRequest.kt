@@ -10,7 +10,6 @@ data class SignInRequest(
   @field:NotBlank(message = "field email is blank")
   @field:Email(message = "field email is not email format")
   val email: String,
-
   @field:Schema(description = "User Password", nullable = false)
   @field:NotBlank(message = "field password is blank")
   @field:Size(

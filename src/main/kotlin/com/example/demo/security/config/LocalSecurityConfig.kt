@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configurers.*
+import org.springframework.security.config.annotation.web.configurers.ExceptionHandlingConfigurer
 import org.springframework.security.web.SecurityFilterChain
 
 @Profile("local")
@@ -21,25 +21,18 @@ class LocalSecurityConfig(
   private val authProvider: AuthProvider,
   private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint
 ) {
+  @Bean
+  @Throws(Exception::class)
+  fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager = authenticationConfiguration.authenticationManager
 
   @Bean
   @Throws(Exception::class)
-  fun authenticationManager(
-    authenticationConfiguration: AuthenticationConfiguration
-  ): AuthenticationManager {
-    return authenticationConfiguration.authenticationManager
-  }
-
-  @Bean
-  @Throws(Exception::class)
-  fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain {
-    return authProvider
+  fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
+    authProvider
       .defaultSecurityFilterChain(httpSecurity)
       .exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
         exceptionHandling.authenticationEntryPoint(
           customAuthenticationEntryPoint
         )
-      }
-      .build()
-  }
+      }.build()
 }

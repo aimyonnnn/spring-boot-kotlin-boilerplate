@@ -12,7 +12,6 @@ data class CreatePostRequest(
     message = "field title is max size 20"
   )
   val title: String,
-
   @field:Schema(description = "Post Sub Title", nullable = false)
   @field:NotBlank(message = "field subTitle is blank")
   @field:Size(
@@ -20,7 +19,6 @@ data class CreatePostRequest(
     message = "field subTitle is max size 40"
   )
   val subTitle: String,
-
   @field:Schema(description = "Post Content", nullable = false)
   @field:NotBlank(message = "field content is blank")
   @field:Size(

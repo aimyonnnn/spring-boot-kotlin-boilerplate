@@ -13,7 +13,6 @@ import org.springframework.web.filter.OncePerRequestFilter
 class JWTAuthFilter(
   private val jwtProvider: JWTProvider
 ) : OncePerRequestFilter() {
-
   override fun doFilterInternal(
     @NonNull httpServletRequest: HttpServletRequest,
     @NonNull httpServletResponse: HttpServletResponse,
@@ -23,16 +22,16 @@ class JWTAuthFilter(
       jwtProvider.generateRequestToken(httpServletRequest)?.let {
         jwtProvider.validateToken(it)
 
-        val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken = jwtProvider.getAuthentication(
-          it
-        )
+        val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken =
+          jwtProvider.getAuthentication(
+            it
+          )
 
         SecurityContextHolder
-          .getContext().authentication = usernamePasswordAuthenticationToken
-
+          .getContext()
+          .authentication = usernamePasswordAuthenticationToken
       } ?: SecurityContextHolder.clearContext()
-    }
-      .onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
+    }.onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
       .onFailure {
         SecurityContextHolder.clearContext()
 

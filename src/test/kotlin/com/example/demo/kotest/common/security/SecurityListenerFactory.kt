@@ -20,36 +20,42 @@ class SecurityListenerFactory(
 ) : TestListener {
   object NonSecurityOption : Tag()
 
-  private fun getCurrentSecurityScope(prefix: String?): Boolean {
-    return when (prefix) {
+  private fun getCurrentSecurityScope(prefix: String?): Boolean =
+    when (prefix) {
       "Then: ", "Describe: " -> true
       else -> false
     }
-  }
 
   override suspend fun beforeTest(testCase: TestCase) {
     super.beforeTest(testCase)
 
     val isCurrentSecurityScope = getCurrentSecurityScope(testCase.name.prefix)
     if (isCurrentSecurityScope && NonSecurityOption !in testCase.config.tags) {
-      val securityUserItem = Instancio.create(User::class.java).apply {
-        id = userId
-        email = userEmail
-        name = userName
-        role = userRole
-      }.let(SecurityUserItem.Companion::of)
+      val securityUserItem =
+        Instancio
+          .create(User::class.java)
+          .apply {
+            id = userId
+            email = userEmail
+            name = userName
+            role = userRole
+          }.let(SecurityUserItem.Companion::of)
 
       val userAdapter = UserAdapter(securityUserItem)
 
-      SecurityContextHolder.getContext().authentication = UsernamePasswordAuthenticationToken(
-        userAdapter,
-        null,
-        userAdapter.authorities
-      )
+      SecurityContextHolder.getContext().authentication =
+        UsernamePasswordAuthenticationToken(
+          userAdapter,
+          null,
+          userAdapter.authorities
+        )
     }
   }
 
-  override suspend fun afterTest(testCase: TestCase, result: TestResult) {
+  override suspend fun afterTest(
+    testCase: TestCase,
+    result: TestResult
+  ) {
     super.afterTest(testCase, result)
 
     SecurityContextHolder.clearContext()
