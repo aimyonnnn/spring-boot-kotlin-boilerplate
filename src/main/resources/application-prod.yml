@@ -12,3 +12,11 @@ springdoc:
     enabled: false
 sentry:
   dsn:
+logging:
+  file:
+    name: logs/app.log
+  logback:
+    rollingpolicy:
+      file-name-pattern: logs/app-%d{yyyy-MM-dd_HH-mm}.%i.log
+      max-file-size: 10MB
+
