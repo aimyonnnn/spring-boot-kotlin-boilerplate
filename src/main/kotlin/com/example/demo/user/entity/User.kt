@@ -52,7 +52,7 @@ data class User(
   }
 
   fun validatePassword(
-    password: String?,
+    password: String,
     bCryptPasswordEncoder: BCryptPasswordEncoder
   ): Boolean = bCryptPasswordEncoder.matches(password, this.password)
 }
