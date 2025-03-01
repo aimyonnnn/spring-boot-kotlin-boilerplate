@@ -38,7 +38,7 @@ class ChangeUserServiceImpl(
         role = UserRole.USER
       ).encodePassword(bCryptPasswordEncoder)
 
-    return CreateUserResponse.of(
+    return CreateUserResponse.from(
       userRepository.save(user),
       tokenProvider.createFullTokens(user)
     )
@@ -53,7 +53,7 @@ class ChangeUserServiceImpl(
         .validateReturnUser(userId)
         .update(name = updateUserRequest.name, role = updateUserRequest.role)
 
-    return user.let(UpdateUserResponse::of)
+    return user.let(UpdateUserResponse::from)
   }
 
   override fun updateMe(
@@ -65,7 +65,7 @@ class ChangeUserServiceImpl(
         .validateReturnUser(userId)
         .update(name = updateUserRequest.name, role = updateUserRequest.role)
 
-    return UpdateMeResponse.of(user, tokenProvider.createFullTokens(user))
+    return UpdateMeResponse.from(user, tokenProvider.createFullTokens(user))
   }
 
   override fun deleteUser(userId: Long) {

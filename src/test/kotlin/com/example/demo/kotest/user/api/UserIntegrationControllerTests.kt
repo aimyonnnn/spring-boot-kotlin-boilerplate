@@ -58,7 +58,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 
       When("Success GET /api/v1/users/{userId}") {
 
-        every { getUserService.getUserById(any<Long>()) } returns GetUserResponse.of(user)
+        every { getUserService.getUserById(any<Long>()) } returns GetUserResponse.from(user)
 
         Then("Call GET /api/v1/users/{userId}") {
           mockMvc
@@ -106,7 +106,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
         every { getUserService.getUserList(any<Pageable>()) } returns
           PageImpl(
             listOf(
-              GetUserResponse.of(user)
+              GetUserResponse.from(user)
             ),
             defaultPageable,
             1
@@ -170,7 +170,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
       When("Success POST /api/v1/users/register") {
 
         every { changeUserService.createUser(any<CreateUserRequest>()) } returns
-          CreateUserResponse.of(
+          CreateUserResponse.from(
             user,
             defaultAccessToken
           )
@@ -258,7 +258,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
             any<Long>(),
             any<UpdateUserRequest>()
           )
-        } returns UpdateUserResponse.of(user)
+        } returns UpdateUserResponse.from(user)
 
         Then("Call PATCH /api/v1/users/{userId}") {
           mockMvc
@@ -337,7 +337,7 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
       When("Success PATCH /api/v1/users") {
 
         every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns
-          UpdateMeResponse.of(
+          UpdateMeResponse.from(
             user,
             defaultAccessToken
           )

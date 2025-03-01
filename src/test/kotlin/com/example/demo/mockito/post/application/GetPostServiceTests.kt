@@ -146,7 +146,7 @@ class GetPostServiceTests {
             any<GetExcludeUsersPostsRequest>(),
             any<Pageable>()
           )
-        ).thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+        ).thenReturn(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
       val getPostResponseList =
         getPostServiceImpl.getExcludeUsersPostList(

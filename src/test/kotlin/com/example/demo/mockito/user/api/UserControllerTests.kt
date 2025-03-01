@@ -6,7 +6,7 @@ import com.example.demo.user.application.impl.ChangeUserServiceImpl
 import com.example.demo.user.application.impl.GetUserServiceImpl
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
-import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.of
+import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.from
 import com.example.demo.user.dto.serve.response.GetUserResponse
 import com.example.demo.user.dto.serve.response.UpdateMeResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
@@ -58,7 +58,7 @@ class UserControllerTests {
   fun should_AssertGetUserResponse_when_GivenUserId() {
     Mockito
       .`when`(getUserServiceImpl.getUserById(any<Long>()))
-      .thenReturn(GetUserResponse.of(user))
+      .thenReturn(GetUserResponse.from(user))
 
     val response =
       userController.getUserById(
@@ -85,7 +85,7 @@ class UserControllerTests {
   fun should_AssertPageOfGetUserResponse_when_GivenDefaultPageable() {
     Mockito
       .`when`(getUserServiceImpl.getUserList(any<Pageable>()))
-      .thenReturn(PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1))
+      .thenReturn(PageImpl(listOf(GetUserResponse.from(user)), defaultPageable, 1))
 
     val response =
       userController.getUserList(
@@ -118,7 +118,7 @@ class UserControllerTests {
 
     Mockito
       .`when`(changeUserServiceImpl.createUser(any<CreateUserRequest>()))
-      .thenReturn(of(user, defaultAccessToken))
+      .thenReturn(from(user, defaultAccessToken))
 
     val response =
       userController.createUser(
@@ -149,7 +149,7 @@ class UserControllerTests {
 
     Mockito
       .`when`(changeUserServiceImpl.updateUser(any<Long>(), any<UpdateUserRequest>()))
-      .thenReturn(UpdateUserResponse.of(user))
+      .thenReturn(UpdateUserResponse.from(user))
 
     val response =
       userController.updateUser(
@@ -185,7 +185,7 @@ class UserControllerTests {
 
     Mockito
       .`when`(changeUserServiceImpl.updateMe(any<Long>(), any<UpdateUserRequest>()))
-      .thenReturn(UpdateMeResponse.of(user, defaultAccessToken))
+      .thenReturn(UpdateMeResponse.from(user, defaultAccessToken))
 
     val response =
       userController.updateMe(

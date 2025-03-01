@@ -17,6 +17,6 @@ class UserDetailsServiceImpl(
   override fun loadUserByUsername(userId: String): UserDetails {
     val user: User = userService.validateReturnUser(userId.toLong())
 
-    return UserAdapter(SecurityUserItem.of(user))
+    return UserAdapter(SecurityUserItem.from(user))
   }
 }

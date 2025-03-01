@@ -39,7 +39,7 @@ class GetUserServiceTests :
           getUserService.getUserById(
             any<Long>()
           )
-        } returns GetUserResponse.of(user)
+        } returns GetUserResponse.from(user)
 
         val getUserResponse =
           getUserService.getUserById(
@@ -78,7 +78,7 @@ class GetUserServiceTests :
           getUserService.getUserByEmail(
             any<String>()
           )
-        } returns GetUserResponse.of(user)
+        } returns GetUserResponse.from(user)
 
         val getUserResponse =
           getUserService.getUserByEmail(
@@ -122,7 +122,7 @@ class GetUserServiceTests :
           getUserService.getUserList(
             any<Pageable>()
           )
-        } returns PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1)
+        } returns PageImpl(listOf(GetUserResponse.from(user)), defaultPageable, 1)
 
         val getUserResponseList =
           getUserService.getUserList(

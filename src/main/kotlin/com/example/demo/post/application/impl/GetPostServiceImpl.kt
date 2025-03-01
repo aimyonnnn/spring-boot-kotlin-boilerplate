@@ -21,13 +21,13 @@ class GetPostServiceImpl(
       postRepository
         .findOneById(postId) ?: throw PostNotFoundException(postId)
 
-    return post.let(GetPostResponse::of)
+    return post.let(GetPostResponse::from)
   }
 
   override fun getPostList(pageable: Pageable): Page<GetPostResponse> =
     postRepository
       .findAll(pageable)
-      .map(GetPostResponse::of)
+      .map(GetPostResponse::from)
 
   override fun getExcludeUsersPostList(
     getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,

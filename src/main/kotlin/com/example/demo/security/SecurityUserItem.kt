@@ -10,7 +10,7 @@ data class SecurityUserItem(
   val email: String
 ) {
   companion object {
-    fun of(user: User): SecurityUserItem =
+    fun from(user: User): SecurityUserItem =
       SecurityUserItem(
         userId = user.id,
         role = user.role,

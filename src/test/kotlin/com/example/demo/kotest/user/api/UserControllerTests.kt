@@ -6,7 +6,7 @@ import com.example.demo.user.application.ChangeUserService
 import com.example.demo.user.application.GetUserService
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
-import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.of
+import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.from
 import com.example.demo.user.dto.serve.response.GetUserResponse
 import com.example.demo.user.dto.serve.response.UpdateMeResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
@@ -44,13 +44,13 @@ class UserControllerTests :
 
     test("Get User By Id") {
 
-      every { getUserService.getUserById(any<Long>()) } returns GetUserResponse.of(user)
+      every { getUserService.getUserById(any<Long>()) } returns GetUserResponse.from(user)
 
       every {
         userController.getUserById(
           any<Long>()
         )
-      } returns ResponseEntity.ok(GetUserResponse.of(user))
+      } returns ResponseEntity.ok(GetUserResponse.from(user))
 
       val response =
         userController.getUserById(
@@ -72,7 +72,7 @@ class UserControllerTests :
 
       every { getUserService.getUserList(any<Pageable>()) } returns
         PageImpl(
-          listOf(GetUserResponse.of(user)),
+          listOf(GetUserResponse.from(user)),
           defaultPageable,
           1
         )
@@ -81,7 +81,7 @@ class UserControllerTests :
         userController.getUserList(
           any<Pageable>()
         )
-      } returns ResponseEntity.ok(PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1))
+      } returns ResponseEntity.ok(PageImpl(listOf(GetUserResponse.from(user)), defaultPageable, 1))
 
       val response =
         userController.getUserList(
@@ -107,13 +107,13 @@ class UserControllerTests :
           CreateUserRequest::class.java
         )
 
-      every { changeUserService.createUser(any<CreateUserRequest>()) } returns of(user, defaultAccessToken)
+      every { changeUserService.createUser(any<CreateUserRequest>()) } returns from(user, defaultAccessToken)
 
       every { userController.createUser(any<CreateUserRequest>()) } returns
         ResponseEntity
           .status(HttpStatus.CREATED)
           .body(
-            of(
+            from(
               user,
               defaultAccessToken
             )
@@ -146,14 +146,14 @@ class UserControllerTests :
           any<Long>(),
           any<UpdateUserRequest>()
         )
-      } returns UpdateUserResponse.of(user)
+      } returns UpdateUserResponse.from(user)
 
       every {
         userController.updateUser(
           any<UpdateUserRequest>(),
           any<Long>()
         )
-      } returns ResponseEntity.ok(UpdateUserResponse.of(user))
+      } returns ResponseEntity.ok(UpdateUserResponse.from(user))
 
       val response =
         userController.updateUser(
@@ -182,14 +182,14 @@ class UserControllerTests :
         )
 
       every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns
-        UpdateMeResponse.of(
+        UpdateMeResponse.from(
           user,
           defaultAccessToken
         )
 
       every { userController.updateMe(any<UpdateUserRequest>(), any<SecurityUserItem>()) } returns
         ResponseEntity.ok(
-          UpdateMeResponse.of(
+          UpdateMeResponse.from(
             user,
             defaultAccessToken
           )

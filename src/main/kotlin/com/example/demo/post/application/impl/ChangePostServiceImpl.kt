@@ -35,7 +35,7 @@ class ChangePostServiceImpl(
         )
       )
 
-    return post.let(CreatePostResponse::of)
+    return post.let(CreatePostResponse::from)
   }
 
   override fun updatePost(
@@ -51,7 +51,7 @@ class ChangePostServiceImpl(
           content = updatePostRequest.content
         )
 
-    return post.let(UpdatePostResponse::of)
+    return post.let(UpdatePostResponse::from)
   }
 
   override fun deletePost(postId: Long) {

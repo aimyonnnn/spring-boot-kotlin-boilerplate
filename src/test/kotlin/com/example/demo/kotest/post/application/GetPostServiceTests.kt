@@ -39,7 +39,7 @@ class GetPostServiceTests :
           getPostService.getPostById(
             any<Long>()
           )
-        } returns GetPostResponse.of(post)
+        } returns GetPostResponse.from(post)
 
         val getPostResponse = getPostService.getPostById(post.id)
 
@@ -75,7 +75,7 @@ class GetPostServiceTests :
           getPostService.getPostList(
             any<Pageable>()
           )
-        } returns PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1)
+        } returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
 
         val getPostResponseList =
           getPostService.getPostList(
@@ -108,14 +108,14 @@ class GetPostServiceTests :
             any<GetExcludeUsersPostsRequest>(),
             any<Pageable>()
           )
-        } returns PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1)
+        } returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
 
         every {
           getPostService.getExcludeUsersPostList(
             any<GetExcludeUsersPostsRequest>(),
             any<Pageable>()
           )
-        } returns PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1)
+        } returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
 
         val getPostResponseList =
           getPostService.getExcludeUsersPostList(

@@ -84,7 +84,7 @@ class ChangeUserServiceTests :
             any<UpdateUserRequest>()
           )
         } returns
-          UpdateUserResponse.of(
+          UpdateUserResponse.from(
             user.apply {
               name = updateUserRequest.name
               role = updateUserRequest.role
@@ -138,7 +138,7 @@ class ChangeUserServiceTests :
           changeUserService.createUser(
             any<CreateUserRequest>()
           )
-        } returns CreateUserResponse.of(user, defaultAccessToken)
+        } returns CreateUserResponse.from(user, defaultAccessToken)
 
         val createUserResponse =
           changeUserService.createUser(

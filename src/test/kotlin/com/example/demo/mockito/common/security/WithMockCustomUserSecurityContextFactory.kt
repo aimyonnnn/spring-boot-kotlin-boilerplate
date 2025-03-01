@@ -15,7 +15,7 @@ class WithMockCustomUserSecurityContextFactory : WithSecurityContextFactory<With
     val securityContext = SecurityContextHolder.createEmptyContext()
     val user = Instancio.create(User::class.java)
     val securityUserItem =
-      SecurityUserItem.of(
+      SecurityUserItem.from(
         user.also {
           with(annotation) {
             it.id = id.toLong()

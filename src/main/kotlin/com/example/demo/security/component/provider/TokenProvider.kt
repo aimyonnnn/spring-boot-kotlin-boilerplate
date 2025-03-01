@@ -30,13 +30,13 @@ class TokenProvider(
 
     redisUtils.set(
       redisKey,
-      jwtProvider.createRefreshToken(SecurityUserItem.of(user)),
+      jwtProvider.createRefreshToken(SecurityUserItem.from(user)),
       jwtProvider.refreshExpireTime,
       TimeUnit.SECONDS
     )
   }
 
-  fun createAccessToken(user: User): String = jwtProvider.createAccessToken(SecurityUserItem.of(user))
+  fun createAccessToken(user: User): String = jwtProvider.createAccessToken(SecurityUserItem.from(user))
 
   fun refreshAccessToken(securityUserItem: SecurityUserItem): String =
     jwtProvider.refreshAccessToken(

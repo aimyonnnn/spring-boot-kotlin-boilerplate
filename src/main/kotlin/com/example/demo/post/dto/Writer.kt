@@ -8,7 +8,7 @@ data class Writer(
   val name: String
 ) {
   companion object {
-    fun of(user: User): Writer =
+    fun from(user: User): Writer =
       with(user) {
         Writer(
           userId = id,

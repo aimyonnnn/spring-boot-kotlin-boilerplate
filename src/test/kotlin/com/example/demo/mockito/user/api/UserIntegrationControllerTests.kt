@@ -7,7 +7,7 @@ import com.example.demo.user.application.impl.ChangeUserServiceImpl
 import com.example.demo.user.application.impl.GetUserServiceImpl
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
-import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.of
+import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.from
 import com.example.demo.user.dto.serve.response.GetUserResponse
 import com.example.demo.user.dto.serve.response.UpdateMeResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
@@ -86,7 +86,7 @@ class UserIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToGetUserResponse_when_GivenUserIdAndUserIsAuthenticated() {
       Mockito
         .`when`(getUserServiceImpl.getUserById(any<Long>()))
-        .thenReturn(GetUserResponse.of(user))
+        .thenReturn(GetUserResponse.from(user))
 
       mockMvc
         .perform(
@@ -161,7 +161,7 @@ class UserIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToPageOfGetUserResponse_when_GivenDefaultPageableAndUserIsAuthenticated() {
       Mockito
         .`when`(getUserServiceImpl.getUserList(any<Pageable>()))
-        .thenReturn(PageImpl(listOf(GetUserResponse.of(user)), defaultPageable, 1))
+        .thenReturn(PageImpl(listOf(GetUserResponse.from(user)), defaultPageable, 1))
 
       mockMvc
         .perform(
@@ -240,7 +240,7 @@ class UserIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToCreateUserResponse_when_GivenCreateUserRequest() {
       Mockito
         .`when`(changeUserServiceImpl.createUser(any<CreateUserRequest>()))
-        .thenReturn(of(user, defaultAccessToken))
+        .thenReturn(from(user, defaultAccessToken))
 
       mockMvc
         .perform(
@@ -337,7 +337,7 @@ class UserIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToUpdateUserResponse_when_GivenUserIdAndUpdateUserRequestAndUserIsAuthenticated() {
       Mockito
         .`when`(changeUserServiceImpl.updateUser(any<Long>(), any<UpdateUserRequest>()))
-        .thenReturn(UpdateUserResponse.of(user))
+        .thenReturn(UpdateUserResponse.from(user))
 
       mockMvc
         .perform(
@@ -447,7 +447,7 @@ class UserIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToUpdateMeResponse_when_GivenSecurityUserItemAndUpdateUserRequestAndUserIsAuthenticated() {
       Mockito
         .`when`(changeUserServiceImpl.updateMe(any<Long>(), any<UpdateUserRequest>()))
-        .thenReturn(UpdateMeResponse.of(user, defaultAccessToken))
+        .thenReturn(UpdateMeResponse.from(user, defaultAccessToken))
 
       mockMvc
         .perform(

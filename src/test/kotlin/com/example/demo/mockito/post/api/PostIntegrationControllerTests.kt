@@ -78,7 +78,7 @@ class PostIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToGetPostResponse_when_GivenPostIdAndUserIsAuthenticated() {
       Mockito
         .`when`(getPostServiceImpl.getPostById(any<Long>()))
-        .thenReturn(GetPostResponse.of(post))
+        .thenReturn(GetPostResponse.from(post))
 
       mockMvc
         .perform(
@@ -156,7 +156,7 @@ class PostIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToPageOfGetPostResponse_when_GivenDefaultPageableAndUserIsAuthenticated() {
       Mockito
         .`when`(getPostServiceImpl.getPostList(any<Pageable>()))
-        .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+        .thenReturn(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
       mockMvc
         .perform(
@@ -233,7 +233,7 @@ class PostIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToPageOfGetPostResponse_when_GivenDefaultPageableAndGetExcludeUsersPostsRequestAndUserIsAuthenticated() {
       Mockito
         .`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
-        .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+        .thenReturn(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
       mockMvc
         .perform(
@@ -320,7 +320,7 @@ class PostIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToCreatePostResponse_when_GivenUserIdAndCreatePostRequestAndUserIsAuthenticated() {
       Mockito
         .`when`(changePostServiceImpl.createPost(any<Long>(), any<CreatePostRequest>()))
-        .thenReturn(CreatePostResponse.of(post))
+        .thenReturn(CreatePostResponse.from(post))
 
       mockMvc
         .perform(
@@ -402,7 +402,7 @@ class PostIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToUpdatePostResponse_when_GivenPostIdAndUpdatePostRequestAndUserIsAuthenticated() {
       Mockito
         .`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
-        .thenReturn(UpdatePostResponse.of(post))
+        .thenReturn(UpdatePostResponse.from(post))
 
       mockMvc
         .perform(

@@ -20,7 +20,7 @@ data class CreateUserResponse(
   val accessToken: String
 ) {
   companion object {
-    fun of(
+    fun from(
       user: User,
       accessToken: String
     ): CreateUserResponse =

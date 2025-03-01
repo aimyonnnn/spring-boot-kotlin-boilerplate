@@ -39,7 +39,7 @@ class SecurityListenerFactory(
             email = userEmail
             name = userName
             role = userRole
-          }.let(SecurityUserItem.Companion::of)
+          }.let(SecurityUserItem.Companion::from)
 
       val userAdapter = UserAdapter(securityUserItem)
 

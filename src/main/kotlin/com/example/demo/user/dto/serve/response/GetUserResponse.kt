@@ -15,7 +15,7 @@ data class GetUserResponse(
   val email: String
 ) {
   companion object {
-    fun of(user: User): GetUserResponse =
+    fun from(user: User): GetUserResponse =
       with(user) {
         GetUserResponse(
           userId = id,

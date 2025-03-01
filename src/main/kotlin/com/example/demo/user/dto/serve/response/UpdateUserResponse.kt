@@ -15,7 +15,7 @@ class UpdateUserResponse(
   val email: String
 ) {
   companion object {
-    fun of(user: User): UpdateUserResponse =
+    fun from(user: User): UpdateUserResponse =
       with(user) {
         UpdateUserResponse(
           userId = id,

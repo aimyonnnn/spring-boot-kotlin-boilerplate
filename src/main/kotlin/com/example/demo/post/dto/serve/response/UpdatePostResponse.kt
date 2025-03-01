@@ -17,14 +17,14 @@ data class UpdatePostResponse(
   val writer: Writer
 ) {
   companion object {
-    fun of(post: Post): UpdatePostResponse =
+    fun from(post: Post): UpdatePostResponse =
       with(post) {
         UpdatePostResponse(
           postId = id,
           title = title,
           subTitle = subTitle,
           content = content,
-          writer = Writer.of(user)
+          writer = Writer.from(user)
         )
       }
   }

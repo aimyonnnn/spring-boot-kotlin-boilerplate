@@ -55,7 +55,7 @@ class PostControllerTests {
   fun should_AssertGetPostResponse_when_GivenPostId() {
     Mockito
       .`when`(getPostServiceImpl.getPostById(any<Long>()))
-      .thenReturn(GetPostResponse.of(post))
+      .thenReturn(GetPostResponse.from(post))
 
     val response =
       postController.getPostById(
@@ -83,7 +83,7 @@ class PostControllerTests {
   fun should_AssertPageOfGetPostResponse_when_GivenDefaultPageable() {
     Mockito
       .`when`(getPostServiceImpl.getPostList(any<Pageable>()))
-      .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+      .thenReturn(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
     val response =
       postController.getPostList(
@@ -117,7 +117,7 @@ class PostControllerTests {
 
     Mockito
       .`when`(getPostServiceImpl.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>()))
-      .thenReturn(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+      .thenReturn(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
     val response =
       postController.getExcludeUsersPostList(
@@ -156,7 +156,7 @@ class PostControllerTests {
 
     Mockito
       .`when`(changePostServiceImpl.createPost(any<Long>(), any<CreatePostRequest>()))
-      .thenReturn(CreatePostResponse.of(post))
+      .thenReturn(CreatePostResponse.from(post))
 
     val response =
       postController.createPost(
@@ -190,7 +190,7 @@ class PostControllerTests {
 
     Mockito
       .`when`(changePostServiceImpl.updatePost(any<Long>(), any<UpdatePostRequest>()))
-      .thenReturn(UpdatePostResponse.of(post))
+      .thenReturn(UpdatePostResponse.from(post))
 
     val response =
       postController.updatePost(

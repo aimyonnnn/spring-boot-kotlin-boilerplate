@@ -20,17 +20,17 @@ class GetUserServiceImpl(
       userRepository
         .findOneById(userId) ?: throw UserNotFoundException(userId)
 
-    return user.let(GetUserResponse::of)
+    return user.let(GetUserResponse::from)
   }
 
   override fun getUserByEmail(email: String): GetUserResponse? {
     val user: User = userRepository.findOneByEmail(email) ?: return null
 
-    return user.let(GetUserResponse::of)
+    return user.let(GetUserResponse::from)
   }
 
   override fun getUserList(pageable: Pageable): Page<GetUserResponse> =
     userRepository
       .findAll(pageable)
-      .map(GetUserResponse::of)
+      .map(GetUserResponse::from)
 }

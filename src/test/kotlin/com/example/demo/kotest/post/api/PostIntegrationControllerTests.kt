@@ -50,7 +50,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
 
       When("Success GET /api/v1/posts/{postId}") {
 
-        every { getPostService.getPostById(any<Long>()) } returns GetPostResponse.of(post)
+        every { getPostService.getPostById(any<Long>()) } returns GetPostResponse.from(post)
 
         Then("Call GET /api/v1/posts/{postId}") {
           mockMvc
@@ -99,7 +99,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
         every { getPostService.getPostList(any<Pageable>()) } returns
           PageImpl(
             listOf(
-              GetPostResponse.of(post)
+              GetPostResponse.from(post)
             ),
             defaultPageable,
             1
@@ -164,7 +164,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
           )
         } returns
           PageImpl(
-            listOf(GetPostResponse.of(post)),
+            listOf(GetPostResponse.from(post)),
             defaultPageable,
             1
           )
@@ -243,7 +243,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
             any<Long>(),
             any<CreatePostRequest>()
           )
-        } returns CreatePostResponse.of(post)
+        } returns CreatePostResponse.from(post)
 
         Then("Call PUT /api/v1/posts") {
           mockMvc
@@ -307,7 +307,7 @@ class PostIntegrationControllerTests : BaseIntegrationController() {
             any<Long>(),
             any<UpdatePostRequest>()
           )
-        } returns UpdatePostResponse.of(post)
+        } returns UpdatePostResponse.from(post)
 
         Then("Call PATCH /api/v1/posts/{postId}") {
           mockMvc

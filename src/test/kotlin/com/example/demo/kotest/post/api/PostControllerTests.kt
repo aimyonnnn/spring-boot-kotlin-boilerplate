@@ -39,9 +39,9 @@ class PostControllerTests :
 
     test("Get Post By Id") {
 
-      every { getPostService.getPostById(any<Long>()) } returns GetPostResponse.of(post)
+      every { getPostService.getPostById(any<Long>()) } returns GetPostResponse.from(post)
 
-      every { postController.getPostById(any<Long>()) } returns ResponseEntity.ok(GetPostResponse.of(post))
+      every { postController.getPostById(any<Long>()) } returns ResponseEntity.ok(GetPostResponse.from(post))
 
       val response = postController.getPostById(post.id)
 
@@ -61,14 +61,14 @@ class PostControllerTests :
 
       every { getPostService.getPostList(any<Pageable>()) } returns
         PageImpl(
-          listOf(GetPostResponse.of(post)),
+          listOf(GetPostResponse.from(post)),
           defaultPageable,
           1
         )
 
       every {
         postController.getPostList(any<Pageable>())
-      } returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+      } returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
       val response =
         postController.getPostList(
@@ -102,14 +102,14 @@ class PostControllerTests :
         )
       } returns
         PageImpl(
-          listOf(GetPostResponse.of(post)),
+          listOf(GetPostResponse.from(post)),
           defaultPageable,
           1
         )
 
       every {
         postController.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>())
-      } returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.of(post)), defaultPageable, 1))
+      } returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
       val response =
         postController.getExcludeUsersPostList(
@@ -141,14 +141,14 @@ class PostControllerTests :
           SecurityUserItem::class.java
         )
 
-      every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.of(post)
+      every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.from(post)
 
       every {
         postController.createPost(
           any<CreatePostRequest>(),
           any<SecurityUserItem>()
         )
-      } returns ResponseEntity.status(HttpStatus.CREATED).body(CreatePostResponse.of(post))
+      } returns ResponseEntity.status(HttpStatus.CREATED).body(CreatePostResponse.from(post))
 
       val response = postController.createPost(createPostRequest, securityUserItem)
 
@@ -167,11 +167,11 @@ class PostControllerTests :
     test("Update Post") {
       val updatedPostRequest = Instancio.create(UpdatePostRequest::class.java)
 
-      every { changePostService.updatePost(any<Long>(), any<UpdatePostRequest>()) } returns UpdatePostResponse.of(post)
+      every { changePostService.updatePost(any<Long>(), any<UpdatePostRequest>()) } returns UpdatePostResponse.from(post)
 
       every { postController.updatePost(any<UpdatePostRequest>(), any<Long>()) } returns
         ResponseEntity.ok(
-          UpdatePostResponse.of(post)
+          UpdatePostResponse.from(post)
         )
 
       val response = postController.updatePost(updatedPostRequest, post.id)

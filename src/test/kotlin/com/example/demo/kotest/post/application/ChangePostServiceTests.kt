@@ -73,7 +73,7 @@ class ChangePostServiceTests :
             any<UpdatePostRequest>()
           )
         } returns
-          UpdatePostResponse.of(
+          UpdatePostResponse.from(
             post.apply {
               title = updatePostRequest.title
               subTitle = updatePostRequest.subTitle
@@ -123,7 +123,7 @@ class ChangePostServiceTests :
 
         every { postRepository.save(any<Post>()) } returns post
 
-        every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.of(post)
+        every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.from(post)
 
         val createPostResponse = changePostService.createPost(user.id, createPostRequest)
 
