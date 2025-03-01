@@ -2,6 +2,7 @@ package com.example.demo.security.config
 
 import com.example.demo.security.component.CustomAuthenticationEntryPoint
 import com.example.demo.security.component.provider.AuthProvider
+import org.springframework.boot.autoconfigure.security.servlet.PathRequest
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
@@ -30,7 +31,19 @@ class LocalSecurityConfig(
   fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
     authProvider
       .defaultSecurityFilterChain(httpSecurity)
-      .exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
+      .headers {
+        it.frameOptions { options ->
+          options.sameOrigin()
+        }
+      }.authorizeHttpRequests { request ->
+        request
+          .requestMatchers(*authProvider.whiteListDefaultEndpoints(), *authProvider.ignoreListDefaultEndpoints())
+          .permitAll()
+          .requestMatchers(PathRequest.toH2Console())
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+      }.exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
         exceptionHandling.authenticationEntryPoint(
           customAuthenticationEntryPoint
         )

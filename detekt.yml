@@ -40,5 +40,5 @@ performance:
   SpreadOperator:
     active: true
     excludes:
-      - "**/security/component/provider/**"
-      - "**/src/main/kotlin/com/example/demo/DemoApplication.kt"
+      - "**/security/config/**"
+      - "**/DemoApplication.kt"

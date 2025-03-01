@@ -26,8 +26,7 @@ class AuthProvider(
     arrayOf(
       "/api-docs/**",
       "/swagger-ui/**",
-      "/swagger.html",
-      "/h2-console/**"
+      "/swagger.html"
     )
 
   fun whiteListDefaultEndpoints(): Array<String> =
@@ -49,12 +48,6 @@ class AuthProvider(
         cors.configurationSource(
           corsConfig.corsConfigurationSource()
         )
-      }.authorizeHttpRequests { request ->
-        request
-          .requestMatchers(*whiteListDefaultEndpoints(), *ignoreListDefaultEndpoints())
-          .permitAll()
-          .anyRequest()
-          .authenticated()
       }.sessionManagement { httpSecuritySessionManagementConfigurer: SessionManagementConfigurer<HttpSecurity?> ->
         httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
           SessionCreationPolicy.STATELESS

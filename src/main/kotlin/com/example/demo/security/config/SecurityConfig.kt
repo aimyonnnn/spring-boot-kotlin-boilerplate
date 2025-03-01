@@ -32,7 +32,13 @@ class SecurityConfig(
   fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
     authProvider
       .defaultSecurityFilterChain(httpSecurity)
-      .addFilterAfter(
+      .authorizeHttpRequests { request ->
+        request
+          .requestMatchers(*authProvider.whiteListDefaultEndpoints(), *authProvider.ignoreListDefaultEndpoints())
+          .permitAll()
+          .anyRequest()
+          .authenticated()
+      }.addFilterAfter(
         APIKeyAuthFilter(authProvider),
         UsernamePasswordAuthenticationFilter::class.java
       ).exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
