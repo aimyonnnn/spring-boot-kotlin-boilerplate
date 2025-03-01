@@ -3,7 +3,7 @@
 ### Environment & Skills
 
 - `Application`
-  - Kotlin 2.1
+  - Kotlin 2.0
   - Jdk 21
   - Spring boot 3.4.0
   - Gradle 8.10
@@ -58,6 +58,10 @@
       - [Please refer to the lint rules for this project here.](.editorconfig)
     - report output
       - build/reports/ktlint
+  - detekt
+    - [using rules](detekt.yml)
+    - report output
+      - build/reports/detekt
 - docker-compose
   - If you plan to use it, you need to check the environment variables.
 - create spring batch metadata table (localhost, development and production environments.)
