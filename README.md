@@ -36,6 +36,7 @@
 - `Etc`
   - Pgadmin
   - Ktlint
+  - Detekt
 
 ### Project Guide
 
