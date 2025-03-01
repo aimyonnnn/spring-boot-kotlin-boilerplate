@@ -1,4 +1,4 @@
-package com.example.demo.utils
+package com.example.demo.mockito.utils
 
 import com.example.demo.utils.SecurityUtils.sendErrorResponse
 import org.instancio.Instancio
