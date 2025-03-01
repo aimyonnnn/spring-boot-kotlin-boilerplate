@@ -1,0 +1,44 @@
+style:
+  MagicNumber:
+    active: false
+  MaxLineLength:
+    active: true
+    maxLineLength: 170
+  UnusedPrivateMember:
+    active: true
+    excludes:
+      - "**/common/exception/handler/**"
+  UnusedPrivateProperty:
+    active: true
+    excludes:
+      - "**/user/repository/impl/**"
+
+build:
+  maxIssues: 0
+  excludeCorrectable: true
+
+config:
+  validation: true
+  warningsAsErrors: true
+
+complexity:
+  active: true
+  LongMethod:
+    active: false
+  TooManyFunctions:
+    active: true
+    thresholdInFiles: 10
+    thresholdInClasses: 20
+    thresholdInInterfaces: 10
+    thresholdInObjects: 20
+    thresholdInEnums: 5
+    ignoreDeprecated: true
+    ignorePrivate: true
+    ignoreOverridden: false
+
+performance:
+  SpreadOperator:
+    active: true
+    excludes:
+      - "**/security/component/provider/**"
+      - "**/src/main/kotlin/com/example/demo/DemoApplication.kt"

@@ -5,6 +5,7 @@ pluginManagement {
   val springBootVersion: String by settings
   val springDependencyManagementVersion: String by settings
   val ktLintGradleVersion: String by settings
+  val detektVersion: String by settings
 
   resolutionStrategy {
     eachPlugin {
@@ -16,6 +17,7 @@ pluginManagement {
         "org.jetbrains.kotlin.plugin.jpa" -> useVersion(kotlinVersion)
         "io.spring.dependency-management" -> useVersion(springDependencyManagementVersion)
         "org.jlleitschuh.gradle.ktlint" -> useVersion(ktLintGradleVersion)
+        "io.gitlab.arturbosch.detekt" -> useVersion(detektVersion)
       }
     }
   }

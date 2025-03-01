@@ -1,3 +1,5 @@
+import io.gitlab.arturbosch.detekt.Detekt
+import io.gitlab.arturbosch.detekt.DetektCreateBaselineTask
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -9,12 +11,14 @@ val ktLintVersion: String by project
 
 val currentJavaVersion = JavaVersion.toVersion(javaVersion)
 val currentJvmVersion = JvmTarget.fromTarget(javaVersion)
-val currentKotlinVersion = KotlinVersion.fromVersion(kotlinVersion.dropLast(2))
+val splitKotlinVersion = kotlinVersion.split(".", limit = 3)
+val currentKotlinVersion = KotlinVersion.fromVersion("${splitKotlinVersion[0]}.${splitKotlinVersion[1]}")
 
 plugins {
   id("org.springframework.boot")
   id("io.spring.dependency-management")
   id("org.jlleitschuh.gradle.ktlint")
+  id("io.gitlab.arturbosch.detekt")
   kotlin("jvm")
   kotlin("kapt")
   kotlin("plugin.spring")
@@ -133,4 +137,28 @@ ktlint {
   reporters {
     reporter(ReporterType.JSON)
   }
+}
+
+detekt {
+  config.setFrom("$rootDir/detekt.yml")
+  allRules = true
+  buildUponDefaultConfig = true
+  ignoreFailures = false
+}
+
+tasks.withType<Detekt>().configureEach {
+  reports {
+    html.required.set(true)
+    xml.required.set(true)
+    sarif.required.set(true)
+    md.required.set(true)
+  }
+}
+
+tasks.withType<Detekt>().configureEach {
+  jvmTarget = javaVersion
+}
+
+tasks.withType<DetektCreateBaselineTask>().configureEach {
+  jvmTarget = javaVersion
 }
