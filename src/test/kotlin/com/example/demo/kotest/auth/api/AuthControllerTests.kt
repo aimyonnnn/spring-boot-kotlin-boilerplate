@@ -36,11 +36,11 @@ class AuthControllerTests :
     test("Sign In") {
       val signInRequest = Instancio.create(SignInRequest::class.java)
 
-      every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.of(user, defaultAccessToken)
+      every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.from(user, defaultAccessToken)
 
       every { authController.signIn(any<SignInRequest>()) } returns
         ResponseEntity.ok(
-          SignInResponse.of(
+          SignInResponse.from(
             user,
             defaultAccessToken
           )

@@ -19,7 +19,7 @@ class AuthService(
     val user: User = userService.validateAuthReturnUser(signInRequest)
 
     return user.let {
-      SignInResponse.of(it, tokenProvider.createFullTokens(it))
+      SignInResponse.from(it, tokenProvider.createFullTokens(it))
     }
   }
 

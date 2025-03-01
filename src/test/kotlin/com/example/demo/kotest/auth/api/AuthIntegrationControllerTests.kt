@@ -58,7 +58,7 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
 
       When("Success POST /api/v1/auth/signIn") {
 
-        every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.of(user, defaultAccessToken)
+        every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.from(user, defaultAccessToken)
 
         Then("Call POST /api/v1/auth/signIn") {
           mockMvc

@@ -51,7 +51,7 @@ class AuthControllerTests {
 
     Mockito
       .`when`(authService.signIn(any<SignInRequest>()))
-      .thenReturn(SignInResponse.of(user, defaultAccessToken))
+      .thenReturn(SignInResponse.from(user, defaultAccessToken))
 
     val response =
       authController.signIn(

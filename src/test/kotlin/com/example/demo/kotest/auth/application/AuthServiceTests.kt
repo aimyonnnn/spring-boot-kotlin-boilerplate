@@ -49,7 +49,7 @@ class AuthServiceTests :
 
         every { userService.validateAuthReturnUser(any<SignInRequest>()) } returns user
 
-        every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.of(user, defaultAccessToken)
+        every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.from(user, defaultAccessToken)
 
         val signInResponse = authService.signIn(signInRequest)
 

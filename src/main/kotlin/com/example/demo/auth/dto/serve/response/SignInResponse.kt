@@ -20,7 +20,7 @@ class SignInResponse(
   val email: String
 ) {
   companion object {
-    fun of(
+    fun from(
       user: User,
       accessToken: String
     ): SignInResponse =

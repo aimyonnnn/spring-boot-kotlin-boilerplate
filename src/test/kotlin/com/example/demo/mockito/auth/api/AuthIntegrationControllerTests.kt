@@ -4,7 +4,7 @@ import com.example.demo.auth.api.AuthController
 import com.example.demo.auth.application.AuthService
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
-import com.example.demo.auth.dto.serve.response.SignInResponse.Companion.of
+import com.example.demo.auth.dto.serve.response.SignInResponse.Companion.from
 import com.example.demo.mockito.common.security.SecurityItem
 import com.example.demo.mockito.common.security.WithMockCustomUser
 import com.example.demo.security.SecurityUserItem
@@ -87,7 +87,7 @@ class AuthIntegrationControllerTests : SecurityItem() {
     fun should_ExpectOKResponseToSignInResponse_when_GivenSignInRequest() {
       Mockito
         .`when`(authService.signIn(any<SignInRequest>()))
-        .thenReturn(of(user, defaultAccessToken))
+        .thenReturn(from(user, defaultAccessToken))
 
       mockMvc
         .perform(
