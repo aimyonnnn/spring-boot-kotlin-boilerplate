@@ -58,7 +58,7 @@ dependencies {
   implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 
   // flyway
-  implementation("org.flywaydb:flyway-core")
+  implementation("org.flywaydb:flyway-core:11.3.4")
 
   // querydsl
   implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
@@ -150,7 +150,7 @@ tasks.withType<Detekt>().configureEach {
   reports {
     html.required.set(true)
     xml.required.set(true)
-    sarif.required.set(true)
+    sarif.required.set(false)
     md.required.set(true)
   }
 }
