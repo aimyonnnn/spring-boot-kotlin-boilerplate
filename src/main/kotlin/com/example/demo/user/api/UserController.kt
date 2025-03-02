@@ -12,6 +12,7 @@ import com.example.demo.user.dto.serve.response.GetUserResponse
 import com.example.demo.user.dto.serve.response.UpdateMeResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -21,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -73,7 +75,11 @@ class UserController(
     ]
   )
   @GetMapping
-  fun getUserList(pageable: Pageable): ResponseEntity<Page<GetUserResponse>> =
+  fun getUserList(
+    @PageableDefault
+    @Parameter(hidden = true)
+    pageable: Pageable
+  ): ResponseEntity<Page<GetUserResponse>> =
     ResponseEntity.ok(
       getUserService.getUserList(
         pageable

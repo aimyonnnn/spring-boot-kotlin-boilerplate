@@ -12,6 +12,7 @@ import com.example.demo.post.dto.serve.response.UpdatePostResponse
 import com.example.demo.security.SecurityUserItem
 import com.example.demo.security.annotation.CurrentUser
 import io.swagger.v3.oas.annotations.Operation
+import io.swagger.v3.oas.annotations.Parameter
 import io.swagger.v3.oas.annotations.media.ArraySchema
 import io.swagger.v3.oas.annotations.media.Content
 import io.swagger.v3.oas.annotations.media.Schema
@@ -21,6 +22,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
+import org.springframework.data.web.PageableDefault
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -80,7 +82,11 @@ class PostController(
     ]
   )
   @GetMapping
-  fun getPostList(pageable: Pageable): ResponseEntity<Page<GetPostResponse>> =
+  fun getPostList(
+    @PageableDefault
+    @Parameter(hidden = true)
+    pageable: Pageable
+  ): ResponseEntity<Page<GetPostResponse>> =
     ResponseEntity.ok(
       getPostService.getPostList(
         pageable
@@ -112,6 +118,8 @@ class PostController(
   @GetMapping("/exclude-users")
   fun getExcludeUsersPostList(
     getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
+    @PageableDefault
+    @Parameter(hidden = true)
     pageable: Pageable
   ): ResponseEntity<Page<GetPostResponse>> =
     ResponseEntity.ok(
