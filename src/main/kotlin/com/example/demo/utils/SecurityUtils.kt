@@ -22,12 +22,11 @@ object SecurityUtils {
     val errorResponse =
       ErrorResponse.of(
         HttpStatus.UNAUTHORIZED.value(),
-        message
+        exception.message ?: message
       )
 
     logger.error {
-      "Security Filter sendErrorResponse - ${httpServletRequest.method} ${httpServletRequest.requestURI} " +
-        "$message ${exception.message ?: "Security Filter Error"}"
+      "Security Filter sendErrorResponse - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message ?: message}"
     }
 
     with(httpServletResponse) {
