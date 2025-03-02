@@ -2,6 +2,13 @@ spring:
   config:
     activate:
       on-profile: prod
+  datasource:
+    hikari:
+      driver-class-name: org.postgresql.Driver
+      maximum-pool-size: 20
+      max-lifetime: 600000
+      connection-timeout: 15000
+      validation-timeout: 5000
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     database: postgresql
