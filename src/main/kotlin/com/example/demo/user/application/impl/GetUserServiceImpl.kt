@@ -23,8 +23,8 @@ class GetUserServiceImpl(
     return user.let(GetUserResponse::from)
   }
 
-  override fun getUserByEmail(email: String): GetUserResponse? {
-    val user: User = userRepository.findOneByEmail(email) ?: return null
+  override fun getUserByEmail(email: String): GetUserResponse {
+    val user = userRepository.findOneByEmail(email) ?: throw UserNotFoundException(email)
 
     return user.let(GetUserResponse::from)
   }

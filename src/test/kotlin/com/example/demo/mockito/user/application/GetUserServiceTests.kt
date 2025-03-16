@@ -8,7 +8,6 @@ import org.assertj.core.api.Assertions.assertThat
 import org.instancio.Instancio
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
-import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -84,13 +83,9 @@ class GetUserServiceTests {
         .thenReturn(user)
 
       val getUserResponse =
-        requireNotNull(
-          getUserServiceImpl.getUserByEmail(
-            user.email
-          )
-        ) {
-          "Get user response must not be null"
-        }
+        getUserServiceImpl.getUserByEmail(
+          user.email
+        )
 
       assertNotNull(getUserResponse)
       assertEquals(user.id, getUserResponse.userId)
@@ -100,18 +95,15 @@ class GetUserServiceTests {
     }
 
     @Test
-    @DisplayName("Get user by email is null")
-    fun should_AssertGetUserResponseIsNull_when_GivenUserEmail() {
+    @DisplayName("Not found user")
+    fun should_AssertUserNotFoundException_when_GivenUserId() {
       Mockito
         .`when`(userRepository.findOneByEmail(any<String>()))
-        .thenReturn(null)
+        .thenThrow(UserNotFoundException(user.email))
 
-      val getUserResponse =
-        getUserServiceImpl.getUserByEmail(
-          user.email
-        )
-
-      assertNull(getUserResponse)
+      assertThrows(
+        UserNotFoundException::class.java
+      ) { getUserServiceImpl.getUserByEmail(user.email) }
     }
   }
 
