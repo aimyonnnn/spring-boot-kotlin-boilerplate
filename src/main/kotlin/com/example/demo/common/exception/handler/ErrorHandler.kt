@@ -10,6 +10,7 @@ import io.jsonwebtoken.ExpiredJwtException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.validation.BindException
 import org.springframework.web.bind.annotation.ExceptionHandler
@@ -152,6 +153,24 @@ class ErrorHandler {
     }
 
     return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
+  }
+
+  @ExceptionHandler(AccessDeniedException::class)
+  private fun handleAccessDeniedExceptionException(
+    exception: AccessDeniedException,
+    httpServletRequest: HttpServletRequest
+  ): ResponseEntity<ErrorResponse> {
+    val response =
+      ErrorResponse.of(
+        HttpStatus.FORBIDDEN.value(),
+        exception.message ?: HttpStatus.FORBIDDEN.name
+      )
+
+    logger.error {
+      "handleAccessDeniedExceptionException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+    }
+
+    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response)
   }
 
   @ExceptionHandler(NoHandlerFoundException::class)
