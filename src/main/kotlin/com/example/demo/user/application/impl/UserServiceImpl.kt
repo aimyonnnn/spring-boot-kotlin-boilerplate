@@ -27,15 +27,13 @@ class UserServiceImpl(
       userRepository
         .findOneByEmail(signInRequest.email) ?: throw UserNotFoundException(signInRequest.email)
 
-    val isValidate =
-      user.validatePassword(
+    user
+      .validatePassword(
         signInRequest.password,
         bCryptPasswordEncoder
-      )
-
-    if (!isValidate) {
-      throw UserUnAuthorizedException(signInRequest.email)
-    }
+      ).run {
+        if (!this) throw UserUnAuthorizedException(signInRequest.email)
+      }
 
     return user
   }

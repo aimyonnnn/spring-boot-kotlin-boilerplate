@@ -25,10 +25,11 @@ class ChangeUserServiceImpl(
   private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : ChangeUserService {
   override fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
-    val isExist: Boolean = userRepository.existsByEmail(createUserRequest.email)
-    if (isExist) {
-      throw AlreadyUserExistException(createUserRequest.email)
-    }
+    userRepository
+      .existsByEmail(createUserRequest.email)
+      .run {
+        if (this) throw AlreadyUserExistException(createUserRequest.email)
+      }
 
     val user: User =
       User(
