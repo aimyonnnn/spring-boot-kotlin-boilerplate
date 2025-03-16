@@ -12,8 +12,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener
 abstract class BaseChangerEntity(
   @CreatedBy
   @Column(nullable = false, updatable = false)
-  var createdBy: Long? = null,
+  var createdBy: Long = 0L,
   @LastModifiedBy
   @Column(nullable = false)
-  var updatedBy: Long? = null
+  var updatedBy: Long = 0L
 ) : BaseEntity()
