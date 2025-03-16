@@ -4,10 +4,10 @@ import com.example.demo.common.exception.UnAuthorizedException
 
 class UserUnAuthorizedException : UnAuthorizedException {
   constructor(userId: Long) : super(
-    "User Not Found userId = $userId"
+    "User Un Authorized userId = $userId"
   )
 
   constructor(email: String) : super(
-    "User Not Found email = $email"
+    "User Un Authorized email = $email"
   )
 }

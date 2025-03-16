@@ -4,10 +4,10 @@ import com.example.demo.common.exception.AlreadyExistException
 
 class AlreadyUserExistException : AlreadyExistException {
   constructor(userId: Long) : super(
-    "User Not Found userId = $userId"
+    "Already User Exist userId = $userId"
   )
 
   constructor(email: String) : super(
-    "User Not Found email = $email"
+    "Already User Exist email = $email"
   )
 }
