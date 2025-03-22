@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain
 
 @Profile("local")
 @Configuration
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @EnableMethodSecurity(securedEnabled = true)
 class LocalSecurityConfig(
   private val authProvider: AuthProvider,
