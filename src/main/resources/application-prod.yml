@@ -24,6 +24,8 @@ logging:
     name: logs/app.log
   logback:
     rollingpolicy:
-      file-name-pattern: logs/app-%d{yyyy-MM-dd_HH-mm}.%i.log
+      file-name-pattern: logs/app-%d{yyyy-MM-dd_HH-mm}.%i.gz
       max-file-size: 10MB
+      total-size-cap: 10MB
+      max-history: 30
 
