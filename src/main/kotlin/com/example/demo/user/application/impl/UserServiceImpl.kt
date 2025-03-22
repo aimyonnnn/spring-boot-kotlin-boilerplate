@@ -32,7 +32,7 @@ class UserServiceImpl(
         signInRequest.password,
         bCryptPasswordEncoder
       ).run {
-        if (!this) throw UserUnAuthorizedException(signInRequest.email)
+        check(this) { throw UserUnAuthorizedException(signInRequest.email) }
       }
 
     return user
