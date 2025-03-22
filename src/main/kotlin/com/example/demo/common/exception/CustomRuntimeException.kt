@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 open class CustomRuntimeException(
-  message: String
+	message: String
 ) : RuntimeException(message)

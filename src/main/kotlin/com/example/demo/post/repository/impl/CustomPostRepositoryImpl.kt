@@ -12,29 +12,29 @@ import org.springframework.data.domain.Pageable
 import org.springframework.transaction.annotation.Transactional
 
 open class CustomPostRepositoryImpl(
-  private val jpaQueryFactory: JPAQueryFactory
+	private val jpaQueryFactory: JPAQueryFactory
 ) : CustomPostRepository {
-  @Transactional(readOnly = true)
-  override fun getExcludeUsersPosts(
-    getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
-    pageable: Pageable
-  ): Page<GetPostResponse> {
-    val queryFactory =
-      jpaQueryFactory
-        .select(
-          Projections.fields(
-            GetPostResponse::class.java,
-            post.id,
-            post.title,
-            post.content,
-            post.user.id
-          )
-        ).from(post)
-        .where(post.user.id.notIn(getExcludeUsersPostsRequest.userIds))
-        .offset(pageable.offset)
-        .limit(pageable.pageSize.toLong())
-        .fetch()
+	@Transactional(readOnly = true)
+	override fun getExcludeUsersPosts(
+		getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
+		pageable: Pageable
+	): Page<GetPostResponse> {
+		val queryFactory =
+			jpaQueryFactory
+				.select(
+					Projections.fields(
+						GetPostResponse::class.java,
+						post.id,
+						post.title,
+						post.content,
+						post.user.id
+					)
+				).from(post)
+				.where(post.user.id.notIn(getExcludeUsersPostsRequest.userIds))
+				.offset(pageable.offset)
+				.limit(pageable.pageSize.toLong())
+				.fetch()
 
-    return PageImpl(queryFactory, pageable, queryFactory.size.toLong())
-  }
+		return PageImpl(queryFactory, pageable, queryFactory.size.toLong())
+	}
 }

@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 
 @MappedSuperclass
 abstract class BaseSoftDeleteEntity(
-  @Column
-  @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-  var deletedDt: LocalDateTime? = null
+	@Column
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+	var deletedDt: LocalDateTime? = null
 ) : BaseEntity()

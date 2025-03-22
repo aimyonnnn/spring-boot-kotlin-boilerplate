@@ -20,35 +20,35 @@ import java.io.StringWriter
 @Tag("mockito-unit-test")
 @DisplayName("Mockito Unit - Security Utils Test")
 @ExtendWith(
-  MockitoExtension::class
+	MockitoExtension::class
 )
 class SecurityUtilsTest {
-  @Mock
-  private lateinit var mockHttpServletRequest: MockHttpServletRequest
+	@Mock
+	private lateinit var mockHttpServletRequest: MockHttpServletRequest
 
-  @Mock
-  private lateinit var mockHttpServletResponse: MockHttpServletResponse
+	@Mock
+	private lateinit var mockHttpServletResponse: MockHttpServletResponse
 
-  @Test
-  @DisplayName("Send Error Response Test")
-  @Throws(Exception::class)
-  fun should_VerifyCallMethodsOfHttpServletResponse_when_GivenServletAndException() {
-    val exception = Instancio.create(Throwable::class.java)
-    val stringWriter = StringWriter()
-    val printWriter = PrintWriter(stringWriter)
+	@Test
+	@DisplayName("Send Error Response Test")
+	@Throws(Exception::class)
+	fun should_VerifyCallMethodsOfHttpServletResponse_when_GivenServletAndException() {
+		val exception = Instancio.create(Throwable::class.java)
+		val stringWriter = StringWriter()
+		val printWriter = PrintWriter(stringWriter)
 
-    Mockito.`when`(mockHttpServletResponse.writer).thenReturn(printWriter)
+		Mockito.`when`(mockHttpServletResponse.writer).thenReturn(printWriter)
 
-    sendErrorResponse(
-      mockHttpServletRequest,
-      mockHttpServletResponse,
-      exception,
-      "test exception"
-    )
+		sendErrorResponse(
+			mockHttpServletRequest,
+			mockHttpServletResponse,
+			exception,
+			"test exception"
+		)
 
-    Mockito.verify(mockHttpServletResponse, Mockito.times(1)).status = any<Int>()
-    Mockito.verify(mockHttpServletResponse, Mockito.times(1)).contentType =
-      any<String>()
-    Mockito.verify(mockHttpServletResponse, Mockito.times(1)).writer
-  }
+		Mockito.verify(mockHttpServletResponse, Mockito.times(1)).status = any<Int>()
+		Mockito.verify(mockHttpServletResponse, Mockito.times(1)).contentType =
+			any<String>()
+		Mockito.verify(mockHttpServletResponse, Mockito.times(1)).writer
+	}
 }

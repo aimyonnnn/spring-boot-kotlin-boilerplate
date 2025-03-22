@@ -14,31 +14,31 @@ import org.springframework.stereotype.Service
 
 @Service
 class AuthService(
-  private val userService: UserService,
-  private val tokenProvider: TokenProvider,
-  private val jwtProvider: JWTProvider
+	private val userService: UserService,
+	private val tokenProvider: TokenProvider,
+	private val jwtProvider: JWTProvider
 ) {
-  fun signIn(signInRequest: SignInRequest): SignInResponse {
-    val user: User = userService.validateAuthReturnUser(signInRequest)
+	fun signIn(signInRequest: SignInRequest): SignInResponse {
+		val user: User = userService.validateAuthReturnUser(signInRequest)
 
-    return user.let {
-      SignInResponse.from(it, tokenProvider.createFullTokens(it))
-    }
-  }
+		return user.let {
+			SignInResponse.from(it, tokenProvider.createFullTokens(it))
+		}
+	}
 
-  fun signOut(userId: Long) {
-    tokenProvider.deleteRefreshToken(userId)
-    SecurityContextHolder.clearContext()
-  }
+	fun signOut(userId: Long) {
+		tokenProvider.deleteRefreshToken(userId)
+		SecurityContextHolder.clearContext()
+	}
 
-  fun refreshAccessToken(refreshAccessTokenRequest: RefreshAccessTokenRequest): RefreshAccessTokenResponse {
-    val usernamePasswordAuthenticationToken = jwtProvider.getAuthentication(refreshAccessTokenRequest.refreshToken, true)
-    val userAdapter = usernamePasswordAuthenticationToken.principal as UserAdapter
+	fun refreshAccessToken(refreshAccessTokenRequest: RefreshAccessTokenRequest): RefreshAccessTokenResponse {
+		val usernamePasswordAuthenticationToken = jwtProvider.getAuthentication(refreshAccessTokenRequest.refreshToken, true)
+		val userAdapter = usernamePasswordAuthenticationToken.principal as UserAdapter
 
-    return RefreshAccessTokenResponse.of(
-      tokenProvider.refreshAccessToken(
-        userAdapter.securityUserItem
-      )
-    )
-  }
+		return RefreshAccessTokenResponse.of(
+			tokenProvider.refreshAccessToken(
+				userAdapter.securityUserItem
+			)
+		)
+	}
 }

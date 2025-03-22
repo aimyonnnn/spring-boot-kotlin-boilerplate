@@ -10,26 +10,26 @@ import jakarta.servlet.http.HttpServletResponse
 import org.springframework.web.filter.OncePerRequestFilter
 
 class APIKeyAuthFilter(
-  private val authProvider: AuthProvider
+	private val authProvider: AuthProvider
 ) : OncePerRequestFilter() {
-  override fun doFilterInternal(
-    @NonNull httpServletRequest: HttpServletRequest,
-    @NonNull httpServletResponse: HttpServletResponse,
-    @NonNull filterChain: FilterChain
-  ) {
-    runCatching {
-      authProvider.generateRequestAPIKey(httpServletRequest)?.let {
-        if (!authProvider.validateApiKey(it)) {
-          throw APIKeyNotFoundException(httpServletRequest.requestURI)
-        }
-      } ?: throw APIKeyNotFoundException(httpServletRequest.requestURI)
-    }.onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
-      .onFailure {
-        SecurityUtils.sendErrorResponse(
-          httpServletRequest,
-          httpServletResponse,
-          it
-        )
-      }
-  }
+	override fun doFilterInternal(
+		@NonNull httpServletRequest: HttpServletRequest,
+		@NonNull httpServletResponse: HttpServletResponse,
+		@NonNull filterChain: FilterChain
+	) {
+		runCatching {
+			authProvider.generateRequestAPIKey(httpServletRequest)?.let {
+				if (!authProvider.validateApiKey(it)) {
+					throw APIKeyNotFoundException(httpServletRequest.requestURI)
+				}
+			} ?: throw APIKeyNotFoundException(httpServletRequest.requestURI)
+		}.onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
+			.onFailure {
+				SecurityUtils.sendErrorResponse(
+					httpServletRequest,
+					httpServletResponse,
+					it
+				)
+			}
+	}
 }

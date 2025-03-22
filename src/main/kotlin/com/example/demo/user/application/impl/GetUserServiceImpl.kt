@@ -13,24 +13,24 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional(readOnly = true)
 class GetUserServiceImpl(
-  private val userRepository: UserRepository
+	private val userRepository: UserRepository
 ) : GetUserService {
-  override fun getUserById(userId: Long): GetUserResponse {
-    val user: User =
-      userRepository
-        .findOneById(userId) ?: throw UserNotFoundException(userId)
+	override fun getUserById(userId: Long): GetUserResponse {
+		val user: User =
+			userRepository
+				.findOneById(userId) ?: throw UserNotFoundException(userId)
 
-    return user.let(GetUserResponse::from)
-  }
+		return user.let(GetUserResponse::from)
+	}
 
-  override fun getUserByEmail(email: String): GetUserResponse {
-    val user = userRepository.findOneByEmail(email) ?: throw UserNotFoundException(email)
+	override fun getUserByEmail(email: String): GetUserResponse {
+		val user = userRepository.findOneByEmail(email) ?: throw UserNotFoundException(email)
 
-    return user.let(GetUserResponse::from)
-  }
+		return user.let(GetUserResponse::from)
+	}
 
-  override fun getUserList(pageable: Pageable): Page<GetUserResponse> =
-    userRepository
-      .findAll(pageable)
-      .map(GetUserResponse::from)
+	override fun getUserList(pageable: Pageable): Page<GetUserResponse> =
+		userRepository
+			.findAll(pageable)
+			.map(GetUserResponse::from)
 }

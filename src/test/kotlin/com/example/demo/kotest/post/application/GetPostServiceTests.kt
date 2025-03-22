@@ -22,117 +22,117 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
 class GetPostServiceTests :
-  BehaviorSpec({
-    val postRepository = mockk<PostRepository>()
-    val getPostService = mockk<GetPostService>()
+	BehaviorSpec({
+		val postRepository = mockk<PostRepository>()
+		val getPostService = mockk<GetPostService>()
 
-    val post: Post = Instancio.create(Post::class.java)
-    val defaultPageable = Pageable.ofSize(1)
+		val post: Post = Instancio.create(Post::class.java)
+		val defaultPageable = Pageable.ofSize(1)
 
-    Given("Get Post By Id") {
+		Given("Get Post By Id") {
 
-      When("Success Get Post By Id") {
+			When("Success Get Post By Id") {
 
-        every { postRepository.findOneById(any<Long>()) } returns post
+				every { postRepository.findOneById(any<Long>()) } returns post
 
-        every {
-          getPostService.getPostById(
-            any<Long>()
-          )
-        } returns GetPostResponse.from(post)
+				every {
+					getPostService.getPostById(
+						any<Long>()
+					)
+				} returns GetPostResponse.from(post)
 
-        val getPostResponse = getPostService.getPostById(post.id)
+				val getPostResponse = getPostService.getPostById(post.id)
 
-        Then("Assert Post Entity") {
-          getPostResponse shouldNotBeNull {
-            postId shouldBe post.id
-            title shouldBe post.title
-            subTitle shouldBe post.subTitle
-            content shouldBe post.content
-            writer.userId shouldBe post.user.id
-          }
-        }
-      }
+				Then("Assert Post Entity") {
+					getPostResponse shouldNotBeNull {
+						postId shouldBe post.id
+						title shouldBe post.title
+						subTitle shouldBe post.subTitle
+						content shouldBe post.content
+						writer.userId shouldBe post.user.id
+					}
+				}
+			}
 
-      When("Post Not Found Exception") {
+			When("Post Not Found Exception") {
 
-        every { postRepository.findOneById(any<Long>()) } returns null
+				every { postRepository.findOneById(any<Long>()) } returns null
 
-        every { getPostService.getPostById(any<Long>()) } throws PostNotFoundException(post.id)
+				every { getPostService.getPostById(any<Long>()) } throws PostNotFoundException(post.id)
 
-        shouldThrowExactly<PostNotFoundException> {
-          getPostService.getPostById(post.id)
-        }
-      }
-    }
+				shouldThrowExactly<PostNotFoundException> {
+					getPostService.getPostById(post.id)
+				}
+			}
+		}
 
-    Given("Get Post List") {
+		Given("Get Post List") {
 
-      When("Success Get Post List") {
-        every { postRepository.findAll(any<Pageable>()) } returns PageImpl(listOf(post), defaultPageable, 1)
+			When("Success Get Post List") {
+				every { postRepository.findAll(any<Pageable>()) } returns PageImpl(listOf(post), defaultPageable, 1)
 
-        every {
-          getPostService.getPostList(
-            any<Pageable>()
-          )
-        } returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
+				every {
+					getPostService.getPostList(
+						any<Pageable>()
+					)
+				} returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
 
-        val getPostResponseList =
-          getPostService.getPostList(
-            defaultPageable
-          )
+				val getPostResponseList =
+					getPostService.getPostList(
+						defaultPageable
+					)
 
-        Then("Assert Post List") {
-          getPostResponseList.shouldNotBeEmpty()
-          getPostResponseList.content[0] shouldNotBeNull {
-            postId shouldBe post.id
-            title shouldBe post.title
-            subTitle shouldBe post.subTitle
-            content shouldBe post.content
-            writer.userId shouldBe post.user.id
-          }
-        }
-      }
-    }
+				Then("Assert Post List") {
+					getPostResponseList.shouldNotBeEmpty()
+					getPostResponseList.content[0] shouldNotBeNull {
+						postId shouldBe post.id
+						title shouldBe post.title
+						subTitle shouldBe post.subTitle
+						content shouldBe post.content
+						writer.userId shouldBe post.user.id
+					}
+				}
+			}
+		}
 
-    Given("Get Exclude Users Post List") {
-      val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest =
-        Instancio.create(
-          GetExcludeUsersPostsRequest::class.java
-        )
+		Given("Get Exclude Users Post List") {
+			val getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest =
+				Instancio.create(
+					GetExcludeUsersPostsRequest::class.java
+				)
 
-      When("Success Get Exclude Users Post List") {
+			When("Success Get Exclude Users Post List") {
 
-        every {
-          postRepository.getExcludeUsersPosts(
-            any<GetExcludeUsersPostsRequest>(),
-            any<Pageable>()
-          )
-        } returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
+				every {
+					postRepository.getExcludeUsersPosts(
+						any<GetExcludeUsersPostsRequest>(),
+						any<Pageable>()
+					)
+				} returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
 
-        every {
-          getPostService.getExcludeUsersPostList(
-            any<GetExcludeUsersPostsRequest>(),
-            any<Pageable>()
-          )
-        } returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
+				every {
+					getPostService.getExcludeUsersPostList(
+						any<GetExcludeUsersPostsRequest>(),
+						any<Pageable>()
+					)
+				} returns PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1)
 
-        val getPostResponseList =
-          getPostService.getExcludeUsersPostList(
-            getExcludeUsersPostsRequest,
-            defaultPageable
-          )
+				val getPostResponseList =
+					getPostService.getExcludeUsersPostList(
+						getExcludeUsersPostsRequest,
+						defaultPageable
+					)
 
-        Then("Assert Post List") {
-          getPostResponseList.shouldNotBeEmpty()
-          getPostResponseList.content[0] shouldNotBeNull {
-            postId shouldBe post.id
-            title shouldBe post.title
-            subTitle shouldBe post.subTitle
-            content shouldBe post.content
-            writer.userId shouldBe post.user.id
-          }
-        }
-      }
-    }
-  })
+				Then("Assert Post List") {
+					getPostResponseList.shouldNotBeEmpty()
+					getPostResponseList.content[0] shouldNotBeNull {
+						postId shouldBe post.id
+						title shouldBe post.title
+						subTitle shouldBe post.subTitle
+						content shouldBe post.content
+						writer.userId shouldBe post.user.id
+					}
+				}
+			}
+		}
+	})

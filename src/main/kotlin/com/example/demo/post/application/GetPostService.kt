@@ -6,12 +6,12 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface GetPostService {
-  fun getPostById(postId: Long): GetPostResponse
+	fun getPostById(postId: Long): GetPostResponse
 
-  fun getPostList(pageable: Pageable): Page<GetPostResponse>
+	fun getPostList(pageable: Pageable): Page<GetPostResponse>
 
-  fun getExcludeUsersPostList(
-    getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
-    pageable: Pageable
-  ): Page<GetPostResponse>
+	fun getExcludeUsersPostList(
+		getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
+		pageable: Pageable
+	): Page<GetPostResponse>
 }

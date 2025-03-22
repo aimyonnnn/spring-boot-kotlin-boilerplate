@@ -39,275 +39,275 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 @Tag("mockito-integration-test")
 @DisplayName("Mockito Integration - Auth Controller Test")
 @WebMvcTest(
-  AuthController::class
+	AuthController::class
 )
 @ExtendWith(MockitoExtension::class)
 class AuthIntegrationControllerTests : SecurityItem() {
-  @MockitoBean
-  private lateinit var authService: AuthService
+	@MockitoBean
+	private lateinit var authService: AuthService
 
-  private val defaultUserEmail = "awakelife93@gmail.com"
-  private val defaultUserPassword = "test_password_123!@"
-  private val defaultAccessToken =
-    """
+	private val defaultUserEmail = "awakelife93@gmail.com"
+	private val defaultUserPassword = "test_password_123!@"
+	private val defaultAccessToken =
+		"""
     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
     eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
     """
 
-  private val user: User = Instancio.create(User::class.java)
+	private val user: User = Instancio.create(User::class.java)
 
-  @BeforeEach
-  fun setUp() {
-    mockMvc =
-      MockMvcBuilders
-        .webAppContextSetup(webApplicationContext)
-        .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
-        .alwaysDo<DefaultMockMvcBuilder>(MockMvcResultHandlers.print())
-        .build()
-  }
+	@BeforeEach
+	fun setUp() {
+		mockMvc =
+			MockMvcBuilders
+				.webAppContextSetup(webApplicationContext)
+				.apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
+				.alwaysDo<DefaultMockMvcBuilder>(MockMvcResultHandlers.print())
+				.build()
+	}
 
-  @Nested
-  @DisplayName("POST /api/v1/auth/signIn Test")
-  inner class SignInTest {
-    private val mockSignInRequest = Instancio.create(SignInRequest::class.java)
-    private val signInRequest: SignInRequest =
-      mockSignInRequest.copy(
-        email = defaultUserEmail,
-        password = defaultUserPassword
-      )
+	@Nested
+	@DisplayName("POST /api/v1/auth/signIn Test")
+	inner class SignInTest {
+		private val mockSignInRequest = Instancio.create(SignInRequest::class.java)
+		private val signInRequest: SignInRequest =
+			mockSignInRequest.copy(
+				email = defaultUserEmail,
+				password = defaultUserPassword
+			)
 
-    @Test
-    @DisplayName("POST /api/v1/auth/signIn Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectOKResponseToSignInResponse_when_GivenSignInRequest() {
-      Mockito
-        .`when`(authService.signIn(any<SignInRequest>()))
-        .thenReturn(from(user, defaultAccessToken))
+		@Test
+		@DisplayName("POST /api/v1/auth/signIn Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectOKResponseToSignInResponse_when_GivenSignInRequest() {
+			Mockito
+				.`when`(authService.signIn(any<SignInRequest>()))
+				.thenReturn(from(user, defaultAccessToken))
 
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/signIn")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .content(objectMapper.writeValueAsString(signInRequest))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk)
-        .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(user.email))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(user.name))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value(user.role.name))
-    }
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/signIn")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(signInRequest))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isOk)
+				.andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data.userId").value(user.id))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data.email").value(user.email))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data.name").value(user.name))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data.role").value(user.role.name))
+		}
 
-    @Test
-    @DisplayName("Field Valid Exception POST /api/v1/auth/signIn Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectErrorResponseToValidException_when_GivenWrongSignInRequest() {
-      val wrongSignInRequest: SignInRequest =
-        signInRequest.copy(
-          email = "wrong_email_format",
-          password = "1234"
-        )
+		@Test
+		@DisplayName("Field Valid Exception POST /api/v1/auth/signIn Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectErrorResponseToValidException_when_GivenWrongSignInRequest() {
+			val wrongSignInRequest: SignInRequest =
+				signInRequest.copy(
+					email = "wrong_email_format",
+					password = "1234"
+				)
 
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/signIn")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .content(objectMapper.writeValueAsString(wrongSignInRequest))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isBadRequest)
-        .andExpect(
-          MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
-        ) // email:field email is not email format, password:field password is min size 8 and max size 20,
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").isString)
-        .andExpect(MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty)
-    }
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/signIn")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(wrongSignInRequest))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isBadRequest)
+				.andExpect(
+					MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.BAD_REQUEST.value())
+				) // email:field email is not email format, password:field password is min size 8 and max size 20,
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").isString)
+				.andExpect(MockMvcResultMatchers.jsonPath("$.errors").isNotEmpty)
+		}
 
-    @Test
-    @DisplayName("UnAuthorized Exception POST /api/v1/auth/signIn Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectErrorResponseToUserUnAuthorizedException_when_GivenSignInRequest() {
-      val userUnAuthorizedException =
-        UserUnAuthorizedException(
-          user.id
-        )
+		@Test
+		@DisplayName("UnAuthorized Exception POST /api/v1/auth/signIn Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectErrorResponseToUserUnAuthorizedException_when_GivenSignInRequest() {
+			val userUnAuthorizedException =
+				UserUnAuthorizedException(
+					user.id
+				)
 
-      Mockito
-        .`when`(authService.signIn(any<SignInRequest>()))
-        .thenThrow(userUnAuthorizedException)
+			Mockito
+				.`when`(authService.signIn(any<SignInRequest>()))
+				.thenThrow(userUnAuthorizedException)
 
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/signIn")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .content(objectMapper.writeValueAsString(signInRequest))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
-        .andExpect(
-          MockMvcResultMatchers.jsonPath("$.message").value(userUnAuthorizedException.message)
-        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
-    }
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/signIn")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(signInRequest))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isUnauthorized)
+				.andExpect(
+					MockMvcResultMatchers.jsonPath("$.message").value(userUnAuthorizedException.message)
+				).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+		}
 
-    @Test
-    @DisplayName("Not Found Exception POST /api/v1/auth/signIn Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectErrorResponseToUserNotFoundException_when_GivenSignInRequest() {
-      val userNotFoundException =
-        UserNotFoundException(
-          user.id
-        )
+		@Test
+		@DisplayName("Not Found Exception POST /api/v1/auth/signIn Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectErrorResponseToUserNotFoundException_when_GivenSignInRequest() {
+			val userNotFoundException =
+				UserNotFoundException(
+					user.id
+				)
 
-      Mockito
-        .`when`(authService.signIn(any<SignInRequest>()))
-        .thenThrow(userNotFoundException)
+			Mockito
+				.`when`(authService.signIn(any<SignInRequest>()))
+				.thenThrow(userNotFoundException)
 
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/signIn")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .content(objectMapper.writeValueAsString(signInRequest))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isNotFound)
-        .andExpect(
-          MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
-        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
-    }
-  }
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/signIn")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(signInRequest))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isNotFound)
+				.andExpect(
+					MockMvcResultMatchers.jsonPath("$.message").value(userNotFoundException.message)
+				).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+		}
+	}
 
-  @Nested
-  @DisplayName("POST /api/v1/auth/signOut Test")
-  inner class SignOutTest {
-    @Test
-    @DisplayName("POST /api/v1/auth/signOut Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectOKResponseToSignOutVoidResponse_when_GivenSecurityUserItemAndUserIsAuthenticated() {
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/signOut")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk)
-        .andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
-    }
+	@Nested
+	@DisplayName("POST /api/v1/auth/signOut Test")
+	inner class SignOutTest {
+		@Test
+		@DisplayName("POST /api/v1/auth/signOut Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectOKResponseToSignOutVoidResponse_when_GivenSecurityUserItemAndUserIsAuthenticated() {
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/signOut")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isOk)
+				.andExpect(MockMvcResultMatchers.jsonPath("$.code").value(commonStatus))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
+		}
 
-    @Test
-    @DisplayName("Unauthorized Exception POST /api/v1/auth/signOut Response")
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectErrorResponseToUnauthorizedException_when_GivenSecurityUserItemAndUserIsNotAuthenticated() {
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/signOut")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
-    }
-  }
+		@Test
+		@DisplayName("Unauthorized Exception POST /api/v1/auth/signOut Response")
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectErrorResponseToUnauthorizedException_when_GivenSecurityUserItemAndUserIsNotAuthenticated() {
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/signOut")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isUnauthorized)
+		}
+	}
 
-  @Nested
-  @DisplayName("POST /api/v1/auth/refresh Test")
-  inner class RefreshAccessTokenTest {
-    private val refreshAccessTokenRequest = Instancio.create(RefreshAccessTokenRequest::class.java)
+	@Nested
+	@DisplayName("POST /api/v1/auth/refresh Test")
+	inner class RefreshAccessTokenTest {
+		private val refreshAccessTokenRequest = Instancio.create(RefreshAccessTokenRequest::class.java)
 
-    @Test
-    @DisplayName("POST /api/v1/auth/refresh Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectOKResponseToRefreshAccessTokenResponse_when_GivenSecurityUserItemAndUserIsAuthenticated() {
-      Mockito
-        .`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
-        .thenReturn(RefreshAccessTokenResponse.of(defaultAccessToken))
+		@Test
+		@DisplayName("POST /api/v1/auth/refresh Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectOKResponseToRefreshAccessTokenResponse_when_GivenSecurityUserItemAndUserIsAuthenticated() {
+			Mockito
+				.`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
+				.thenReturn(RefreshAccessTokenResponse.of(defaultAccessToken))
 
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/refresh")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .content(objectMapper.writeValueAsString(refreshAccessTokenRequest))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isCreated)
-        .andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
-        .andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken").value(defaultAccessToken))
-    }
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/refresh")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(refreshAccessTokenRequest))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isCreated)
+				.andExpect(MockMvcResultMatchers.jsonPath("$.message").value(commonMessage))
+				.andExpect(MockMvcResultMatchers.jsonPath("$.data.accessToken").value(defaultAccessToken))
+		}
 
-    @Test
-    @DisplayName("Refresh Token Not Found Unauthorized Exception POST /api/v1/auth/refresh Response")
-    @WithMockCustomUser
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectErrorResponseToRefreshTokenNotFoundException_when_GivenSecurityUserItemAndUserIsAuthenticated() {
-      val refreshTokenNotFoundException =
-        RefreshTokenNotFoundException(
-          user.id
-        )
+		@Test
+		@DisplayName("Refresh Token Not Found Unauthorized Exception POST /api/v1/auth/refresh Response")
+		@WithMockCustomUser
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectErrorResponseToRefreshTokenNotFoundException_when_GivenSecurityUserItemAndUserIsAuthenticated() {
+			val refreshTokenNotFoundException =
+				RefreshTokenNotFoundException(
+					user.id
+				)
 
-      Mockito
-        .`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
-        .thenThrow(refreshTokenNotFoundException)
+			Mockito
+				.`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
+				.thenThrow(refreshTokenNotFoundException)
 
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/refresh")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .content(objectMapper.writeValueAsString(refreshAccessTokenRequest))
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
-        .andExpect(
-          MockMvcResultMatchers
-            .jsonPath("$.message")
-            .value(refreshTokenNotFoundException.message)
-        ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
-    }
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/refresh")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.content(objectMapper.writeValueAsString(refreshAccessTokenRequest))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isUnauthorized)
+				.andExpect(
+					MockMvcResultMatchers
+						.jsonPath("$.message")
+						.value(refreshTokenNotFoundException.message)
+				).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
+		}
 
-    @Test
-    @DisplayName("Unauthorized Exception POST /api/v1/auth/refresh Response")
-    @Throws(
-      Exception::class
-    )
-    fun should_ExpectErrorResponseToUnauthorizedException_when_GivenSecurityUserItemAndUserIsNotAuthenticated() {
-      mockMvc
-        .perform(
-          MockMvcRequestBuilders
-            .post("/api/v1/auth/refresh")
-            .with(SecurityMockMvcRequestPostProcessors.csrf())
-            .contentType(MediaType.APPLICATION_JSON)
-            .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
-    }
-  }
+		@Test
+		@DisplayName("Unauthorized Exception POST /api/v1/auth/refresh Response")
+		@Throws(
+			Exception::class
+		)
+		fun should_ExpectErrorResponseToUnauthorizedException_when_GivenSecurityUserItemAndUserIsNotAuthenticated() {
+			mockMvc
+				.perform(
+					MockMvcRequestBuilders
+						.post("/api/v1/auth/refresh")
+						.with(SecurityMockMvcRequestPostProcessors.csrf())
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON)
+				).andExpect(MockMvcResultMatchers.status().isUnauthorized)
+		}
+	}
 }

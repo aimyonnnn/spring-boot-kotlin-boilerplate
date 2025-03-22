@@ -20,109 +20,109 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
 class UserServiceTests :
-  BehaviorSpec({
-    val userService = mockk<UserService>()
-    val userRepository = mockk<UserRepository>()
-    val bCryptPasswordEncoder = mockk<BCryptPasswordEncoder>()
+	BehaviorSpec({
+		val userService = mockk<UserService>()
+		val userRepository = mockk<UserRepository>()
+		val bCryptPasswordEncoder = mockk<BCryptPasswordEncoder>()
 
-    val user = Instancio.create(User::class.java)
+		val user = Instancio.create(User::class.java)
 
-    Given("Validate and return User entity") {
+		Given("Validate and return User entity") {
 
-      When("Success validate and get user entity") {
+			When("Success validate and get user entity") {
 
-        every { userRepository.findOneById(any<Long>()) } returns user
+				every { userRepository.findOneById(any<Long>()) } returns user
 
-        every { userService.validateReturnUser(any<Long>()) } returns user
+				every { userService.validateReturnUser(any<Long>()) } returns user
 
-        val validateUser = userService.validateReturnUser(user.id)
+				val validateUser = userService.validateReturnUser(user.id)
 
-        then("Validate & Get user entity") {
-          validateUser shouldNotBeNull {
-            id shouldBe user.id
-            email shouldBe user.email
-            name shouldBe user.name
-            role shouldBe user.role
-          }
-        }
-      }
+				then("Validate & Get user entity") {
+					validateUser shouldNotBeNull {
+						id shouldBe user.id
+						email shouldBe user.email
+						name shouldBe user.name
+						role shouldBe user.role
+					}
+				}
+			}
 
-      When("User Not Found Exception") {
+			When("User Not Found Exception") {
 
-        every { userRepository.findOneById(any<Long>()) } returns null
+				every { userRepository.findOneById(any<Long>()) } returns null
 
-        every { userService.validateReturnUser(any<Long>()) } throws UserNotFoundException(user.id)
+				every { userService.validateReturnUser(any<Long>()) } throws UserNotFoundException(user.id)
 
-        shouldThrowExactly<UserNotFoundException> {
-          userService.validateReturnUser(user.id)
-        }
-      }
-    }
+				shouldThrowExactly<UserNotFoundException> {
+					userService.validateReturnUser(user.id)
+				}
+			}
+		}
 
-    Given("Validate and authenticated Return User Entity") {
-      val signInRequest: SignInRequest = Instancio.create(SignInRequest::class.java)
+		Given("Validate and authenticated Return User Entity") {
+			val signInRequest: SignInRequest = Instancio.create(SignInRequest::class.java)
 
-      When("Success validate and authenticated get user entity") {
+			When("Success validate and authenticated get user entity") {
 
-        every { userRepository.findOneByEmail(any<String>()) } returns user
+				every { userRepository.findOneByEmail(any<String>()) } returns user
 
-        every {
-          user.validatePassword(
-            any<String>(),
-            bCryptPasswordEncoder
-          )
-        } returns true
+				every {
+					user.validatePassword(
+						any<String>(),
+						bCryptPasswordEncoder
+					)
+				} returns true
 
-        every {
-          userService.validateAuthReturnUser(
-            any<SignInRequest>()
-          )
-        } returns user
+				every {
+					userService.validateAuthReturnUser(
+						any<SignInRequest>()
+					)
+				} returns user
 
-        val validateAuthUser =
-          userService.validateAuthReturnUser(
-            signInRequest
-          )
+				val validateAuthUser =
+					userService.validateAuthReturnUser(
+						signInRequest
+					)
 
-        Then("Success Auth & Get user entity") {
-          validateAuthUser shouldNotBeNull {
-            id shouldBe user.id
-            email shouldBe user.email
-            name shouldBe user.name
-            role shouldBe user.role
-          }
-        }
-      }
+				Then("Success Auth & Get user entity") {
+					validateAuthUser shouldNotBeNull {
+						id shouldBe user.id
+						email shouldBe user.email
+						name shouldBe user.name
+						role shouldBe user.role
+					}
+				}
+			}
 
-      When("User Not Found Exception") {
+			When("User Not Found Exception") {
 
-        every { userRepository.findOneByEmail(any<String>()) } returns null
+				every { userRepository.findOneByEmail(any<String>()) } returns null
 
-        every { userService.validateAuthReturnUser(any<SignInRequest>()) } throws UserNotFoundException(user.email)
+				every { userService.validateAuthReturnUser(any<SignInRequest>()) } throws UserNotFoundException(user.email)
 
-        shouldThrowExactly<UserNotFoundException> {
-          userService.validateAuthReturnUser(signInRequest)
-        }
-      }
+				shouldThrowExactly<UserNotFoundException> {
+					userService.validateAuthReturnUser(signInRequest)
+				}
+			}
 
-      When("User Unauthorized exception") {
+			When("User Unauthorized exception") {
 
-        every { userRepository.findOneByEmail(any<String>()) } returns user
+				every { userRepository.findOneByEmail(any<String>()) } returns user
 
-        every {
-          user.validatePassword(
-            any<String>(),
-            bCryptPasswordEncoder
-          )
-        } returns false
+				every {
+					user.validatePassword(
+						any<String>(),
+						bCryptPasswordEncoder
+					)
+				} returns false
 
-        every {
-          userService.validateAuthReturnUser(any<SignInRequest>())
-        } throws UserUnAuthorizedException(user.email)
+				every {
+					userService.validateAuthReturnUser(any<SignInRequest>())
+				} throws UserUnAuthorizedException(user.email)
 
-        shouldThrowExactly<UserUnAuthorizedException> {
-          userService.validateAuthReturnUser(signInRequest)
-        }
-      }
-    }
-  })
+				shouldThrowExactly<UserUnAuthorizedException> {
+					userService.validateAuthReturnUser(signInRequest)
+				}
+			}
+		}
+	})

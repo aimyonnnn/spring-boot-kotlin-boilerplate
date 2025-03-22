@@ -27,112 +27,112 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
 class AuthServiceTests :
-  BehaviorSpec({
-    val tokenProvider = mockk<TokenProvider>()
-    val userService = mockk<UserService>()
-    val authService = mockk<AuthService>()
+	BehaviorSpec({
+		val tokenProvider = mockk<TokenProvider>()
+		val userService = mockk<UserService>()
+		val authService = mockk<AuthService>()
 
-    val user: User = Instancio.create(User::class.java)
-    val defaultAccessToken =
-      """
+		val user: User = Instancio.create(User::class.java)
+		val defaultAccessToken =
+			"""
       eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
       eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
       """
 
-    Given("Sign In") {
-      val signInRequest: SignInRequest = Instancio.create(SignInRequest::class.java)
+		Given("Sign In") {
+			val signInRequest: SignInRequest = Instancio.create(SignInRequest::class.java)
 
-      When("Success Sign In") {
+			When("Success Sign In") {
 
-        every { tokenProvider.createFullTokens(any<User>()) } returns defaultAccessToken
+				every { tokenProvider.createFullTokens(any<User>()) } returns defaultAccessToken
 
-        every { userService.validateAuthReturnUser(any<SignInRequest>()) } returns user
+				every { userService.validateAuthReturnUser(any<SignInRequest>()) } returns user
 
-        every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.from(user, defaultAccessToken)
+				every { authService.signIn(any<SignInRequest>()) } returns SignInResponse.from(user, defaultAccessToken)
 
-        val signInResponse = authService.signIn(signInRequest)
+				val signInResponse = authService.signIn(signInRequest)
 
-        Then("Assert Sign In Response") {
-          signInResponse shouldNotBeNull {
-            email shouldBe user.email
-            name shouldBe user.name
-            accessToken shouldBe defaultAccessToken
-          }
-        }
-      }
+				Then("Assert Sign In Response") {
+					signInResponse shouldNotBeNull {
+						email shouldBe user.email
+						name shouldBe user.name
+						accessToken shouldBe defaultAccessToken
+					}
+				}
+			}
 
-      When("User Not Found Exception") {
+			When("User Not Found Exception") {
 
-        every { userService.validateAuthReturnUser(any<SignInRequest>()) } throws UserNotFoundException(user.id)
+				every { userService.validateAuthReturnUser(any<SignInRequest>()) } throws UserNotFoundException(user.id)
 
-        every { authService.signIn(any<SignInRequest>()) } throws UserNotFoundException(user.id)
+				every { authService.signIn(any<SignInRequest>()) } throws UserNotFoundException(user.id)
 
-        shouldThrowExactly<UserNotFoundException> { authService.signIn(signInRequest) }
-      }
+				shouldThrowExactly<UserNotFoundException> { authService.signIn(signInRequest) }
+			}
 
-      When("User Unauthorized Exception") {
+			When("User Unauthorized Exception") {
 
-        every { userService.validateAuthReturnUser(any<SignInRequest>()) } throws UserUnAuthorizedException(user.email)
+				every { userService.validateAuthReturnUser(any<SignInRequest>()) } throws UserUnAuthorizedException(user.email)
 
-        every { authService.signIn(any<SignInRequest>()) } throws UserUnAuthorizedException(user.email)
+				every { authService.signIn(any<SignInRequest>()) } throws UserUnAuthorizedException(user.email)
 
-        shouldThrowExactly<UserUnAuthorizedException> { authService.signIn(signInRequest) }
-      }
-    }
+				shouldThrowExactly<UserUnAuthorizedException> { authService.signIn(signInRequest) }
+			}
+		}
 
-    Given("Sign Out") {
+		Given("Sign Out") {
 
-      When("Success Sign Out") {
+			When("Success Sign Out") {
 
-        justRun {
-          tokenProvider.deleteRefreshToken(any<Long>())
-          authService.signOut(any<Long>())
-        }
+				justRun {
+					tokenProvider.deleteRefreshToken(any<Long>())
+					authService.signOut(any<Long>())
+				}
 
-        tokenProvider.deleteRefreshToken(user.id)
+				tokenProvider.deleteRefreshToken(user.id)
 
-        authService.signOut(user.id)
+				authService.signOut(user.id)
 
-        verify(exactly = 1) {
-          tokenProvider.deleteRefreshToken(user.id)
-          authService.signOut(user.id)
-        }
-      }
-    }
+				verify(exactly = 1) {
+					tokenProvider.deleteRefreshToken(user.id)
+					authService.signOut(user.id)
+				}
+			}
+		}
 
-    Given("Refresh Access Token") {
-      val securityUserItem: SecurityUserItem =
-        Instancio.create(
-          SecurityUserItem::class.java
-        )
-      val refreshAccessTokenRequest: RefreshAccessTokenRequest =
-        Instancio.create(
-          RefreshAccessTokenRequest::class.java
-        )
+		Given("Refresh Access Token") {
+			val securityUserItem: SecurityUserItem =
+				Instancio.create(
+					SecurityUserItem::class.java
+				)
+			val refreshAccessTokenRequest: RefreshAccessTokenRequest =
+				Instancio.create(
+					RefreshAccessTokenRequest::class.java
+				)
 
-      When("Success Refresh Access Token") {
+			When("Success Refresh Access Token") {
 
-        every { tokenProvider.refreshAccessToken(any<SecurityUserItem>()) } returns defaultAccessToken
+				every { tokenProvider.refreshAccessToken(any<SecurityUserItem>()) } returns defaultAccessToken
 
-        every { authService.refreshAccessToken(any<RefreshAccessTokenRequest>()) } returns
-          RefreshAccessTokenResponse.of(
-            defaultAccessToken
-          )
+				every { authService.refreshAccessToken(any<RefreshAccessTokenRequest>()) } returns
+					RefreshAccessTokenResponse.of(
+						defaultAccessToken
+					)
 
-        val refreshAccessTokenResponse = authService.refreshAccessToken(refreshAccessTokenRequest)
+				val refreshAccessTokenResponse = authService.refreshAccessToken(refreshAccessTokenRequest)
 
-        Then("Assert Refresh Access Token Response") {
-          refreshAccessTokenResponse shouldNotBeNull {
-            accessToken shouldBe defaultAccessToken
-          }
-        }
-      }
+				Then("Assert Refresh Access Token Response") {
+					refreshAccessTokenResponse shouldNotBeNull {
+						accessToken shouldBe defaultAccessToken
+					}
+				}
+			}
 
-      When("Refresh Access Token Not Found Exception") {
+			When("Refresh Access Token Not Found Exception") {
 
-        every { tokenProvider.refreshAccessToken(any<SecurityUserItem>()) } throws RefreshTokenNotFoundException(user.id)
+				every { tokenProvider.refreshAccessToken(any<SecurityUserItem>()) } throws RefreshTokenNotFoundException(user.id)
 
-        shouldThrowExactly<RefreshTokenNotFoundException> { tokenProvider.refreshAccessToken(securityUserItem) }
-      }
-    }
-  })
+				shouldThrowExactly<RefreshTokenNotFoundException> { tokenProvider.refreshAccessToken(securityUserItem) }
+			}
+		}
+	})

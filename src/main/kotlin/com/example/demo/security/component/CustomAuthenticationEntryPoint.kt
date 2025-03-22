@@ -12,15 +12,15 @@ import java.io.IOException
 
 @Component
 class CustomAuthenticationEntryPoint(
-  @param:Qualifier("handlerExceptionResolver")
-  private val resolver: HandlerExceptionResolver
+	@param:Qualifier("handlerExceptionResolver")
+	private val resolver: HandlerExceptionResolver
 ) : AuthenticationEntryPoint {
-  @Throws(ServletException::class, IOException::class)
-  override fun commence(
-    request: HttpServletRequest,
-    response: HttpServletResponse,
-    authException: AuthenticationException
-  ) {
-    resolver.resolveException(request, response, null, authException)
-  }
+	@Throws(ServletException::class, IOException::class)
+	override fun commence(
+		request: HttpServletRequest,
+		response: HttpServletResponse,
+		authException: AuthenticationException
+	) {
+		resolver.resolveException(request, response, null, authException)
+	}
 }

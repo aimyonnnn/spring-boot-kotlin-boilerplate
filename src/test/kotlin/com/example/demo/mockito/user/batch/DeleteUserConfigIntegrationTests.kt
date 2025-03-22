@@ -28,58 +28,58 @@ import java.time.LocalDateTime
 @SpringBootTest(classes = [DeleteUserConfig::class, TestBatchConfig::class])
 @SpringBatchTest
 class DeleteUserConfigIntegrationTests(
-  @Autowired private val jdbcTemplate: JdbcTemplate,
-  @Autowired private val jobLauncherTestUtils: JobLauncherTestUtils,
-  @Autowired private val jobRepositoryTestUtils: JobRepositoryTestUtils
+	@Autowired private val jdbcTemplate: JdbcTemplate,
+	@Autowired private val jobLauncherTestUtils: JobLauncherTestUtils,
+	@Autowired private val jobRepositoryTestUtils: JobRepositoryTestUtils
 ) {
-  private val defaultUserEmail = "awakelife93@gmail.com"
-  private val defaultUserEncodePassword =
-    "$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" + //
-      ""
-  private val defaultUserName = "Hyunwoo Park"
-  private val defaultUserRole = UserRole.USER
+	private val defaultUserEmail = "awakelife93@gmail.com"
+	private val defaultUserEncodePassword =
+		"$2a$10\$T44NRNpbxkQ9qHbCtqQZ7O3gYfipzC0cHvOIJ/aV4PTlvJjtDl7x2\n" + //
+			""
+	private val defaultUserName = "Hyunwoo Park"
+	private val defaultUserRole = UserRole.USER
 
-  @AfterEach
-  fun cleanUp() {
-    jobRepositoryTestUtils.removeJobExecutions()
-  }
+	@AfterEach
+	fun cleanUp() {
+		jobRepositoryTestUtils.removeJobExecutions()
+	}
 
-  @Test
-  @DisplayName("DeleteUserConfig batch Integration Test")
-  @Throws(
-    Exception::class
-  )
-  fun should_AssertBatchStatusAndExitStatusAndListOfDeletedUser_when_GivenLocalDateTimeIsNowTime() {
-    val now = LocalDateTime.now().withNano(0)
+	@Test
+	@DisplayName("DeleteUserConfig batch Integration Test")
+	@Throws(
+		Exception::class
+	)
+	fun should_AssertBatchStatusAndExitStatusAndListOfDeletedUser_when_GivenLocalDateTimeIsNowTime() {
+		val now = LocalDateTime.now().withNano(0)
 
-    jdbcTemplate.update(
-      "insert into \"user\" (created_dt, updated_dt, deleted_dt, email, name, password, role) values (?, ?, ?, ?, ?, ?, ?)",
-      now,
-      now,
-      now.minusYears(1),
-      defaultUserEmail,
-      defaultUserName,
-      defaultUserEncodePassword,
-      defaultUserRole.name
-    )
+		jdbcTemplate.update(
+			"insert into \"user\" (created_dt, updated_dt, deleted_dt, email, name, password, role) values (?, ?, ?, ?, ?, ?, ?)",
+			now,
+			now,
+			now.minusYears(1),
+			defaultUserEmail,
+			defaultUserName,
+			defaultUserEncodePassword,
+			defaultUserRole.name
+		)
 
-    val jobParameters =
-      JobParametersBuilder()
-        .addLocalDateTime("now", LocalDateTime.now())
-        .toJobParameters()
+		val jobParameters =
+			JobParametersBuilder()
+				.addLocalDateTime("now", LocalDateTime.now())
+				.toJobParameters()
 
-    val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
+		val jobExecution = jobLauncherTestUtils.launchJob(jobParameters)
 
-    val deleteUserItemList =
-      jdbcTemplate.query(
-        "select * from \"user\" where deleted_dt <= ?",
-        DeleteUserItemRowMapper(),
-        now.minusYears(1)
-      )
+		val deleteUserItemList =
+			jdbcTemplate.query(
+				"select * from \"user\" where deleted_dt <= ?",
+				DeleteUserItemRowMapper(),
+				now.minusYears(1)
+			)
 
-    assertEquals(BatchStatus.COMPLETED, jobExecution.status)
-    assertEquals(ExitStatus.COMPLETED, jobExecution.exitStatus)
-    assertThat(deleteUserItemList).isEmpty()
-    assertEquals(deleteUserItemList.size, 0)
-  }
+		assertEquals(BatchStatus.COMPLETED, jobExecution.status)
+		assertEquals(ExitStatus.COMPLETED, jobExecution.exitStatus)
+		assertThat(deleteUserItemList).isEmpty()
+		assertEquals(deleteUserItemList.size, 0)
+	}
 }

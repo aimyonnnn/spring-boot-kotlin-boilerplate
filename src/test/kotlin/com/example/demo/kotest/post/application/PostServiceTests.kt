@@ -17,42 +17,42 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
 class PostServiceTests :
-  BehaviorSpec({
-    val postService = mockk<PostService>()
-    val postRepository = mockk<PostRepository>()
+	BehaviorSpec({
+		val postService = mockk<PostService>()
+		val postRepository = mockk<PostRepository>()
 
-    val post: Post = Instancio.create(Post::class.java)
+		val post: Post = Instancio.create(Post::class.java)
 
-    Given("Validate and return Post entity") {
+		Given("Validate and return Post entity") {
 
-      When("Success validate and get post entity") {
+			When("Success validate and get post entity") {
 
-        every { postRepository.findOneById(any<Long>()) } returns post
+				every { postRepository.findOneById(any<Long>()) } returns post
 
-        every { postService.validateReturnPost(any<Long>()) } returns post
+				every { postService.validateReturnPost(any<Long>()) } returns post
 
-        val validatePost = postService.validateReturnPost(post.id)
+				val validatePost = postService.validateReturnPost(post.id)
 
-        then("Validate & Get user entity") {
-          validatePost shouldNotBeNull {
-            id shouldBe post.id
-            title shouldBe post.title
-            subTitle shouldBe post.subTitle
-            content shouldBe post.content
-            user.id shouldBe post.user.id
-          }
-        }
-      }
+				then("Validate & Get user entity") {
+					validatePost shouldNotBeNull {
+						id shouldBe post.id
+						title shouldBe post.title
+						subTitle shouldBe post.subTitle
+						content shouldBe post.content
+						user.id shouldBe post.user.id
+					}
+				}
+			}
 
-      When("Post Not Found Exception") {
+			When("Post Not Found Exception") {
 
-        every { postRepository.findOneById(any<Long>()) } returns null
+				every { postRepository.findOneById(any<Long>()) } returns null
 
-        every { postService.validateReturnPost(any<Long>()) } throws PostNotFoundException(post.id)
+				every { postService.validateReturnPost(any<Long>()) } throws PostNotFoundException(post.id)
 
-        shouldThrowExactly<PostNotFoundException> {
-          postService.validateReturnPost(post.id)
-        }
-      }
-    }
-  })
+				shouldThrowExactly<PostNotFoundException> {
+					postService.validateReturnPost(post.id)
+				}
+			}
+		}
+	})

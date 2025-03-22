@@ -21,194 +21,194 @@ private val logger = KotlinLogging.logger {}
 
 @RestControllerAdvice
 class ErrorHandler {
-  @ExceptionHandler(CustomRuntimeException::class)
-  private fun handleCustomRuntimeException(
-    exception: CustomRuntimeException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        exception.message ?: HttpStatus.INTERNAL_SERVER_ERROR.name
-      )
+	@ExceptionHandler(CustomRuntimeException::class)
+	private fun handleCustomRuntimeException(
+		exception: CustomRuntimeException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				exception.message ?: HttpStatus.INTERNAL_SERVER_ERROR.name
+			)
 
-    logger.error {
-      "handleCustomRuntimeException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleCustomRuntimeException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity
-      .status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .body(response)
-  }
+		return ResponseEntity
+			.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(response)
+	}
 
-  @ExceptionHandler(ExpiredJwtException::class)
-  private fun handleExpiredJwtException(
-    exception: ExpiredJwtException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.UNAUTHORIZED.value(),
-        exception.message ?: HttpStatus.UNAUTHORIZED.name
-      )
+	@ExceptionHandler(ExpiredJwtException::class)
+	private fun handleExpiredJwtException(
+		exception: ExpiredJwtException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.UNAUTHORIZED.value(),
+				exception.message ?: HttpStatus.UNAUTHORIZED.name
+			)
 
-    logger.error {
-      "handleExpiredJwtException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleExpiredJwtException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
+	}
 
-  @ExceptionHandler(NotFoundException::class)
-  private fun handleNotFoundException(
-    exception: NotFoundException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.NOT_FOUND.value(),
-        exception.message ?: HttpStatus.NOT_FOUND.name
-      )
+	@ExceptionHandler(NotFoundException::class)
+	private fun handleNotFoundException(
+		exception: NotFoundException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.NOT_FOUND.value(),
+				exception.message ?: HttpStatus.NOT_FOUND.name
+			)
 
-    logger.error {
-      "handleNotFoundException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleNotFoundException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
+	}
 
-  @ExceptionHandler(UnAuthorizedException::class)
-  private fun handleUnAuthorizedException(
-    exception: UnAuthorizedException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.UNAUTHORIZED.value(),
-        exception.message ?: HttpStatus.UNAUTHORIZED.name
-      )
+	@ExceptionHandler(UnAuthorizedException::class)
+	private fun handleUnAuthorizedException(
+		exception: UnAuthorizedException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.UNAUTHORIZED.value(),
+				exception.message ?: HttpStatus.UNAUTHORIZED.name
+			)
 
-    logger.error {
-      "handleUnAuthorizedException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleUnAuthorizedException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
+	}
 
-  @ExceptionHandler(AlreadyExistException::class)
-  private fun handleAlreadyExistException(
-    exception: AlreadyExistException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.CONFLICT.value(),
-        exception.message ?: HttpStatus.CONFLICT.name
-      )
+	@ExceptionHandler(AlreadyExistException::class)
+	private fun handleAlreadyExistException(
+		exception: AlreadyExistException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.CONFLICT.value(),
+				exception.message ?: HttpStatus.CONFLICT.name
+			)
 
-    logger.error {
-      "handleAlreadyExistException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleAlreadyExistException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.CONFLICT).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.CONFLICT).body(response)
+	}
 
-  @ExceptionHandler(BindException::class)
-  private fun handleMethodArgumentNotValidException(
-    exception: BindException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val exceptionMessage =
-      exception.bindingResult.fieldErrors.joinToString(", ") {
-        "${it.field}: ${it.defaultMessage}"
-      }
+	@ExceptionHandler(BindException::class)
+	private fun handleMethodArgumentNotValidException(
+		exception: BindException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val exceptionMessage =
+			exception.bindingResult.fieldErrors.joinToString(", ") {
+				"${it.field}: ${it.defaultMessage}"
+			}
 
-    val response =
-      ErrorResponse.of(
-        HttpStatus.BAD_REQUEST.value(),
-        exceptionMessage,
-        exception.fieldErrors
-      )
+		val response =
+			ErrorResponse.of(
+				HttpStatus.BAD_REQUEST.value(),
+				exceptionMessage,
+				exception.fieldErrors
+			)
 
-    logger.error {
-      "handleMethodArgumentNotValidException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} $exceptionMessage"
-    }
+		logger.error {
+			"handleMethodArgumentNotValidException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} $exceptionMessage"
+		}
 
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response)
+	}
 
-  @ExceptionHandler(AuthenticationException::class)
-  private fun handleAuthenticationException(
-    exception: AuthenticationException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.UNAUTHORIZED.value(),
-        exception.message ?: HttpStatus.UNAUTHORIZED.name
-      )
+	@ExceptionHandler(AuthenticationException::class)
+	private fun handleAuthenticationException(
+		exception: AuthenticationException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.UNAUTHORIZED.value(),
+				exception.message ?: HttpStatus.UNAUTHORIZED.name
+			)
 
-    logger.error {
-      "handleAuthenticationException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleAuthenticationException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response)
+	}
 
-  @ExceptionHandler(AccessDeniedException::class)
-  private fun handleAccessDeniedExceptionException(
-    exception: AccessDeniedException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.FORBIDDEN.value(),
-        exception.message ?: HttpStatus.FORBIDDEN.name
-      )
+	@ExceptionHandler(AccessDeniedException::class)
+	private fun handleAccessDeniedExceptionException(
+		exception: AccessDeniedException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.FORBIDDEN.value(),
+				exception.message ?: HttpStatus.FORBIDDEN.name
+			)
 
-    logger.error {
-      "handleAccessDeniedExceptionException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleAccessDeniedExceptionException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response)
+	}
 
-  @ExceptionHandler(NoHandlerFoundException::class)
-  private fun handleNoHandlerFoundException(
-    exception: NoHandlerFoundException,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.NOT_FOUND.value(),
-        exception.message ?: HttpStatus.NOT_FOUND.name,
-        exception.requestHeaders
-      )
+	@ExceptionHandler(NoHandlerFoundException::class)
+	private fun handleNoHandlerFoundException(
+		exception: NoHandlerFoundException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.NOT_FOUND.value(),
+				exception.message ?: HttpStatus.NOT_FOUND.name,
+				exception.requestHeaders
+			)
 
-    logger.error {
-      "handleNoHandlerFoundException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleNoHandlerFoundException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
-  }
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response)
+	}
 
-  @ExceptionHandler(Exception::class)
-  private fun handleException(
-    exception: Exception,
-    httpServletRequest: HttpServletRequest
-  ): ResponseEntity<ErrorResponse> {
-    val response =
-      ErrorResponse.of(
-        HttpStatus.INTERNAL_SERVER_ERROR.value(),
-        exception.message ?: HttpStatus.INTERNAL_SERVER_ERROR.name
-      )
+	@ExceptionHandler(Exception::class)
+	private fun handleException(
+		exception: Exception,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val response =
+			ErrorResponse.of(
+				HttpStatus.INTERNAL_SERVER_ERROR.value(),
+				exception.message ?: HttpStatus.INTERNAL_SERVER_ERROR.name
+			)
 
-    logger.error {
-      "handleException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
-    }
+		logger.error {
+			"handleException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message}"
+		}
 
-    return ResponseEntity
-      .status(HttpStatus.INTERNAL_SERVER_ERROR)
-      .body(response)
-  }
+		return ResponseEntity
+			.status(HttpStatus.INTERNAL_SERVER_ERROR)
+			.body(response)
+	}
 }

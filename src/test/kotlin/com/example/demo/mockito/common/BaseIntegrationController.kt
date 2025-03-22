@@ -7,21 +7,21 @@ import org.springframework.test.web.servlet.MockMvc
 import org.springframework.web.context.WebApplicationContext
 
 open class BaseIntegrationController {
-  @Autowired
-  protected lateinit var webApplicationContext: WebApplicationContext
+	@Autowired
+	protected lateinit var webApplicationContext: WebApplicationContext
 
-  @Autowired
-  protected lateinit var objectMapper: ObjectMapper
+	@Autowired
+	protected lateinit var objectMapper: ObjectMapper
 
-  protected lateinit var mockMvc: MockMvc
+	protected lateinit var mockMvc: MockMvc
 
-  /**
-   * ResponseAdvice Status
-   */
-  protected val commonStatus: Int = HttpStatus.OK.value()
+	/**
+	 * ResponseAdvice Status
+	 */
+	protected val commonStatus: Int = HttpStatus.OK.value()
 
-  /**
-   * ResponseAdvice Message
-   */
-  protected val commonMessage: String = HttpStatus.OK.name
+	/**
+	 * ResponseAdvice Message
+	 */
+	protected val commonMessage: String = HttpStatus.OK.name
 }

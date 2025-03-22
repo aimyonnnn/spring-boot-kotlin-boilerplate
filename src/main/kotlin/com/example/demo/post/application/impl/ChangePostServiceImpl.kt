@@ -16,45 +16,45 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ChangePostServiceImpl(
-  private val postRepository: PostRepository,
-  private val postService: PostService,
-  private val userService: UserService
+	private val postRepository: PostRepository,
+	private val postService: PostService,
+	private val userService: UserService
 ) : ChangePostService {
-  override fun createPost(
-    userId: Long,
-    createPostRequest: CreatePostRequest
-  ): CreatePostResponse {
-    val user: User = userService.validateReturnUser(userId)
-    val post =
-      postRepository.save(
-        Post(
-          title = createPostRequest.title,
-          subTitle = createPostRequest.subTitle,
-          content = createPostRequest.content,
-          user = user
-        )
-      )
+	override fun createPost(
+		userId: Long,
+		createPostRequest: CreatePostRequest
+	): CreatePostResponse {
+		val user: User = userService.validateReturnUser(userId)
+		val post =
+			postRepository.save(
+				Post(
+					title = createPostRequest.title,
+					subTitle = createPostRequest.subTitle,
+					content = createPostRequest.content,
+					user = user
+				)
+			)
 
-    return post.let(CreatePostResponse::from)
-  }
+		return post.let(CreatePostResponse::from)
+	}
 
-  override fun updatePost(
-    postId: Long,
-    updatePostRequest: UpdatePostRequest
-  ): UpdatePostResponse {
-    val post: Post =
-      postService
-        .validateReturnPost(postId)
-        .update(
-          title = updatePostRequest.title,
-          subTitle = updatePostRequest.subTitle,
-          content = updatePostRequest.content
-        )
+	override fun updatePost(
+		postId: Long,
+		updatePostRequest: UpdatePostRequest
+	): UpdatePostResponse {
+		val post: Post =
+			postService
+				.validateReturnPost(postId)
+				.update(
+					title = updatePostRequest.title,
+					subTitle = updatePostRequest.subTitle,
+					content = updatePostRequest.content
+				)
 
-    return post.let(UpdatePostResponse::from)
-  }
+		return post.let(UpdatePostResponse::from)
+	}
 
-  override fun deletePost(postId: Long) {
-    postRepository.deleteById(postId)
-  }
+	override fun deletePost(postId: Long) {
+		postRepository.deleteById(postId)
+	}
 }

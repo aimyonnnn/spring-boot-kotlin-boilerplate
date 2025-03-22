@@ -31,87 +31,87 @@ private val logger = KotlinLogging.logger {}
 
 @Configuration
 class DeleteUserConfig(
-  private val jdbcTemplate: JdbcTemplate,
-  private val dataSource: DataSource
+	private val jdbcTemplate: JdbcTemplate,
+	private val dataSource: DataSource
 ) : DefaultBatchConfiguration() {
-  private val chunkSize = 10
+	private val chunkSize = 10
 
-  @Bean
-  fun deleteUser(
-    jobRepository: JobRepository,
-    transactionManager: PlatformTransactionManager
-  ): Job =
-    JobBuilder("deleteUserJob", jobRepository)
-      .flow(generateStep(jobRepository, transactionManager))
-      .end()
-      .build()
+	@Bean
+	fun deleteUser(
+		jobRepository: JobRepository,
+		transactionManager: PlatformTransactionManager
+	): Job =
+		JobBuilder("deleteUserJob", jobRepository)
+			.flow(generateStep(jobRepository, transactionManager))
+			.end()
+			.build()
 
-  @Bean
-  @JobScope
-  @Throws(
-    Exception::class
-  )
-  fun generateStep(
-    jobRepository: JobRepository,
-    transactionManager: PlatformTransactionManager
-  ): Step =
-    StepBuilder("deleteUserStep", jobRepository)
-      .chunk<DeleteUserItem, DeleteUserItem>(chunkSize, transactionManager)
-      .allowStartIfComplete(true)
-      .reader(reader(null))
-      .writer(writer())
-      .build()
+	@Bean
+	@JobScope
+	@Throws(
+		Exception::class
+	)
+	fun generateStep(
+		jobRepository: JobRepository,
+		transactionManager: PlatformTransactionManager
+	): Step =
+		StepBuilder("deleteUserStep", jobRepository)
+			.chunk<DeleteUserItem, DeleteUserItem>(chunkSize, transactionManager)
+			.allowStartIfComplete(true)
+			.reader(reader(null))
+			.writer(writer())
+			.build()
 
-  @Bean
-  @StepScope
-  fun reader(
-    @Value("#{jobParameters[now]}") now: LocalDateTime?
-  ): JdbcPagingItemReader<DeleteUserItem> {
-    val nowDateTime = checkNotNull(now) { "now parameter is required" }
+	@Bean
+	@StepScope
+	fun reader(
+		@Value("#{jobParameters[now]}") now: LocalDateTime?
+	): JdbcPagingItemReader<DeleteUserItem> {
+		val nowDateTime = checkNotNull(now) { "now parameter is required" }
 
-    return JdbcPagingItemReaderBuilder<DeleteUserItem>()
-      .name("DeletedUsersYearAgoReader")
-      .dataSource(dataSource)
-      .pageSize(chunkSize)
-      .fetchSize(chunkSize)
-      .queryProvider(pagingQueryProvider())
-      .parameterValues(
-        Collections.singletonMap<String, Any>("oneYearBeforeNow", nowDateTime.minusYears(1))
-      ).rowMapper(DeleteUserItemRowMapper())
-      .build()
-  }
+		return JdbcPagingItemReaderBuilder<DeleteUserItem>()
+			.name("DeletedUsersYearAgoReader")
+			.dataSource(dataSource)
+			.pageSize(chunkSize)
+			.fetchSize(chunkSize)
+			.queryProvider(pagingQueryProvider())
+			.parameterValues(
+				Collections.singletonMap<String, Any>("oneYearBeforeNow", nowDateTime.minusYears(1))
+			).rowMapper(DeleteUserItemRowMapper())
+			.build()
+	}
 
-  @Bean
-  @StepScope
-  fun writer(): ItemWriter<DeleteUserItem> =
-    ItemWriter<DeleteUserItem> { items: Chunk<out DeleteUserItem> ->
-      items.map {
-        logger.info {
-          "Hard Deleted User By = ${it.name} ${it.email} ${it.role} ${it.deletedDt}"
-        }
+	@Bean
+	@StepScope
+	fun writer(): ItemWriter<DeleteUserItem> =
+		ItemWriter<DeleteUserItem> { items: Chunk<out DeleteUserItem> ->
+			items.map {
+				logger.info {
+					"Hard Deleted User By = ${it.name} ${it.email} ${it.role} ${it.deletedDt}"
+				}
 
-        jdbcTemplate.update(
-          "DELETE FROM \"user\" WHERE user_id = ?",
-          it.id
-        )
-      }
-    }
+				jdbcTemplate.update(
+					"DELETE FROM \"user\" WHERE user_id = ?",
+					it.id
+				)
+			}
+		}
 
-  @Bean
-  @Throws(Exception::class)
-  fun pagingQueryProvider(): PagingQueryProvider {
-    val queryProvider = SqlPagingQueryProviderFactoryBean()
+	@Bean
+	@Throws(Exception::class)
+	fun pagingQueryProvider(): PagingQueryProvider {
+		val queryProvider = SqlPagingQueryProviderFactoryBean()
 
-    queryProvider.setDataSource(dataSource)
-    queryProvider.setSelectClause("select *")
-    queryProvider.setFromClause("from \"user\"")
-    queryProvider.setWhereClause("where deleted_dt <= :oneYearBeforeNow")
+		queryProvider.setDataSource(dataSource)
+		queryProvider.setSelectClause("select *")
+		queryProvider.setFromClause("from \"user\"")
+		queryProvider.setWhereClause("where deleted_dt <= :oneYearBeforeNow")
 
-    val sortKeys: MutableMap<String, Order> = HashMap(1)
-    sortKeys["user_id"] = Order.ASCENDING
+		val sortKeys: MutableMap<String, Order> = HashMap(1)
+		sortKeys["user_id"] = Order.ASCENDING
 
-    queryProvider.setSortKeys(sortKeys)
+		queryProvider.setSortKeys(sortKeys)
 
-    return queryProvider.getObject()
-  }
+		return queryProvider.getObject()
+	}
 }

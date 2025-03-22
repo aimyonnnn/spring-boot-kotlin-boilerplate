@@ -17,49 +17,49 @@ import org.springframework.stereotype.Component
 
 @Component
 class AuthProvider(
-  private val corsConfig: CorsConfig,
-  private val jwtProvider: JWTProvider
+	private val corsConfig: CorsConfig,
+	private val jwtProvider: JWTProvider
 ) {
-  @Value("\${auth.x-api-key}")
-  lateinit var apiKey: String
+	@Value("\${auth.x-api-key}")
+	lateinit var apiKey: String
 
-  fun ignoreListDefaultEndpoints(): Array<String> =
-    arrayOf(
-      "/api-docs/**",
-      "/swagger-ui/**",
-      "/swagger.html"
-    )
+	fun ignoreListDefaultEndpoints(): Array<String> =
+		arrayOf(
+			"/api-docs/**",
+			"/swagger-ui/**",
+			"/swagger.html"
+		)
 
-  fun whiteListDefaultEndpoints(): Array<String> =
-    arrayOf(
-      "/api/v1/auth/signIn",
-      "/api/v1/auth/refresh",
-      "/api/v1/users/register"
-    )
+	fun whiteListDefaultEndpoints(): Array<String> =
+		arrayOf(
+			"/api/v1/auth/signIn",
+			"/api/v1/auth/refresh",
+			"/api/v1/users/register"
+		)
 
-  fun generateRequestAPIKey(request: HttpServletRequest): String? = request.getHeader("X-API-KEY")
+	fun generateRequestAPIKey(request: HttpServletRequest): String? = request.getHeader("X-API-KEY")
 
-  fun validateApiKey(requestAPIKey: String): Boolean = apiKey == requestAPIKey
+	fun validateApiKey(requestAPIKey: String): Boolean = apiKey == requestAPIKey
 
-  fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): HttpSecurity =
-    httpSecurity
-      .csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.disable() }
-      .httpBasic { httpBasic: HttpBasicConfigurer<HttpSecurity?> -> httpBasic.disable() }
-      .formLogin { formLogin: FormLoginConfigurer<HttpSecurity?> -> formLogin.disable() }
-      .cors { cors: CorsConfigurer<HttpSecurity?> ->
-        cors.configurationSource(
-          corsConfig.corsConfigurationSource()
-        )
-      }.sessionManagement { httpSecuritySessionManagementConfigurer: SessionManagementConfigurer<HttpSecurity?> ->
-        httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
-          SessionCreationPolicy.STATELESS
-        )
-      }.addFilterBefore(
-        JWTAuthFilter(jwtProvider),
-        UsernamePasswordAuthenticationFilter::class.java
-      ).authorizeHttpRequests { request ->
-        request
-          .dispatcherTypeMatchers(DispatcherType.ERROR)
-          .permitAll()
-      }
+	fun defaultSecurityFilterChain(httpSecurity: HttpSecurity): HttpSecurity =
+		httpSecurity
+			.csrf { csrf: CsrfConfigurer<HttpSecurity?> -> csrf.disable() }
+			.httpBasic { httpBasic: HttpBasicConfigurer<HttpSecurity?> -> httpBasic.disable() }
+			.formLogin { formLogin: FormLoginConfigurer<HttpSecurity?> -> formLogin.disable() }
+			.cors { cors: CorsConfigurer<HttpSecurity?> ->
+				cors.configurationSource(
+					corsConfig.corsConfigurationSource()
+				)
+			}.sessionManagement { httpSecuritySessionManagementConfigurer: SessionManagementConfigurer<HttpSecurity?> ->
+				httpSecuritySessionManagementConfigurer.sessionCreationPolicy(
+					SessionCreationPolicy.STATELESS
+				)
+			}.addFilterBefore(
+				JWTAuthFilter(jwtProvider),
+				UsernamePasswordAuthenticationFilter::class.java
+			).authorizeHttpRequests { request ->
+				request
+					.dispatcherTypeMatchers(DispatcherType.ERROR)
+					.permitAll()
+			}
 }

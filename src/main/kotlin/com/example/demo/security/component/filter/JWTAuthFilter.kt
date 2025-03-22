@@ -11,36 +11,36 @@ import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.web.filter.OncePerRequestFilter
 
 class JWTAuthFilter(
-  private val jwtProvider: JWTProvider
+	private val jwtProvider: JWTProvider
 ) : OncePerRequestFilter() {
-  override fun doFilterInternal(
-    @NonNull httpServletRequest: HttpServletRequest,
-    @NonNull httpServletResponse: HttpServletResponse,
-    @NonNull filterChain: FilterChain
-  ) {
-    runCatching {
-      jwtProvider.generateRequestToken(httpServletRequest)?.let {
-        jwtProvider.validateToken(it)
+	override fun doFilterInternal(
+		@NonNull httpServletRequest: HttpServletRequest,
+		@NonNull httpServletResponse: HttpServletResponse,
+		@NonNull filterChain: FilterChain
+	) {
+		runCatching {
+			jwtProvider.generateRequestToken(httpServletRequest)?.let {
+				jwtProvider.validateToken(it)
 
-        val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken =
-          jwtProvider.getAuthentication(
-            it
-          )
+				val usernamePasswordAuthenticationToken: UsernamePasswordAuthenticationToken =
+					jwtProvider.getAuthentication(
+						it
+					)
 
-        SecurityContextHolder
-          .getContext()
-          .authentication = usernamePasswordAuthenticationToken
-      } ?: SecurityContextHolder.clearContext()
-    }.onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
-      .onFailure {
-        SecurityContextHolder.clearContext()
+				SecurityContextHolder
+					.getContext()
+					.authentication = usernamePasswordAuthenticationToken
+			} ?: SecurityContextHolder.clearContext()
+		}.onSuccess { filterChain.doFilter(httpServletRequest, httpServletResponse) }
+			.onFailure {
+				SecurityContextHolder.clearContext()
 
-        SecurityUtils.sendErrorResponse(
-          httpServletRequest,
-          httpServletResponse,
-          it,
-          it.message ?: "Invalid Token"
-        )
-      }
-  }
+				SecurityUtils.sendErrorResponse(
+					httpServletRequest,
+					httpServletResponse,
+					it,
+					it.message ?: "Invalid Token"
+				)
+			}
+	}
 }

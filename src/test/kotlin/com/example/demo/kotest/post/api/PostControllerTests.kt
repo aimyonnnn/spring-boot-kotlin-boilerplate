@@ -29,176 +29,176 @@ import org.springframework.test.context.ActiveProfiles
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
 class PostControllerTests :
-  FunSpec({
-    val postController = mockk<PostController>()
-    val getPostService = mockk<GetPostService>()
-    val changePostService = mockk<ChangePostService>()
+	FunSpec({
+		val postController = mockk<PostController>()
+		val getPostService = mockk<GetPostService>()
+		val changePostService = mockk<ChangePostService>()
 
-    val post: Post = Instancio.create(Post::class.java)
-    val defaultPageable = Pageable.ofSize(1)
+		val post: Post = Instancio.create(Post::class.java)
+		val defaultPageable = Pageable.ofSize(1)
 
-    test("Get Post By Id") {
+		test("Get Post By Id") {
 
-      every { getPostService.getPostById(any<Long>()) } returns GetPostResponse.from(post)
+			every { getPostService.getPostById(any<Long>()) } returns GetPostResponse.from(post)
 
-      every { postController.getPostById(any<Long>()) } returns ResponseEntity.ok(GetPostResponse.from(post))
+			every { postController.getPostById(any<Long>()) } returns ResponseEntity.ok(GetPostResponse.from(post))
 
-      val response = postController.getPostById(post.id)
+			val response = postController.getPostById(post.id)
 
-      response shouldNotBeNull {
-        statusCode shouldBe HttpStatus.OK
-        body shouldNotBeNull {
-          postId shouldBe post.id
-          title shouldBe post.title
-          subTitle shouldBe post.subTitle
-          content shouldBe post.content
-          writer.userId shouldBe post.user.id
-        }
-      }
-    }
+			response shouldNotBeNull {
+				statusCode shouldBe HttpStatus.OK
+				body shouldNotBeNull {
+					postId shouldBe post.id
+					title shouldBe post.title
+					subTitle shouldBe post.subTitle
+					content shouldBe post.content
+					writer.userId shouldBe post.user.id
+				}
+			}
+		}
 
-    test("Get Post List") {
+		test("Get Post List") {
 
-      every { getPostService.getPostList(any<Pageable>()) } returns
-        PageImpl(
-          listOf(GetPostResponse.from(post)),
-          defaultPageable,
-          1
-        )
+			every { getPostService.getPostList(any<Pageable>()) } returns
+				PageImpl(
+					listOf(GetPostResponse.from(post)),
+					defaultPageable,
+					1
+				)
 
-      every {
-        postController.getPostList(any<Pageable>())
-      } returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
+			every {
+				postController.getPostList(any<Pageable>())
+			} returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
-      val response =
-        postController.getPostList(
-          defaultPageable
-        )
+			val response =
+				postController.getPostList(
+					defaultPageable
+				)
 
-      response shouldNotBeNull {
-        statusCode shouldBe HttpStatus.OK
-        body shouldNotBeNull {
-          content[0] shouldNotBeNull {
-            postId shouldBe post.id
-            title shouldBe post.title
-            subTitle shouldBe post.subTitle
-            content shouldBe post.content
-            writer.userId shouldBe post.user.id
-          }
-        }
-      }
-    }
+			response shouldNotBeNull {
+				statusCode shouldBe HttpStatus.OK
+				body shouldNotBeNull {
+					content[0] shouldNotBeNull {
+						postId shouldBe post.id
+						title shouldBe post.title
+						subTitle shouldBe post.subTitle
+						content shouldBe post.content
+						writer.userId shouldBe post.user.id
+					}
+				}
+			}
+		}
 
-    test("Get Exclude Users Post List") {
-      val getExcludeUsersPostsRequest =
-        Instancio.create(
-          GetExcludeUsersPostsRequest::class.java
-        )
+		test("Get Exclude Users Post List") {
+			val getExcludeUsersPostsRequest =
+				Instancio.create(
+					GetExcludeUsersPostsRequest::class.java
+				)
 
-      every {
-        getPostService.getExcludeUsersPostList(
-          any<GetExcludeUsersPostsRequest>(),
-          any<Pageable>()
-        )
-      } returns
-        PageImpl(
-          listOf(GetPostResponse.from(post)),
-          defaultPageable,
-          1
-        )
+			every {
+				getPostService.getExcludeUsersPostList(
+					any<GetExcludeUsersPostsRequest>(),
+					any<Pageable>()
+				)
+			} returns
+				PageImpl(
+					listOf(GetPostResponse.from(post)),
+					defaultPageable,
+					1
+				)
 
-      every {
-        postController.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>())
-      } returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
+			every {
+				postController.getExcludeUsersPostList(any<GetExcludeUsersPostsRequest>(), any<Pageable>())
+			} returns ResponseEntity.ok(PageImpl(listOf(GetPostResponse.from(post)), defaultPageable, 1))
 
-      val response =
-        postController.getExcludeUsersPostList(
-          getExcludeUsersPostsRequest,
-          defaultPageable
-        )
+			val response =
+				postController.getExcludeUsersPostList(
+					getExcludeUsersPostsRequest,
+					defaultPageable
+				)
 
-      response shouldNotBeNull {
-        statusCode shouldBe HttpStatus.OK
-        body shouldNotBeNull {
-          content[0] shouldNotBeNull {
-            postId shouldBe post.id
-            title shouldBe post.title
-            subTitle shouldBe post.subTitle
-            content shouldBe post.content
-            writer.userId shouldBe post.user.id
-          }
-        }
-      }
-    }
+			response shouldNotBeNull {
+				statusCode shouldBe HttpStatus.OK
+				body shouldNotBeNull {
+					content[0] shouldNotBeNull {
+						postId shouldBe post.id
+						title shouldBe post.title
+						subTitle shouldBe post.subTitle
+						content shouldBe post.content
+						writer.userId shouldBe post.user.id
+					}
+				}
+			}
+		}
 
-    test("Create Post") {
-      val createPostRequest =
-        Instancio.create(
-          CreatePostRequest::class.java
-        )
-      val securityUserItem =
-        Instancio.create(
-          SecurityUserItem::class.java
-        )
+		test("Create Post") {
+			val createPostRequest =
+				Instancio.create(
+					CreatePostRequest::class.java
+				)
+			val securityUserItem =
+				Instancio.create(
+					SecurityUserItem::class.java
+				)
 
-      every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.from(post)
+			every { changePostService.createPost(any<Long>(), any<CreatePostRequest>()) } returns CreatePostResponse.from(post)
 
-      every {
-        postController.createPost(
-          any<CreatePostRequest>(),
-          any<SecurityUserItem>()
-        )
-      } returns ResponseEntity.status(HttpStatus.CREATED).body(CreatePostResponse.from(post))
+			every {
+				postController.createPost(
+					any<CreatePostRequest>(),
+					any<SecurityUserItem>()
+				)
+			} returns ResponseEntity.status(HttpStatus.CREATED).body(CreatePostResponse.from(post))
 
-      val response = postController.createPost(createPostRequest, securityUserItem)
+			val response = postController.createPost(createPostRequest, securityUserItem)
 
-      response shouldNotBeNull {
-        statusCode shouldBe HttpStatus.CREATED
-        body shouldNotBeNull {
-          postId shouldBe post.id
-          title shouldBe post.title
-          subTitle shouldBe post.subTitle
-          content shouldBe post.content
-          writer.userId shouldBe post.user.id
-        }
-      }
-    }
+			response shouldNotBeNull {
+				statusCode shouldBe HttpStatus.CREATED
+				body shouldNotBeNull {
+					postId shouldBe post.id
+					title shouldBe post.title
+					subTitle shouldBe post.subTitle
+					content shouldBe post.content
+					writer.userId shouldBe post.user.id
+				}
+			}
+		}
 
-    test("Update Post") {
-      val updatedPostRequest = Instancio.create(UpdatePostRequest::class.java)
+		test("Update Post") {
+			val updatedPostRequest = Instancio.create(UpdatePostRequest::class.java)
 
-      every { changePostService.updatePost(any<Long>(), any<UpdatePostRequest>()) } returns UpdatePostResponse.from(post)
+			every { changePostService.updatePost(any<Long>(), any<UpdatePostRequest>()) } returns UpdatePostResponse.from(post)
 
-      every { postController.updatePost(any<UpdatePostRequest>(), any<Long>()) } returns
-        ResponseEntity.ok(
-          UpdatePostResponse.from(post)
-        )
+			every { postController.updatePost(any<UpdatePostRequest>(), any<Long>()) } returns
+				ResponseEntity.ok(
+					UpdatePostResponse.from(post)
+				)
 
-      val response = postController.updatePost(updatedPostRequest, post.id)
+			val response = postController.updatePost(updatedPostRequest, post.id)
 
-      response shouldNotBeNull {
-        statusCode shouldBe HttpStatus.OK
-        body shouldNotBeNull {
-          postId shouldBe post.id
-          title shouldBe post.title
-          subTitle shouldBe post.subTitle
-          content shouldBe post.content
-          writer.userId shouldBe post.user.id
-        }
-      }
-    }
+			response shouldNotBeNull {
+				statusCode shouldBe HttpStatus.OK
+				body shouldNotBeNull {
+					postId shouldBe post.id
+					title shouldBe post.title
+					subTitle shouldBe post.subTitle
+					content shouldBe post.content
+					writer.userId shouldBe post.user.id
+				}
+			}
+		}
 
-    test("Delete Post") {
+		test("Delete Post") {
 
-      justRun { changePostService.deletePost(any<Long>()) }
+			justRun { changePostService.deletePost(any<Long>()) }
 
-      every { postController.deletePost(any<Long>()) } returns ResponseEntity.noContent().build()
+			every { postController.deletePost(any<Long>()) } returns ResponseEntity.noContent().build()
 
-      val response = postController.deletePost(post.id)
+			val response = postController.deletePost(post.id)
 
-      response shouldNotBeNull {
-        body.shouldBeNull()
-        statusCode shouldBe HttpStatus.NO_CONTENT
-      }
-    }
-  })
+			response shouldNotBeNull {
+				body.shouldBeNull()
+				statusCode shouldBe HttpStatus.NO_CONTENT
+			}
+		}
+	})

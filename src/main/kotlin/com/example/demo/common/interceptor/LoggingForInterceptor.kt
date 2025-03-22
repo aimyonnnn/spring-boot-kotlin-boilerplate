@@ -11,17 +11,17 @@ private val logger = KotlinLogging.logger {}
 
 @Component
 class LoggingForInterceptor : HandlerInterceptor {
-  @Throws(Exception::class)
-  override fun postHandle(
-    request: HttpServletRequest,
-    response: HttpServletResponse,
-    handler: Any,
-    modelAndView: ModelAndView?
-  ) {
-    logger.info {
-      "${request.requestURI} - ${response.status}"
-    }
+	@Throws(Exception::class)
+	override fun postHandle(
+		request: HttpServletRequest,
+		response: HttpServletResponse,
+		handler: Any,
+		modelAndView: ModelAndView?
+	) {
+		logger.info {
+			"${request.requestURI} - ${response.status}"
+		}
 
-    super.postHandle(request, response, handler, null)
-  }
+		super.postHandle(request, response, handler, null)
+	}
 }

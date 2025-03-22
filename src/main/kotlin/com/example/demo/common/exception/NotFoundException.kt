@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
 open class NotFoundException(
-  message: String
+	message: String
 ) : CustomRuntimeException(message)

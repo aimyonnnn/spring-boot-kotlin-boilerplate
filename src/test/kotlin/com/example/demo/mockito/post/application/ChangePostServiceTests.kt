@@ -30,121 +30,121 @@ import org.springframework.test.context.ActiveProfiles
 @Tag("mockito-unit-test")
 @DisplayName("Mockito Unit - Post / Put / Delete / Patch Post Service Test")
 @ExtendWith(
-  MockitoExtension::class
+	MockitoExtension::class
 )
 class ChangePostServiceTests {
-  @Mock
-  private lateinit var userServiceImpl: UserServiceImpl
+	@Mock
+	private lateinit var userServiceImpl: UserServiceImpl
 
-  @Mock
-  private lateinit var postServiceImpl: PostServiceImpl
+	@Mock
+	private lateinit var postServiceImpl: PostServiceImpl
 
-  @Mock
-  private lateinit var postRepository: PostRepository
+	@Mock
+	private lateinit var postRepository: PostRepository
 
-  @InjectMocks
-  private lateinit var changePostServiceImpl: ChangePostServiceImpl
+	@InjectMocks
+	private lateinit var changePostServiceImpl: ChangePostServiceImpl
 
-  private val post: Post = Instancio.create(Post::class.java)
-  private val user: User = Instancio.create(User::class.java)
+	private val post: Post = Instancio.create(Post::class.java)
+	private val user: User = Instancio.create(User::class.java)
 
-  @Nested
-  @DisplayName("Delete Post Test")
-  inner class DeleteTest {
-    @Test
-    @DisplayName("Success delete post")
-    fun should_VerifyCallDeleteByIdMethods_when_GivenPostId() {
-      changePostServiceImpl.deletePost(post.id)
+	@Nested
+	@DisplayName("Delete Post Test")
+	inner class DeleteTest {
+		@Test
+		@DisplayName("Success delete post")
+		fun should_VerifyCallDeleteByIdMethods_when_GivenPostId() {
+			changePostServiceImpl.deletePost(post.id)
 
-      Mockito.verify(postRepository, Mockito.times(1)).deleteById(any<Long>())
-    }
-  }
+			Mockito.verify(postRepository, Mockito.times(1)).deleteById(any<Long>())
+		}
+	}
 
-  @Nested
-  @DisplayName("Update Post Test")
-  inner class UpdateTest {
-    private val updatePostRequest: UpdatePostRequest =
-      Instancio.create(
-        UpdatePostRequest::class.java
-      )
+	@Nested
+	@DisplayName("Update Post Test")
+	inner class UpdateTest {
+		private val updatePostRequest: UpdatePostRequest =
+			Instancio.create(
+				UpdatePostRequest::class.java
+			)
 
-    @Test
-    @DisplayName("Success update post")
-    fun should_AssertUpdatePostResponse_when_GivenPostIdAndUpdatePostRequest() {
-      Mockito.`when`(postServiceImpl.validateReturnPost(any<Long>())).thenReturn(post)
+		@Test
+		@DisplayName("Success update post")
+		fun should_AssertUpdatePostResponse_when_GivenPostIdAndUpdatePostRequest() {
+			Mockito.`when`(postServiceImpl.validateReturnPost(any<Long>())).thenReturn(post)
 
-      val updatePostResponse =
-        changePostServiceImpl.updatePost(
-          post.id,
-          updatePostRequest
-        )
+			val updatePostResponse =
+				changePostServiceImpl.updatePost(
+					post.id,
+					updatePostRequest
+				)
 
-      assertNotNull(updatePostResponse)
-      assertEquals(post.id, updatePostResponse.postId)
-      assertEquals(post.title, updatePostResponse.title)
-      assertEquals(post.subTitle, updatePostResponse.subTitle)
-      assertEquals(post.content, updatePostResponse.content)
-      assertEquals(
-        post.user.id,
-        updatePostResponse.writer.userId
-      )
-    }
+			assertNotNull(updatePostResponse)
+			assertEquals(post.id, updatePostResponse.postId)
+			assertEquals(post.title, updatePostResponse.title)
+			assertEquals(post.subTitle, updatePostResponse.subTitle)
+			assertEquals(post.content, updatePostResponse.content)
+			assertEquals(
+				post.user.id,
+				updatePostResponse.writer.userId
+			)
+		}
 
-    @Test
-    @DisplayName("Not found post")
-    fun should_AssertPostNotFoundException_when_GivenPostIdAndUpdatePostRequest() {
-      Mockito
-        .`when`(postServiceImpl.validateReturnPost(any<Long>()))
-        .thenThrow(PostNotFoundException(post.id))
+		@Test
+		@DisplayName("Not found post")
+		fun should_AssertPostNotFoundException_when_GivenPostIdAndUpdatePostRequest() {
+			Mockito
+				.`when`(postServiceImpl.validateReturnPost(any<Long>()))
+				.thenThrow(PostNotFoundException(post.id))
 
-      Assertions.assertThrows(
-        PostNotFoundException::class.java
-      ) { changePostServiceImpl.updatePost(post.id, updatePostRequest) }
-    }
-  }
+			Assertions.assertThrows(
+				PostNotFoundException::class.java
+			) { changePostServiceImpl.updatePost(post.id, updatePostRequest) }
+		}
+	}
 
-  @Nested
-  @DisplayName("Create Post Test")
-  inner class CreatePostTest {
-    private val createPostRequest: CreatePostRequest =
-      Instancio.create(
-        CreatePostRequest::class.java
-      )
+	@Nested
+	@DisplayName("Create Post Test")
+	inner class CreatePostTest {
+		private val createPostRequest: CreatePostRequest =
+			Instancio.create(
+				CreatePostRequest::class.java
+			)
 
-    @Test
-    @DisplayName("Success create post")
-    fun should_AssertCreatePostResponse_when_GivenUserIdAndCreatePostRequest() {
-      Mockito.`when`(userServiceImpl.validateReturnUser(any<Long>())).thenReturn(user)
+		@Test
+		@DisplayName("Success create post")
+		fun should_AssertCreatePostResponse_when_GivenUserIdAndCreatePostRequest() {
+			Mockito.`when`(userServiceImpl.validateReturnUser(any<Long>())).thenReturn(user)
 
-      Mockito.`when`(postRepository.save(any<Post>())).thenReturn(post)
+			Mockito.`when`(postRepository.save(any<Post>())).thenReturn(post)
 
-      val createPostResponse =
-        changePostServiceImpl.createPost(
-          user.id,
-          createPostRequest
-        )
+			val createPostResponse =
+				changePostServiceImpl.createPost(
+					user.id,
+					createPostRequest
+				)
 
-      assertNotNull(createPostResponse)
-      assertEquals(post.id, createPostResponse.postId)
-      assertEquals(post.title, createPostResponse.title)
-      assertEquals(post.subTitle, createPostResponse.subTitle)
-      assertEquals(post.content, createPostResponse.content)
-      assertEquals(
-        post.user.id,
-        createPostResponse.writer.userId
-      )
-    }
+			assertNotNull(createPostResponse)
+			assertEquals(post.id, createPostResponse.postId)
+			assertEquals(post.title, createPostResponse.title)
+			assertEquals(post.subTitle, createPostResponse.subTitle)
+			assertEquals(post.content, createPostResponse.content)
+			assertEquals(
+				post.user.id,
+				createPostResponse.writer.userId
+			)
+		}
 
-    @Test
-    @DisplayName("Not found user")
-    fun should_AssertUserNotFoundException_when_GivenUserIdAndCreatePostRequest() {
-      Mockito
-        .`when`(userServiceImpl.validateReturnUser(any<Long>()))
-        .thenThrow(UserNotFoundException(user.id))
+		@Test
+		@DisplayName("Not found user")
+		fun should_AssertUserNotFoundException_when_GivenUserIdAndCreatePostRequest() {
+			Mockito
+				.`when`(userServiceImpl.validateReturnUser(any<Long>()))
+				.thenThrow(UserNotFoundException(user.id))
 
-      Assertions.assertThrows(
-        UserNotFoundException::class.java
-      ) { changePostServiceImpl.createPost(user.id, createPostRequest) }
-    }
-  }
+			Assertions.assertThrows(
+				UserNotFoundException::class.java
+			) { changePostServiceImpl.createPost(user.id, createPostRequest) }
+		}
+	}
 }

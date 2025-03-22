@@ -11,49 +11,49 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @OpenAPIDefinition(
-  info =
-    Info(
-      title = "Spring Boot Boilerplate",
-      description = "Spring Boot Boilerplate API Docs",
-      version = "v1"
-    )
+	info =
+		Info(
+			title = "Spring Boot Boilerplate",
+			description = "Spring Boot Boilerplate API Docs",
+			version = "v1"
+		)
 )
 @Configuration
 class SwaggerConfig {
-  @Bean
-  fun openAPI(): OpenAPI {
-    val securityAPIKeyScheme =
-      SecurityScheme()
-        .type(SecurityScheme.Type.APIKEY)
-        .`in`(SecurityScheme.In.HEADER)
-        .name("X-API-KEY")
+	@Bean
+	fun openAPI(): OpenAPI {
+		val securityAPIKeyScheme =
+			SecurityScheme()
+				.type(SecurityScheme.Type.APIKEY)
+				.`in`(SecurityScheme.In.HEADER)
+				.name("X-API-KEY")
 
-    val securityJWTScheme =
-      SecurityScheme()
-        .type(SecurityScheme.Type.HTTP)
-        .scheme("bearer")
-        .bearerFormat("JWT")
-        .`in`(SecurityScheme.In.HEADER)
-        .name("Authorization")
+		val securityJWTScheme =
+			SecurityScheme()
+				.type(SecurityScheme.Type.HTTP)
+				.scheme("bearer")
+				.bearerFormat("JWT")
+				.`in`(SecurityScheme.In.HEADER)
+				.name("Authorization")
 
-    val securityRequirement =
-      SecurityRequirement()
-        .addList("API Key")
-        .addList("Bearer Token")
+		val securityRequirement =
+			SecurityRequirement()
+				.addList("API Key")
+				.addList("Bearer Token")
 
-    return OpenAPI()
-      .components(
-        Components()
-          .addSecuritySchemes("API Key", securityAPIKeyScheme)
-          .addSecuritySchemes("Bearer Token", securityJWTScheme)
-      ).security(mutableListOf(securityRequirement))
-  }
+		return OpenAPI()
+			.components(
+				Components()
+					.addSecuritySchemes("API Key", securityAPIKeyScheme)
+					.addSecuritySchemes("Bearer Token", securityJWTScheme)
+			).security(mutableListOf(securityRequirement))
+	}
 
-  @Bean
-  fun v1OpenApi(): GroupedOpenApi =
-    GroupedOpenApi
-      .builder()
-      .group("V1 API")
-      .pathsToMatch("/api/v1/**/**")
-      .build()
+	@Bean
+	fun v1OpenApi(): GroupedOpenApi =
+		GroupedOpenApi
+			.builder()
+			.group("V1 API")
+			.pathsToMatch("/api/v1/**/**")
+			.build()
 }

@@ -28,94 +28,94 @@ import org.springframework.test.context.ActiveProfiles
 @Tag("mockito-unit-test")
 @DisplayName("Mockito Unit - Auth Controller Test")
 @ExtendWith(
-  MockitoExtension::class
+	MockitoExtension::class
 )
 class AuthControllerTests {
-  @InjectMocks
-  private lateinit var authController: AuthController
+	@InjectMocks
+	private lateinit var authController: AuthController
 
-  @Mock
-  private lateinit var authService: AuthService
+	@Mock
+	private lateinit var authService: AuthService
 
-  private val defaultAccessToken =
-    """
+	private val defaultAccessToken =
+		"""
     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.
     eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
     """
 
-  private val user: User = Instancio.create(User::class.java)
+	private val user: User = Instancio.create(User::class.java)
 
-  @Test
-  @DisplayName("Sign in")
-  fun should_AssertSignInResponse_when_GivenSignInRequest() {
-    val signInRequest = Instancio.create(SignInRequest::class.java)
+	@Test
+	@DisplayName("Sign in")
+	fun should_AssertSignInResponse_when_GivenSignInRequest() {
+		val signInRequest = Instancio.create(SignInRequest::class.java)
 
-    Mockito
-      .`when`(authService.signIn(any<SignInRequest>()))
-      .thenReturn(SignInResponse.from(user, defaultAccessToken))
+		Mockito
+			.`when`(authService.signIn(any<SignInRequest>()))
+			.thenReturn(SignInResponse.from(user, defaultAccessToken))
 
-    val response =
-      authController.signIn(
-        signInRequest
-      )
+		val response =
+			authController.signIn(
+				signInRequest
+			)
 
-    assertNotNull(response)
-    assertNotNull(response.body)
-    assertEquals(HttpStatus.OK, response.statusCode)
+		assertNotNull(response)
+		assertNotNull(response.body)
+		assertEquals(HttpStatus.OK, response.statusCode)
 
-    val body =
-      requireNotNull(response.body) {
-        "Response body must not be null"
-      }
+		val body =
+			requireNotNull(response.body) {
+				"Response body must not be null"
+			}
 
-    assertEquals(user.id, body.userId)
-    assertEquals(user.email, body.email)
-    assertEquals(user.name, body.name)
-    assertEquals(user.role, body.role)
-    assertEquals(defaultAccessToken, body.accessToken)
-  }
+		assertEquals(user.id, body.userId)
+		assertEquals(user.email, body.email)
+		assertEquals(user.name, body.name)
+		assertEquals(user.role, body.role)
+		assertEquals(defaultAccessToken, body.accessToken)
+	}
 
-  @Test
-  @DisplayName("Sign out")
-  fun should_AssertSignOutVoidResponse_when_GivenSecurityUserItem() {
-    val securityUserItem =
-      Instancio.create(
-        SecurityUserItem::class.java
-      )
+	@Test
+	@DisplayName("Sign out")
+	fun should_AssertSignOutVoidResponse_when_GivenSecurityUserItem() {
+		val securityUserItem =
+			Instancio.create(
+				SecurityUserItem::class.java
+			)
 
-    val response = authController.signOut(securityUserItem)
+		val response = authController.signOut(securityUserItem)
 
-    assertNotNull(response)
-    assertNull(response.body)
-    assertEquals(HttpStatus.OK, response.statusCode)
-  }
+		assertNotNull(response)
+		assertNull(response.body)
+		assertEquals(HttpStatus.OK, response.statusCode)
+	}
 
-  @Test
-  @DisplayName("Refresh access token")
-  fun should_AssertRefreshAccessTokenResponse_when_GivenSecurityUserItem() {
-    val refreshAccessTokenRequest =
-      Instancio.create(
-        RefreshAccessTokenRequest::class.java
-      )
+	@Test
+	@DisplayName("Refresh access token")
+	fun should_AssertRefreshAccessTokenResponse_when_GivenSecurityUserItem() {
+		val refreshAccessTokenRequest =
+			Instancio.create(
+				RefreshAccessTokenRequest::class.java
+			)
 
-    Mockito
-      .`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
-      .thenReturn(RefreshAccessTokenResponse.of(defaultAccessToken))
+		Mockito
+			.`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
+			.thenReturn(RefreshAccessTokenResponse.of(defaultAccessToken))
 
-    val response =
-      authController.refreshAccessToken(
-        refreshAccessTokenRequest
-      )
+		val response =
+			authController.refreshAccessToken(
+				refreshAccessTokenRequest
+			)
 
-    assertNotNull(response)
-    assertNotNull(response.body)
-    assertEquals(HttpStatus.CREATED, response.statusCode)
+		assertNotNull(response)
+		assertNotNull(response.body)
+		assertEquals(HttpStatus.CREATED, response.statusCode)
 
-    val body =
-      requireNotNull(response.body) {
-        "Response body must not be null"
-      }
+		val body =
+			requireNotNull(response.body) {
+				"Response body must not be null"
+			}
 
-    assertEquals(defaultAccessToken, body.accessToken)
-  }
+		assertEquals(defaultAccessToken, body.accessToken)
+	}
 }

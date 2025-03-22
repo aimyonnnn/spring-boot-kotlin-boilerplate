@@ -21,38 +21,38 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 @SQLDelete(sql = "UPDATE \"user\" SET deleted_dt = CURRENT_TIMESTAMP WHERE user_id = ?")
 @SQLRestriction("deleted_dt IS NULL")
 data class User(
-  @Column(nullable = false)
-  var name: String,
-  @Column(
-    unique = true,
-    nullable = false,
-    updatable = false
-  )
-  var email: String,
-  @Column(nullable = false)
-  var password: String,
-  @Enumerated(EnumType.STRING)
-  @Column(nullable = false)
-  var role: UserRole = UserRole.USER,
-  @OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", orphanRemoval = true)
-  var posts: List<Post> = ArrayList()
+	@Column(nullable = false)
+	var name: String,
+	@Column(
+		unique = true,
+		nullable = false,
+		updatable = false
+	)
+	var email: String,
+	@Column(nullable = false)
+	var password: String,
+	@Enumerated(EnumType.STRING)
+	@Column(nullable = false)
+	var role: UserRole = UserRole.USER,
+	@OneToMany(cascade = [CascadeType.ALL], mappedBy = "user", orphanRemoval = true)
+	var posts: List<Post> = ArrayList()
 ) : BaseSoftDeleteEntity() {
-  fun update(
-    name: String,
-    role: UserRole
-  ): User {
-    this.name = name
-    this.role = role
-    return this
-  }
+	fun update(
+		name: String,
+		role: UserRole
+	): User {
+		this.name = name
+		this.role = role
+		return this
+	}
 
-  fun encodePassword(bCryptPasswordEncoder: BCryptPasswordEncoder): User {
-    this.password = bCryptPasswordEncoder.encode(this.password)
-    return this
-  }
+	fun encodePassword(bCryptPasswordEncoder: BCryptPasswordEncoder): User {
+		this.password = bCryptPasswordEncoder.encode(this.password)
+		return this
+	}
 
-  fun validatePassword(
-    password: String,
-    bCryptPasswordEncoder: BCryptPasswordEncoder
-  ): Boolean = bCryptPasswordEncoder.matches(password, this.password)
+	fun validatePassword(
+		password: String,
+		bCryptPasswordEncoder: BCryptPasswordEncoder
+	): Boolean = bCryptPasswordEncoder.matches(password, this.password)
 }

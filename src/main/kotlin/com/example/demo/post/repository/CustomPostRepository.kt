@@ -6,8 +6,8 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface CustomPostRepository {
-  fun getExcludeUsersPosts(
-    getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
-    pageable: Pageable
-  ): Page<GetPostResponse>
+	fun getExcludeUsersPosts(
+		getExcludeUsersPostsRequest: GetExcludeUsersPostsRequest,
+		pageable: Pageable
+	): Page<GetPostResponse>
 }

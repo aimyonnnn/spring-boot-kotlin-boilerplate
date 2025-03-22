@@ -13,33 +13,33 @@ import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
 class RedisConfig {
-  @Value("\${spring.data.redis.port}")
-  var port: Int = 0
+	@Value("\${spring.data.redis.port}")
+	var port: Int = 0
 
-  @Value("\${spring.data.redis.host}")
-  lateinit var host: String
+	@Value("\${spring.data.redis.host}")
+	lateinit var host: String
 
-  @Bean
-  fun redisConnectionFactory(): LettuceConnectionFactory =
-    LettuceConnectionFactory(
-      RedisStandaloneConfiguration(host, port)
-    )
+	@Bean
+	fun redisConnectionFactory(): LettuceConnectionFactory =
+		LettuceConnectionFactory(
+			RedisStandaloneConfiguration(host, port)
+		)
 
-  @Bean
-  fun redisTemplate(redisConnectionFactory: RedisConnectionFactory?): RedisTemplate<String, Any> {
-    val redisTemplate = RedisTemplate<String, Any>()
+	@Bean
+	fun redisTemplate(redisConnectionFactory: RedisConnectionFactory?): RedisTemplate<String, Any> {
+		val redisTemplate = RedisTemplate<String, Any>()
 
-    redisTemplate.keySerializer = StringRedisSerializer()
-    redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer()
+		redisTemplate.keySerializer = StringRedisSerializer()
+		redisTemplate.valueSerializer = GenericJackson2JsonRedisSerializer()
 
-    redisTemplate.connectionFactory = redisConnectionFactory
-    return redisTemplate
-  }
+		redisTemplate.connectionFactory = redisConnectionFactory
+		return redisTemplate
+	}
 
-  @Bean
-  fun stringRedisTemplate(redisConnectionFactory: RedisConnectionFactory?): StringRedisTemplate {
-    val stringRedisTemplate = StringRedisTemplate()
-    stringRedisTemplate.connectionFactory = redisConnectionFactory
-    return stringRedisTemplate
-  }
+	@Bean
+	fun stringRedisTemplate(redisConnectionFactory: RedisConnectionFactory?): StringRedisTemplate {
+		val stringRedisTemplate = StringRedisTemplate()
+		stringRedisTemplate.connectionFactory = redisConnectionFactory
+		return stringRedisTemplate
+	}
 }

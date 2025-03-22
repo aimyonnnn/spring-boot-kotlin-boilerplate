@@ -21,31 +21,31 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 class SecurityConfig(
-  private val authProvider: AuthProvider,
-  private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
-  private val customAccessDeniedHandler: CustomAccessDeniedHandler
+	private val authProvider: AuthProvider,
+	private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
+	private val customAccessDeniedHandler: CustomAccessDeniedHandler
 ) {
-  @Bean
-  @Throws(Exception::class)
-  fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager = authenticationConfiguration.authenticationManager
+	@Bean
+	@Throws(Exception::class)
+	fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager = authenticationConfiguration.authenticationManager
 
-  @Bean
-  @Throws(Exception::class)
-  fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
-    authProvider
-      .defaultSecurityFilterChain(httpSecurity)
-      .authorizeHttpRequests { request ->
-        request
-          .requestMatchers(*authProvider.whiteListDefaultEndpoints(), *authProvider.ignoreListDefaultEndpoints())
-          .permitAll()
-          .anyRequest()
-          .authenticated()
-      }.addFilterAfter(
-        APIKeyAuthFilter(authProvider),
-        UsernamePasswordAuthenticationFilter::class.java
-      ).exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
-        exceptionHandling
-          .authenticationEntryPoint(customAuthenticationEntryPoint)
-          .accessDeniedHandler(customAccessDeniedHandler)
-      }.build()
+	@Bean
+	@Throws(Exception::class)
+	fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
+		authProvider
+			.defaultSecurityFilterChain(httpSecurity)
+			.authorizeHttpRequests { request ->
+				request
+					.requestMatchers(*authProvider.whiteListDefaultEndpoints(), *authProvider.ignoreListDefaultEndpoints())
+					.permitAll()
+					.anyRequest()
+					.authenticated()
+			}.addFilterAfter(
+				APIKeyAuthFilter(authProvider),
+				UsernamePasswordAuthenticationFilter::class.java
+			).exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
+				exceptionHandling
+					.authenticationEntryPoint(customAuthenticationEntryPoint)
+					.accessDeniedHandler(customAccessDeniedHandler)
+			}.build()
 }

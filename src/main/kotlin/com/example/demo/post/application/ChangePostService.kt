@@ -6,15 +6,15 @@ import com.example.demo.post.dto.serve.response.CreatePostResponse
 import com.example.demo.post.dto.serve.response.UpdatePostResponse
 
 interface ChangePostService {
-  fun updatePost(
-    postId: Long,
-    updatePostRequest: UpdatePostRequest
-  ): UpdatePostResponse
+	fun updatePost(
+		postId: Long,
+		updatePostRequest: UpdatePostRequest
+	): UpdatePostResponse
 
-  fun createPost(
-    userId: Long,
-    createPostRequest: CreatePostRequest
-  ): CreatePostResponse
+	fun createPost(
+		userId: Long,
+		createPostRequest: CreatePostRequest
+	): CreatePostResponse
 
-  fun deletePost(postId: Long)
+	fun deletePost(postId: Long)
 }

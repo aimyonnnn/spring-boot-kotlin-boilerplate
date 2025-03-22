@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.CONFLICT)
 open class AlreadyExistException(
-  message: String
+	message: String
 ) : CustomRuntimeException(message)

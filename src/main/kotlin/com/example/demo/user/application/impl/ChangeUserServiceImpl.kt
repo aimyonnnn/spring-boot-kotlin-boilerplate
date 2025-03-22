@@ -19,58 +19,58 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 @Transactional
 class ChangeUserServiceImpl(
-  private val tokenProvider: TokenProvider,
-  private val userService: UserService,
-  private val userRepository: UserRepository,
-  private val bCryptPasswordEncoder: BCryptPasswordEncoder
+	private val tokenProvider: TokenProvider,
+	private val userService: UserService,
+	private val userRepository: UserRepository,
+	private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : ChangeUserService {
-  override fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
-    userRepository
-      .existsByEmail(createUserRequest.email)
-      .run {
-        if (this) throw AlreadyUserExistException(createUserRequest.email)
-      }
+	override fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
+		userRepository
+			.existsByEmail(createUserRequest.email)
+			.run {
+				if (this) throw AlreadyUserExistException(createUserRequest.email)
+			}
 
-    val user: User =
-      User(
-        name = createUserRequest.name,
-        email = createUserRequest.email,
-        password = createUserRequest.password,
-        role = UserRole.USER
-      ).encodePassword(bCryptPasswordEncoder)
+		val user: User =
+			User(
+				name = createUserRequest.name,
+				email = createUserRequest.email,
+				password = createUserRequest.password,
+				role = UserRole.USER
+			).encodePassword(bCryptPasswordEncoder)
 
-    return CreateUserResponse.from(
-      userRepository.save(user),
-      tokenProvider.createFullTokens(user)
-    )
-  }
+		return CreateUserResponse.from(
+			userRepository.save(user),
+			tokenProvider.createFullTokens(user)
+		)
+	}
 
-  override fun updateUser(
-    userId: Long,
-    updateUserRequest: UpdateUserRequest
-  ): UpdateUserResponse {
-    val user: User =
-      userService
-        .validateReturnUser(userId)
-        .update(name = updateUserRequest.name, role = updateUserRequest.role)
+	override fun updateUser(
+		userId: Long,
+		updateUserRequest: UpdateUserRequest
+	): UpdateUserResponse {
+		val user: User =
+			userService
+				.validateReturnUser(userId)
+				.update(name = updateUserRequest.name, role = updateUserRequest.role)
 
-    return user.let(UpdateUserResponse::from)
-  }
+		return user.let(UpdateUserResponse::from)
+	}
 
-  override fun updateMe(
-    userId: Long,
-    updateUserRequest: UpdateUserRequest
-  ): UpdateMeResponse {
-    val user: User =
-      userService
-        .validateReturnUser(userId)
-        .update(name = updateUserRequest.name, role = updateUserRequest.role)
+	override fun updateMe(
+		userId: Long,
+		updateUserRequest: UpdateUserRequest
+	): UpdateMeResponse {
+		val user: User =
+			userService
+				.validateReturnUser(userId)
+				.update(name = updateUserRequest.name, role = updateUserRequest.role)
 
-    return UpdateMeResponse.from(user, tokenProvider.createFullTokens(user))
-  }
+		return UpdateMeResponse.from(user, tokenProvider.createFullTokens(user))
+	}
 
-  override fun deleteUser(userId: Long) {
-    tokenProvider.deleteRefreshToken(userId)
-    userRepository.deleteById(userId)
-  }
+	override fun deleteUser(userId: Long) {
+		tokenProvider.deleteRefreshToken(userId)
+		userRepository.deleteById(userId)
+	}
 }

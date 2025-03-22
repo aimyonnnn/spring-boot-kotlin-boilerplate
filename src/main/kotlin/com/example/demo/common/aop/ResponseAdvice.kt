@@ -15,24 +15,24 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice
 
 @RestControllerAdvice(basePackages = ["com.example.demo"])
 class ResponseAdvice : ResponseBodyAdvice<Any> {
-  override fun supports(
-    returnType: MethodParameter,
-    converterType: Class<out HttpMessageConverter<*>>
-  ): Boolean =
-    MappingJackson2HttpMessageConverter::class.java.isAssignableFrom(
-      converterType
-    )
+	override fun supports(
+		returnType: MethodParameter,
+		converterType: Class<out HttpMessageConverter<*>>
+	): Boolean =
+		MappingJackson2HttpMessageConverter::class.java.isAssignableFrom(
+			converterType
+		)
 
-  override fun beforeBodyWrite(
-    @Nullable body: Any?,
-    returnType: MethodParameter,
-    selectedContentType: MediaType,
-    selectedConverterType: Class<out HttpMessageConverter<*>>,
-    request: ServerHttpRequest,
-    response: ServerHttpResponse
-  ): Any? =
-    when (body) {
-      is ErrorResponse -> body
-      else -> body.let { OkResponse.of(HttpStatus.OK.value(), HttpStatus.OK.name, it) }
-    }
+	override fun beforeBodyWrite(
+		@Nullable body: Any?,
+		returnType: MethodParameter,
+		selectedContentType: MediaType,
+		selectedConverterType: Class<out HttpMessageConverter<*>>,
+		request: ServerHttpRequest,
+		response: ServerHttpResponse
+	): Any? =
+		when (body) {
+			is ErrorResponse -> body
+			else -> body.let { OkResponse.of(HttpStatus.OK.value(), HttpStatus.OK.name, it) }
+		}
 }

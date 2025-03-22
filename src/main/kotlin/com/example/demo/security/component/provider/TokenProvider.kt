@@ -9,43 +9,43 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class TokenProvider(
-  private val jwtProvider: JWTProvider,
-  private val redisUtils: RedisUtils
+	private val jwtProvider: JWTProvider,
+	private val redisUtils: RedisUtils
 ) {
-  fun getRefreshToken(userId: Long): String {
-    val redisKey: String = redisUtils.generateSessionKey(userId)
-    val refreshToken: String = redisUtils.get(redisKey) ?: throw RefreshTokenNotFoundException(userId)
+	fun getRefreshToken(userId: Long): String {
+		val redisKey: String = redisUtils.generateSessionKey(userId)
+		val refreshToken: String = redisUtils.get(redisKey) ?: throw RefreshTokenNotFoundException(userId)
 
-    return refreshToken
-  }
+		return refreshToken
+	}
 
-  fun deleteRefreshToken(userId: Long) {
-    val redisKey: String = redisUtils.generateSessionKey(userId)
+	fun deleteRefreshToken(userId: Long) {
+		val redisKey: String = redisUtils.generateSessionKey(userId)
 
-    redisUtils.delete(redisKey)
-  }
+		redisUtils.delete(redisKey)
+	}
 
-  fun createRefreshToken(user: User) {
-    val redisKey: String = redisUtils.generateSessionKey(user.id)
+	fun createRefreshToken(user: User) {
+		val redisKey: String = redisUtils.generateSessionKey(user.id)
 
-    redisUtils.set(
-      redisKey,
-      jwtProvider.createRefreshToken(SecurityUserItem.from(user)),
-      jwtProvider.refreshExpireTime,
-      TimeUnit.SECONDS
-    )
-  }
+		redisUtils.set(
+			redisKey,
+			jwtProvider.createRefreshToken(SecurityUserItem.from(user)),
+			jwtProvider.refreshExpireTime,
+			TimeUnit.SECONDS
+		)
+	}
 
-  fun createAccessToken(user: User): String = jwtProvider.createAccessToken(SecurityUserItem.from(user))
+	fun createAccessToken(user: User): String = jwtProvider.createAccessToken(SecurityUserItem.from(user))
 
-  fun refreshAccessToken(securityUserItem: SecurityUserItem): String =
-    jwtProvider.refreshAccessToken(
-      securityUserItem,
-      getRefreshToken(securityUserItem.userId)
-    )
+	fun refreshAccessToken(securityUserItem: SecurityUserItem): String =
+		jwtProvider.refreshAccessToken(
+			securityUserItem,
+			getRefreshToken(securityUserItem.userId)
+		)
 
-  fun createFullTokens(user: User): String {
-    createRefreshToken(user)
-    return createAccessToken(user)
-  }
+	fun createFullTokens(user: User): String {
+		createRefreshToken(user)
+		return createAccessToken(user)
+	}
 }

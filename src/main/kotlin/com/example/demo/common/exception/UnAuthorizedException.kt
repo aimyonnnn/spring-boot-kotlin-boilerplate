@@ -5,5 +5,5 @@ import org.springframework.web.bind.annotation.ResponseStatus
 
 @ResponseStatus(HttpStatus.UNAUTHORIZED)
 open class UnAuthorizedException(
-  message: String
+	message: String
 ) : CustomRuntimeException(message)

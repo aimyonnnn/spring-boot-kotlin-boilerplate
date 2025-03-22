@@ -13,35 +13,35 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 import org.springframework.web.context.WebApplicationContext
 
 abstract class BaseIntegrationController : BehaviorSpec() {
-  @Autowired
-  protected lateinit var webApplicationContext: WebApplicationContext
+	@Autowired
+	protected lateinit var webApplicationContext: WebApplicationContext
 
-  @Autowired
-  protected lateinit var mockMvc: MockMvc
+	@Autowired
+	protected lateinit var mockMvc: MockMvc
 
-  @Autowired
-  protected lateinit var objectMapper: ObjectMapper
+	@Autowired
+	protected lateinit var objectMapper: ObjectMapper
 
-  /**
-   * ResponseAdvice Status
-   */
-  protected val commonStatus: Int = HttpStatus.OK.value()
+	/**
+	 * ResponseAdvice Status
+	 */
+	protected val commonStatus: Int = HttpStatus.OK.value()
 
-  /**
-   * ResponseAdvice Message
-   */
-  protected val commonMessage: String = HttpStatus.OK.name
+	/**
+	 * ResponseAdvice Message
+	 */
+	protected val commonMessage: String = HttpStatus.OK.name
 
-  fun initialize() {
-    listeners(SecurityListenerFactory())
+	fun initialize() {
+		listeners(SecurityListenerFactory())
 
-    beforeSpec {
-      mockMvc =
-        MockMvcBuilders
-          .webAppContextSetup(webApplicationContext)
-          .apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
-          .alwaysDo<DefaultMockMvcBuilder>(MockMvcResultHandlers.print())
-          .build()
-    }
-  }
+		beforeSpec {
+			mockMvc =
+				MockMvcBuilders
+					.webAppContextSetup(webApplicationContext)
+					.apply<DefaultMockMvcBuilder>(SecurityMockMvcConfigurers.springSecurity())
+					.alwaysDo<DefaultMockMvcBuilder>(MockMvcResultHandlers.print())
+					.build()
+		}
+	}
 }

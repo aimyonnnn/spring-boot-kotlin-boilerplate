@@ -5,9 +5,9 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
 interface GetUserService {
-  fun getUserById(userId: Long): GetUserResponse
+	fun getUserById(userId: Long): GetUserResponse
 
-  fun getUserByEmail(email: String): GetUserResponse?
+	fun getUserByEmail(email: String): GetUserResponse?
 
-  fun getUserList(pageable: Pageable): Page<GetUserResponse>
+	fun getUserList(pageable: Pageable): Page<GetUserResponse>
 }

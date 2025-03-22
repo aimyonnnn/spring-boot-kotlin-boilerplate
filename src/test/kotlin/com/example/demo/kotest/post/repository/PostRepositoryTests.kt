@@ -23,144 +23,144 @@ import org.springframework.test.context.ActiveProfiles
 @Import(value = [QueryDslConfig::class, JpaAuditConfig::class])
 @DataJpaTest
 class PostRepositoryTests(
-  @Autowired
-  private val postRepository: PostRepository
+	@Autowired
+	private val postRepository: PostRepository
 ) : DescribeSpec({
-    lateinit var postEntity: Post
-    val defaultPostTitle = "unit test"
-    val defaultPostSubTitle = "Post Repository Test"
-    val defaultPostContent = "default value for post repository testing"
-    val defaultUserEmail = "awakelife93@gmail.com"
-    val defaultUserPassword = "test_password_123!@"
-    val defaultUserName = "Hyunwoo Park"
-    val defaultUserRole = UserRole.USER
+		lateinit var postEntity: Post
+		val defaultPostTitle = "unit test"
+		val defaultPostSubTitle = "Post Repository Test"
+		val defaultPostContent = "default value for post repository testing"
+		val defaultUserEmail = "awakelife93@gmail.com"
+		val defaultUserPassword = "test_password_123!@"
+		val defaultUserName = "Hyunwoo Park"
+		val defaultUserRole = UserRole.USER
 
-    listeners(SecurityListenerFactory())
+		listeners(SecurityListenerFactory())
 
-    beforeContainer {
-      postEntity =
-        Post(
-          defaultPostTitle,
-          defaultPostSubTitle,
-          defaultPostContent,
-          User(
-            defaultUserEmail,
-            defaultUserName,
-            defaultUserPassword,
-            defaultUserRole
-          )
-        )
-    }
+		beforeContainer {
+			postEntity =
+				Post(
+					defaultPostTitle,
+					defaultPostSubTitle,
+					defaultPostContent,
+					User(
+						defaultUserEmail,
+						defaultUserName,
+						defaultUserPassword,
+						defaultUserRole
+					)
+				)
+		}
 
-    describe("Create post") {
+		describe("Create post") {
 
-      context("Save post") {
-        val createPost = postRepository.save(postEntity)
+			context("Save post") {
+				val createPost = postRepository.save(postEntity)
 
-        it("Assert Post Entity") {
-          createPost.id shouldBe postEntity.id
-          createPost.title shouldBe postEntity.title
-          createPost.subTitle shouldBe postEntity.subTitle
-          createPost.content shouldBe postEntity.content
-          createPost.user.id shouldBe postEntity.user.id
-        }
-      }
-    }
+				it("Assert Post Entity") {
+					createPost.id shouldBe postEntity.id
+					createPost.title shouldBe postEntity.title
+					createPost.subTitle shouldBe postEntity.subTitle
+					createPost.content shouldBe postEntity.content
+					createPost.user.id shouldBe postEntity.user.id
+				}
+			}
+		}
 
-    describe("Update post") {
+		describe("Update post") {
 
-      context("Save post") {
-        val updatePostRequest =
-          Instancio.create(
-            UpdatePostRequest::class.java
-          )
+			context("Save post") {
+				val updatePostRequest =
+					Instancio.create(
+						UpdatePostRequest::class.java
+					)
 
-        val beforeUpdatePost = postRepository.save(postEntity)
+				val beforeUpdatePost = postRepository.save(postEntity)
 
-        postRepository.save(
-          beforeUpdatePost.update(
-            updatePostRequest.title,
-            updatePostRequest.subTitle,
-            updatePostRequest.content
-          )
-        )
+				postRepository.save(
+					beforeUpdatePost.update(
+						updatePostRequest.title,
+						updatePostRequest.subTitle,
+						updatePostRequest.content
+					)
+				)
 
-        val afterUpdatePost: Post =
-          requireNotNull(
-            postRepository
-              .findOneById(beforeUpdatePost.id)
-          ) {
-            "Post must not be null"
-          }
+				val afterUpdatePost: Post =
+					requireNotNull(
+						postRepository
+							.findOneById(beforeUpdatePost.id)
+					) {
+						"Post must not be null"
+					}
 
-        it("Assert Post Entity") {
-          afterUpdatePost.title shouldBe updatePostRequest.title
-          afterUpdatePost.subTitle shouldBe updatePostRequest.subTitle
-          afterUpdatePost.content shouldBe updatePostRequest.content
-        }
-      }
-    }
+				it("Assert Post Entity") {
+					afterUpdatePost.title shouldBe updatePostRequest.title
+					afterUpdatePost.subTitle shouldBe updatePostRequest.subTitle
+					afterUpdatePost.content shouldBe updatePostRequest.content
+				}
+			}
+		}
 
-    describe("Delete Post") {
+		describe("Delete Post") {
 
-      context("Call deleteById") {
-        val beforeDeletePost = postRepository.save(postEntity)
+			context("Call deleteById") {
+				val beforeDeletePost = postRepository.save(postEntity)
 
-        postRepository.deleteById(beforeDeletePost.id)
+				postRepository.deleteById(beforeDeletePost.id)
 
-        val afterDeletePost: Post? =
-          postRepository
-            .findOneById(beforeDeletePost.id)
+				val afterDeletePost: Post? =
+					postRepository
+						.findOneById(beforeDeletePost.id)
 
-        it("Assert Null") {
-          afterDeletePost.shouldBeNull()
-        }
-      }
-    }
+				it("Assert Null") {
+					afterDeletePost.shouldBeNull()
+				}
+			}
+		}
 
-    describe("Find Post By Id") {
+		describe("Find Post By Id") {
 
-      context("Call findOneById") {
-        val beforeFindPost = postRepository.save(postEntity)
+			context("Call findOneById") {
+				val beforeFindPost = postRepository.save(postEntity)
 
-        val afterFindPost: Post =
-          requireNotNull(
-            postRepository
-              .findOneById(beforeFindPost.id)
-          ) {
-            "Post must not be null"
-          }
+				val afterFindPost: Post =
+					requireNotNull(
+						postRepository
+							.findOneById(beforeFindPost.id)
+					) {
+						"Post must not be null"
+					}
 
-        it("Assert Post Entity") {
-          afterFindPost.id shouldBe beforeFindPost.id
-          afterFindPost.title shouldBe beforeFindPost.title
-          afterFindPost.subTitle shouldBe beforeFindPost.subTitle
-          afterFindPost.content shouldBe beforeFindPost.content
-          afterFindPost.user.id shouldBe beforeFindPost.user.id
-        }
-      }
-    }
+				it("Assert Post Entity") {
+					afterFindPost.id shouldBe beforeFindPost.id
+					afterFindPost.title shouldBe beforeFindPost.title
+					afterFindPost.subTitle shouldBe beforeFindPost.subTitle
+					afterFindPost.content shouldBe beforeFindPost.content
+					afterFindPost.user.id shouldBe beforeFindPost.user.id
+				}
+			}
+		}
 
-    describe("Find Post By user") {
+		describe("Find Post By user") {
 
-      context("Call findOneByUser") {
-        val beforeFindPost = postRepository.save(postEntity)
+			context("Call findOneByUser") {
+				val beforeFindPost = postRepository.save(postEntity)
 
-        val afterFindPost: Post =
-          requireNotNull(
-            postRepository
-              .findOneByUser(beforeFindPost.user)
-          ) {
-            "Post must not be null"
-          }
+				val afterFindPost: Post =
+					requireNotNull(
+						postRepository
+							.findOneByUser(beforeFindPost.user)
+					) {
+						"Post must not be null"
+					}
 
-        it("Assert Post Entity") {
-          afterFindPost.id shouldBe beforeFindPost.id
-          afterFindPost.title shouldBe beforeFindPost.title
-          afterFindPost.subTitle shouldBe beforeFindPost.subTitle
-          afterFindPost.content shouldBe beforeFindPost.content
-          afterFindPost.user.id shouldBe beforeFindPost.user.id
-        }
-      }
-    }
-  })
+				it("Assert Post Entity") {
+					afterFindPost.id shouldBe beforeFindPost.id
+					afterFindPost.title shouldBe beforeFindPost.title
+					afterFindPost.subTitle shouldBe beforeFindPost.subTitle
+					afterFindPost.content shouldBe beforeFindPost.content
+					afterFindPost.user.id shouldBe beforeFindPost.user.id
+				}
+			}
+		}
+	})

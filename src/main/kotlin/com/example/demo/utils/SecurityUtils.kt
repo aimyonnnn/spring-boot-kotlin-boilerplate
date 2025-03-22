@@ -11,30 +11,30 @@ import org.springframework.http.MediaType
 private val logger = KotlinLogging.logger {}
 
 object SecurityUtils {
-  private val objectMapper = ObjectMapper()
+	private val objectMapper = ObjectMapper()
 
-  fun sendErrorResponse(
-    httpServletRequest: HttpServletRequest,
-    httpServletResponse: HttpServletResponse,
-    exception: Throwable,
-    message: String = ""
-  ) {
-    val errorResponse =
-      ErrorResponse.of(
-        HttpStatus.UNAUTHORIZED.value(),
-        exception.message ?: message
-      )
+	fun sendErrorResponse(
+		httpServletRequest: HttpServletRequest,
+		httpServletResponse: HttpServletResponse,
+		exception: Throwable,
+		message: String = ""
+	) {
+		val errorResponse =
+			ErrorResponse.of(
+				HttpStatus.UNAUTHORIZED.value(),
+				exception.message ?: message
+			)
 
-    logger.error {
-      "Security Filter sendErrorResponse - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message ?: message}"
-    }
+		logger.error {
+			"Security Filter sendErrorResponse - ${httpServletRequest.method} ${httpServletRequest.requestURI} ${exception.message ?: message}"
+		}
 
-    with(httpServletResponse) {
-      status = HttpStatus.UNAUTHORIZED.value()
-      contentType = MediaType.APPLICATION_JSON_VALUE
+		with(httpServletResponse) {
+			status = HttpStatus.UNAUTHORIZED.value()
+			contentType = MediaType.APPLICATION_JSON_VALUE
 
-      runCatching { writer.write(objectMapper.writeValueAsString(errorResponse)) }
-        .onFailure { logger.error { it.message } }
-    }
-  }
+			runCatching { writer.write(objectMapper.writeValueAsString(errorResponse)) }
+				.onFailure { logger.error { it.message } }
+		}
+	}
 }

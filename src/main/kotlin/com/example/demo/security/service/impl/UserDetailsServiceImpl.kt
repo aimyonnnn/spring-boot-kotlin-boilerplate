@@ -11,12 +11,12 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserDetailsServiceImpl(
-  private val userService: UserService
+	private val userService: UserService
 ) : UserDetailsService {
-  @Throws(UserNotFoundException::class)
-  override fun loadUserByUsername(userId: String): UserDetails {
-    val user: User = userService.validateReturnUser(userId.toLong())
+	@Throws(UserNotFoundException::class)
+	override fun loadUserByUsername(userId: String): UserDetails {
+		val user: User = userService.validateReturnUser(userId.toLong())
 
-    return UserAdapter(SecurityUserItem.from(user))
-  }
+		return UserAdapter(SecurityUserItem.from(user))
+	}
 }

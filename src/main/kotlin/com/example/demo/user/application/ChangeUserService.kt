@@ -7,17 +7,17 @@ import com.example.demo.user.dto.serve.response.UpdateMeResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
 
 interface ChangeUserService {
-  fun updateUser(
-    userId: Long,
-    updateUserRequest: UpdateUserRequest
-  ): UpdateUserResponse
+	fun updateUser(
+		userId: Long,
+		updateUserRequest: UpdateUserRequest
+	): UpdateUserResponse
 
-  fun updateMe(
-    userId: Long,
-    updateUserRequest: UpdateUserRequest
-  ): UpdateMeResponse
+	fun updateMe(
+		userId: Long,
+		updateUserRequest: UpdateUserRequest
+	): UpdateMeResponse
 
-  fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse
+	fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse
 
-  fun deleteUser(userId: Long)
+	fun deleteUser(userId: Long)
 }

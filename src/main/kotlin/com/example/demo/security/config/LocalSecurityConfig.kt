@@ -18,36 +18,36 @@ import org.springframework.security.web.SecurityFilterChain
 @Profile("local")
 @Configuration
 @EnableWebSecurity(debug = true)
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity
 class LocalSecurityConfig(
-  private val authProvider: AuthProvider,
-  private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
-  private val customAccessDeniedHandler: CustomAccessDeniedHandler
+	private val authProvider: AuthProvider,
+	private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
+	private val customAccessDeniedHandler: CustomAccessDeniedHandler
 ) {
-  @Bean
-  @Throws(Exception::class)
-  fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager = authenticationConfiguration.authenticationManager
+	@Bean
+	@Throws(Exception::class)
+	fun authenticationManager(authenticationConfiguration: AuthenticationConfiguration): AuthenticationManager = authenticationConfiguration.authenticationManager
 
-  @Bean
-  @Throws(Exception::class)
-  fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
-    authProvider
-      .defaultSecurityFilterChain(httpSecurity)
-      .headers {
-        it.frameOptions { options ->
-          options.sameOrigin()
-        }
-      }.authorizeHttpRequests { request ->
-        request
-          .requestMatchers(*authProvider.whiteListDefaultEndpoints(), *authProvider.ignoreListDefaultEndpoints())
-          .permitAll()
-          .requestMatchers(PathRequest.toH2Console())
-          .permitAll()
-          .anyRequest()
-          .authenticated()
-      }.exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
-        exceptionHandling
-          .authenticationEntryPoint(customAuthenticationEntryPoint)
-          .accessDeniedHandler(customAccessDeniedHandler)
-      }.build()
+	@Bean
+	@Throws(Exception::class)
+	fun filterChain(httpSecurity: HttpSecurity): SecurityFilterChain =
+		authProvider
+			.defaultSecurityFilterChain(httpSecurity)
+			.headers {
+				it.frameOptions { options ->
+					options.sameOrigin()
+				}
+			}.authorizeHttpRequests { request ->
+				request
+					.requestMatchers(*authProvider.whiteListDefaultEndpoints(), *authProvider.ignoreListDefaultEndpoints())
+					.permitAll()
+					.requestMatchers(PathRequest.toH2Console())
+					.permitAll()
+					.anyRequest()
+					.authenticated()
+			}.exceptionHandling { exceptionHandling: ExceptionHandlingConfigurer<HttpSecurity?> ->
+				exceptionHandling
+					.authenticationEntryPoint(customAuthenticationEntryPoint)
+					.accessDeniedHandler(customAccessDeniedHandler)
+			}.build()
 }

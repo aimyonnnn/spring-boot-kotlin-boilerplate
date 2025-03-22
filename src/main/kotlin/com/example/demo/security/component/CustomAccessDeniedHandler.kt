@@ -12,15 +12,15 @@ import java.io.IOException
 
 @Component
 class CustomAccessDeniedHandler(
-  @param:Qualifier("handlerExceptionResolver")
-  private val resolver: HandlerExceptionResolver
+	@param:Qualifier("handlerExceptionResolver")
+	private val resolver: HandlerExceptionResolver
 ) : AccessDeniedHandler {
-  @Throws(ServletException::class, IOException::class)
-  override fun handle(
-    request: HttpServletRequest,
-    response: HttpServletResponse,
-    accessDeniedException: AccessDeniedException
-  ) {
-    resolver.resolveException(request, response, null, accessDeniedException)
-  }
+	@Throws(ServletException::class, IOException::class)
+	override fun handle(
+		request: HttpServletRequest,
+		response: HttpServletResponse,
+		accessDeniedException: AccessDeniedException
+	) {
+		resolver.resolveException(request, response, null, accessDeniedException)
+	}
 }

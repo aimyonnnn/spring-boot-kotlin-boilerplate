@@ -24,116 +24,116 @@ import org.springframework.test.context.ActiveProfiles
 @Import(value = [QueryDslConfig::class, JpaAuditConfig::class])
 @DataJpaTest
 class UserRepositoryTests(
-  @Autowired private val userRepository: UserRepository
+	@Autowired private val userRepository: UserRepository
 ) {
-  private val defaultUserEmail = "awakelife93@gmail.com"
-  private val defaultUserPassword = "test_password_123!@"
-  private val defaultUserName = "Hyunwoo Park"
-  private val defaultUserRole = UserRole.USER
+	private val defaultUserEmail = "awakelife93@gmail.com"
+	private val defaultUserPassword = "test_password_123!@"
+	private val defaultUserName = "Hyunwoo Park"
+	private val defaultUserRole = UserRole.USER
 
-  private lateinit var userEntity: User
+	private lateinit var userEntity: User
 
-  @BeforeEach
-  @Throws(Exception::class)
-  fun setUp() {
-    userEntity =
-      User(
-        defaultUserEmail,
-        defaultUserName,
-        defaultUserPassword,
-        defaultUserRole
-      )
-  }
+	@BeforeEach
+	@Throws(Exception::class)
+	fun setUp() {
+		userEntity =
+			User(
+				defaultUserEmail,
+				defaultUserName,
+				defaultUserPassword,
+				defaultUserRole
+			)
+	}
 
-  @Test
-  @DisplayName("Create user")
-  fun should_AssertCreatedUserEntity_when_GivenUserEntity() {
-    val createUser = userRepository.save(userEntity)
+	@Test
+	@DisplayName("Create user")
+	fun should_AssertCreatedUserEntity_when_GivenUserEntity() {
+		val createUser = userRepository.save(userEntity)
 
-    assertEquals(createUser.id, userEntity.id)
-    assertEquals(createUser.email, userEntity.email)
-    assertEquals(createUser.name, userEntity.name)
-    assertEquals(createUser.role, userEntity.role)
-  }
+		assertEquals(createUser.id, userEntity.id)
+		assertEquals(createUser.email, userEntity.email)
+		assertEquals(createUser.name, userEntity.name)
+		assertEquals(createUser.role, userEntity.role)
+	}
 
-  @Test
-  @DisplayName("Update user")
-  fun should_AssertUpdatedUserEntity_when_GivenUserIdAndUpdateUserRequest() {
-    val updateUserRequest =
-      Instancio.create(
-        UpdateUserRequest::class.java
-      )
+	@Test
+	@DisplayName("Update user")
+	fun should_AssertUpdatedUserEntity_when_GivenUserIdAndUpdateUserRequest() {
+		val updateUserRequest =
+			Instancio.create(
+				UpdateUserRequest::class.java
+			)
 
-    val beforeUpdateUser = userRepository.save(userEntity)
+		val beforeUpdateUser = userRepository.save(userEntity)
 
-    userRepository.save(
-      beforeUpdateUser.update(
-        updateUserRequest.name,
-        updateUserRequest.role
-      )
-    )
+		userRepository.save(
+			beforeUpdateUser.update(
+				updateUserRequest.name,
+				updateUserRequest.role
+			)
+		)
 
-    val afterUpdateUser: User =
-      requireNotNull(
-        userRepository
-          .findOneById(beforeUpdateUser.id)
-      ) {
-        "User must not be null"
-      }
+		val afterUpdateUser: User =
+			requireNotNull(
+				userRepository
+					.findOneById(beforeUpdateUser.id)
+			) {
+				"User must not be null"
+			}
 
-    assertEquals(afterUpdateUser.name, updateUserRequest.name)
-    assertEquals(afterUpdateUser.role, updateUserRequest.role)
-  }
+		assertEquals(afterUpdateUser.name, updateUserRequest.name)
+		assertEquals(afterUpdateUser.role, updateUserRequest.role)
+	}
 
-  @Test
-  @DisplayName("Delete user")
-  fun should_AssertDeletedUserEntity_when_GivenUserId() {
-    val beforeDeleteUser = userRepository.save(userEntity)
+	@Test
+	@DisplayName("Delete user")
+	fun should_AssertDeletedUserEntity_when_GivenUserId() {
+		val beforeDeleteUser = userRepository.save(userEntity)
 
-    userRepository.deleteById(beforeDeleteUser.id)
+		userRepository.deleteById(beforeDeleteUser.id)
 
-    val afterDeleteUser: User? =
-      userRepository
-        .findOneById(beforeDeleteUser.id)
+		val afterDeleteUser: User? =
+			userRepository
+				.findOneById(beforeDeleteUser.id)
 
-    assertNull(afterDeleteUser)
-  }
+		assertNull(afterDeleteUser)
+	}
 
-  @Test
-  @DisplayName("Find user by id")
-  fun should_AssertFindUserEntity_when_GivenUserId() {
-    val beforeFindUser = userRepository.save(userEntity)
+	@Test
+	@DisplayName("Find user by id")
+	fun should_AssertFindUserEntity_when_GivenUserId() {
+		val beforeFindUser = userRepository.save(userEntity)
 
-    val afterFindUser: User =
-      requireNotNull(
-        userRepository
-          .findOneById(beforeFindUser.id)
-      ) {
-        "User must not be null"
-      }
+		val afterFindUser: User =
+			requireNotNull(
+				userRepository
+					.findOneById(beforeFindUser.id)
+			) {
+				"User must not be null"
+			}
 
-    assertEquals(beforeFindUser.id, afterFindUser.id)
-    assertEquals(beforeFindUser.email, afterFindUser.email)
-    assertEquals(beforeFindUser.name, afterFindUser.name)
-    assertEquals(beforeFindUser.role, afterFindUser.role)
-  }
+		assertEquals(beforeFindUser.id, afterFindUser.id)
+		assertEquals(beforeFindUser.email, afterFindUser.email)
+		assertEquals(beforeFindUser.name, afterFindUser.name)
+		assertEquals(beforeFindUser.role, afterFindUser.role)
+	}
 
-  @Test
-  @DisplayName("Find user by email")
-  fun should_AssertFindUserEntity_when_GivenUserEmail() {
-    val beforeFindUser = userRepository.save(userEntity)
+	@Test
+	@DisplayName("Find user by email")
+	fun should_AssertFindUserEntity_when_GivenUserEmail() {
+		val beforeFindUser = userRepository.save(userEntity)
 
-    val afterFindUser: User =
-      requireNotNull(
-        userRepository
-          .findOneByEmail(beforeFindUser.email)
-      ) {
-        "User must not be null"
-      }
+		val afterFindUser: User =
+			requireNotNull(
+				userRepository
+					.findOneByEmail(beforeFindUser.email)
+			) {
+				"User must not be null"
+			}
 
-    assertEquals(beforeFindUser.id, afterFindUser.id)
-    assertEquals(beforeFindUser.email, afterFindUser.email)
-    assertEquals(beforeFindUser.name, afterFindUser.name)
-    assertEquals(beforeFindUser.role, afterFindUser.role)
-  }
+		assertEquals(beforeFindUser.id, afterFindUser.id)
+		assertEquals(beforeFindUser.email, afterFindUser.email)
+		assertEquals(beforeFindUser.name, afterFindUser.name)
+		assertEquals(beforeFindUser.role, afterFindUser.role)
+	}
 }

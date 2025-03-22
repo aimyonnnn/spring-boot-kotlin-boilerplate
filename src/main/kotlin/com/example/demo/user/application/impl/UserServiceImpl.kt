@@ -11,30 +11,30 @@ import org.springframework.stereotype.Service
 
 @Service
 class UserServiceImpl(
-  private val userRepository: UserRepository,
-  private val bCryptPasswordEncoder: BCryptPasswordEncoder
+	private val userRepository: UserRepository,
+	private val bCryptPasswordEncoder: BCryptPasswordEncoder
 ) : UserService {
-  override fun validateReturnUser(userId: Long): User {
-    val user: User =
-      userRepository
-        .findOneById(userId) ?: throw UserNotFoundException(userId)
+	override fun validateReturnUser(userId: Long): User {
+		val user: User =
+			userRepository
+				.findOneById(userId) ?: throw UserNotFoundException(userId)
 
-    return user
-  }
+		return user
+	}
 
-  override fun validateAuthReturnUser(signInRequest: SignInRequest): User {
-    val user: User =
-      userRepository
-        .findOneByEmail(signInRequest.email) ?: throw UserNotFoundException(signInRequest.email)
+	override fun validateAuthReturnUser(signInRequest: SignInRequest): User {
+		val user: User =
+			userRepository
+				.findOneByEmail(signInRequest.email) ?: throw UserNotFoundException(signInRequest.email)
 
-    user
-      .validatePassword(
-        signInRequest.password,
-        bCryptPasswordEncoder
-      ).run {
-        check(this) { throw UserUnAuthorizedException(signInRequest.email) }
-      }
+		user
+			.validatePassword(
+				signInRequest.password,
+				bCryptPasswordEncoder
+			).run {
+				check(this) { throw UserUnAuthorizedException(signInRequest.email) }
+			}
 
-    return user
-  }
+		return user
+	}
 }

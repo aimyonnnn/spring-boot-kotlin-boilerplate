@@ -8,23 +8,23 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource
 
 @Configuration
 class CorsConfig {
-  @Bean
-  fun corsConfigurationSource(): CorsConfigurationSource {
-    val configuration = CorsConfiguration()
-    val source = UrlBasedCorsConfigurationSource()
+	@Bean
+	fun corsConfigurationSource(): CorsConfigurationSource {
+		val configuration = CorsConfiguration()
+		val source = UrlBasedCorsConfigurationSource()
 
-    configuration.allowedOrigins = mutableListOf("*")
+		configuration.allowedOrigins = mutableListOf("*")
 
-    configuration.allowedMethods =
-      mutableListOf("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")
+		configuration.allowedMethods =
+			mutableListOf("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")
 
-    configuration.allowedHeaders =
-      mutableListOf("Authorization", "Cache-Control", "Content-Type")
+		configuration.allowedHeaders =
+			mutableListOf("Authorization", "Cache-Control", "Content-Type")
 
-    configuration.allowCredentials = true
+		configuration.allowCredentials = true
 
-    source.registerCorsConfiguration("/**", configuration)
+		source.registerCorsConfiguration("/**", configuration)
 
-    return source
-  }
+		return source
+	}
 }

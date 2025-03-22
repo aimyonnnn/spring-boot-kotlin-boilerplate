@@ -8,13 +8,13 @@ import org.springframework.stereotype.Service
 
 @Service
 class PostServiceImpl(
-  private val postRepository: PostRepository
+	private val postRepository: PostRepository
 ) : PostService {
-  override fun validateReturnPost(postId: Long): Post {
-    val post: Post =
-      postRepository
-        .findOneById(postId) ?: throw PostNotFoundException(postId)
+	override fun validateReturnPost(postId: Long): Post {
+		val post: Post =
+			postRepository
+				.findOneById(postId) ?: throw PostNotFoundException(postId)
 
-    return post
-  }
+		return post
+	}
 }
