@@ -2,6 +2,7 @@ package com.example.demo.security.component.provider
 
 import com.example.demo.common.config.CorsConfig
 import com.example.demo.security.component.filter.JWTAuthFilter
+import jakarta.servlet.DispatcherType
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.config.annotation.web.builders.HttpSecurity
@@ -32,6 +33,7 @@ class AuthProvider(
   fun whiteListDefaultEndpoints(): Array<String> =
     arrayOf(
       "/api/v1/auth/signIn",
+      "/api/v1/auth/refresh",
       "/api/v1/users/register"
     )
 
@@ -55,5 +57,9 @@ class AuthProvider(
       }.addFilterBefore(
         JWTAuthFilter(jwtProvider),
         UsernamePasswordAuthenticationFilter::class.java
-      )
+      ).authorizeHttpRequests { request ->
+        request
+          .dispatcherTypeMatchers(DispatcherType.ERROR)
+          .permitAll()
+      }
 }

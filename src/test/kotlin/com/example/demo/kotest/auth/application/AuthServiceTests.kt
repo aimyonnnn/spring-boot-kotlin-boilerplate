@@ -1,6 +1,7 @@
 package com.example.demo.kotest.auth.application
 
 import com.example.demo.auth.application.AuthService
+import com.example.demo.auth.dto.serve.request.RefreshAccessTokenRequest
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
 import com.example.demo.auth.dto.serve.response.SignInResponse
@@ -11,8 +12,6 @@ import com.example.demo.user.application.UserService
 import com.example.demo.user.entity.User
 import com.example.demo.user.exception.UserNotFoundException
 import com.example.demo.user.exception.UserUnAuthorizedException
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
 import io.kotest.assertions.throwables.shouldThrowExactly
 import io.kotest.core.annotation.Tags
 import io.kotest.core.spec.style.BehaviorSpec
@@ -106,36 +105,27 @@ class AuthServiceTests :
         Instancio.create(
           SecurityUserItem::class.java
         )
+      val refreshAccessTokenRequest: RefreshAccessTokenRequest =
+        Instancio.create(
+          RefreshAccessTokenRequest::class.java
+        )
 
       When("Success Refresh Access Token") {
 
         every { tokenProvider.refreshAccessToken(any<SecurityUserItem>()) } returns defaultAccessToken
 
-        every { authService.refreshAccessToken(any<SecurityUserItem>()) } returns
+        every { authService.refreshAccessToken(any<RefreshAccessTokenRequest>()) } returns
           RefreshAccessTokenResponse.of(
             defaultAccessToken
           )
 
-        val refreshAccessTokenResponse = authService.refreshAccessToken(securityUserItem)
+        val refreshAccessTokenResponse = authService.refreshAccessToken(refreshAccessTokenRequest)
 
         Then("Assert Refresh Access Token Response") {
           refreshAccessTokenResponse shouldNotBeNull {
             accessToken shouldBe defaultAccessToken
           }
         }
-      }
-
-      When("Refresh Access Token is Expired") {
-        val claims = Instancio.create(Claims::class.java)
-
-        every { tokenProvider.refreshAccessToken(any<SecurityUserItem>()) } throws
-          ExpiredJwtException(
-            null,
-            claims,
-            "JWT expired at ?. Current time: ?, a difference of ? milliseconds.  Allowed clock skew: ? milliseconds."
-          )
-
-        shouldThrowExactly<ExpiredJwtException> { tokenProvider.refreshAccessToken(securityUserItem) }
       }
 
       When("Refresh Access Token Not Found Exception") {

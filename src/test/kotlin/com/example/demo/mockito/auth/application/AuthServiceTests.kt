@@ -1,16 +1,17 @@
 package com.example.demo.mockito.auth.application
 
 import com.example.demo.auth.application.AuthService
+import com.example.demo.auth.dto.serve.request.RefreshAccessTokenRequest
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.security.SecurityUserItem
+import com.example.demo.security.UserAdapter
+import com.example.demo.security.component.provider.JWTProvider
 import com.example.demo.security.component.provider.TokenProvider
 import com.example.demo.security.exception.RefreshTokenNotFoundException
 import com.example.demo.user.application.impl.UserServiceImpl
 import com.example.demo.user.entity.User
 import com.example.demo.user.exception.UserNotFoundException
 import com.example.demo.user.exception.UserUnAuthorizedException
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
 import org.instancio.Instancio
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -25,6 +26,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
@@ -34,6 +36,9 @@ import org.springframework.test.context.ActiveProfiles
   MockitoExtension::class
 )
 class AuthServiceTests {
+  @Mock
+  private lateinit var jwtProvider: JWTProvider
+
   @Mock
   private lateinit var tokenProvider: TokenProvider
 
@@ -115,21 +120,32 @@ class AuthServiceTests {
   @Nested
   @DisplayName("Refresh Access Token Test")
   inner class RefreshTokenTest {
-    private val securityUserItem: SecurityUserItem =
+    private val refreshAccessTokenRequest: RefreshAccessTokenRequest =
       Instancio.create(
-        SecurityUserItem::class.java
+        RefreshAccessTokenRequest::class.java
+      )
+
+    private val usernamePasswordAuthenticationToken =
+      UsernamePasswordAuthenticationToken(
+        UserAdapter(SecurityUserItem.from(user)),
+        null,
+        UserAdapter(SecurityUserItem.from(user)).authorities
       )
 
     @Test
     @DisplayName("Success refresh access token")
     fun should_AssertRefreshAccessTokenResponse_when_GivenSecurityUserItem() {
       Mockito
+        .`when`(jwtProvider.getAuthentication(any<String>(), any<Boolean>()))
+        .thenReturn(usernamePasswordAuthenticationToken)
+
+      Mockito
         .`when`(tokenProvider.refreshAccessToken(any<SecurityUserItem>()))
         .thenReturn(defaultAccessToken)
 
       val refreshAccessTokenResponse =
         authService.refreshAccessToken(
-          securityUserItem
+          refreshAccessTokenRequest
         )
 
       assertNotNull(refreshAccessTokenResponse)
@@ -140,36 +156,19 @@ class AuthServiceTests {
     }
 
     @Test
-    @DisplayName("Refresh token is expired")
-    fun should_AssertExpiredJwtException_when_GivenSecurityUserItem() {
-      val claims = Instancio.create(Claims::class.java)
-
-      Mockito
-        .`when`(
-          tokenProvider.refreshAccessToken(any<SecurityUserItem>())
-        ).thenThrow(
-          ExpiredJwtException(
-            null,
-            claims,
-            "JWT expired at ?. Current time: ?, a difference of ? milliseconds.  Allowed clock skew: ? milliseconds."
-          )
-        )
-
-      Assertions.assertThrows(
-        ExpiredJwtException::class.java
-      ) { authService.refreshAccessToken(securityUserItem) }
-    }
-
-    @Test
     @DisplayName("Refresh token is not found")
     fun should_AssertRefreshTokenNotFoundException_when_GivenSecurityUserItem() {
+      Mockito
+        .`when`(jwtProvider.getAuthentication(any<String>(), any<Boolean>()))
+        .thenReturn(usernamePasswordAuthenticationToken)
+
       Mockito
         .`when`(tokenProvider.refreshAccessToken(any<SecurityUserItem>()))
         .thenThrow(RefreshTokenNotFoundException(user.id))
 
       Assertions.assertThrows(
         RefreshTokenNotFoundException::class.java
-      ) { authService.refreshAccessToken(securityUserItem) }
+      ) { authService.refreshAccessToken(refreshAccessTokenRequest) }
     }
   }
 }

@@ -2,19 +2,17 @@ package com.example.demo.kotest.auth.api
 
 import com.example.demo.auth.api.AuthController
 import com.example.demo.auth.application.AuthService
+import com.example.demo.auth.dto.serve.request.RefreshAccessTokenRequest
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
 import com.example.demo.auth.dto.serve.response.SignInResponse
 import com.example.demo.kotest.common.BaseIntegrationController
 import com.example.demo.kotest.common.security.SecurityListenerFactory
-import com.example.demo.security.SecurityUserItem
 import com.example.demo.security.exception.RefreshTokenNotFoundException
 import com.example.demo.user.entity.User
 import com.example.demo.user.exception.UserNotFoundException
 import com.example.demo.user.exception.UserUnAuthorizedException
 import com.ninjasquad.springmockk.MockkBean
-import io.jsonwebtoken.Claims
-import io.jsonwebtoken.ExpiredJwtException
 import io.kotest.core.annotation.Tags
 import io.mockk.every
 import io.mockk.justRun
@@ -175,10 +173,11 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
     }
 
     Given("POST /api/v1/auth/refresh") {
+      val refreshAccessTokenRequest = Instancio.create(RefreshAccessTokenRequest::class.java)
 
       When("Success POST /api/v1/auth/refresh") {
 
-        every { authService.refreshAccessToken(any<SecurityUserItem>()) } returns
+        every { authService.refreshAccessToken(any<RefreshAccessTokenRequest>()) } returns
           RefreshAccessTokenResponse.of(
             defaultAccessToken
           )
@@ -189,6 +188,7 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
               MockMvcRequestBuilders
                 .post("/api/v1/auth/refresh")
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .content(objectMapper.writeValueAsString(refreshAccessTokenRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
             ).andExpect(MockMvcResultMatchers.status().isCreated)
@@ -201,7 +201,7 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
       When("Not Found Exception POST /api/v1/auth/refresh") {
         val refreshTokenNotFoundException = RefreshTokenNotFoundException(user.id)
 
-        every { authService.refreshAccessToken(any<SecurityUserItem>()) } throws refreshTokenNotFoundException
+        every { authService.refreshAccessToken(any<RefreshAccessTokenRequest>()) } throws refreshTokenNotFoundException
 
         Then("Call POST /api/v1/auth/refresh") {
           mockMvc
@@ -209,6 +209,7 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
               MockMvcRequestBuilders
                 .post("/api/v1/auth/refresh")
                 .with(SecurityMockMvcRequestPostProcessors.csrf())
+                .content(objectMapper.writeValueAsString(refreshAccessTokenRequest))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
             ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
@@ -220,34 +221,6 @@ class AuthIntegrationControllerTests : BaseIntegrationController() {
               MockMvcResultMatchers
                 .jsonPath("$.message")
                 .value(refreshTokenNotFoundException.message)
-            ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
-        }
-      }
-
-      When("Expired Exception POST /api/v1/auth/refresh") {
-        val claims = Instancio.create(Claims::class.java)
-        val expiredJwtException =
-          ExpiredJwtException(
-            null,
-            claims,
-            "JWT expired at ?. Current time: ?, a difference of ? milliseconds.  Allowed clock skew: ? millis"
-          )
-
-        every { authService.refreshAccessToken(any<SecurityUserItem>()) } throws expiredJwtException
-
-        Then("Call POST /api/v1/auth/refresh") {
-          mockMvc
-            .perform(
-              MockMvcRequestBuilders
-                .post("/api/v1/auth/refresh")
-                .with(SecurityMockMvcRequestPostProcessors.csrf())
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-            ).andExpect(MockMvcResultMatchers.status().isUnauthorized)
-            .andExpect(
-              MockMvcResultMatchers.jsonPath("$.code").value(HttpStatus.UNAUTHORIZED.value())
-            ).andExpect(
-              MockMvcResultMatchers.jsonPath("$.message").value(expiredJwtException.message)
             ).andExpect(MockMvcResultMatchers.jsonPath("$.errors").isEmpty)
         }
       }

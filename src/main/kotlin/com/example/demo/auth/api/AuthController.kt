@@ -1,6 +1,7 @@
 package com.example.demo.auth.api
 
 import com.example.demo.auth.application.AuthService
+import com.example.demo.auth.dto.serve.request.RefreshAccessTokenRequest
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
 import com.example.demo.auth.dto.serve.response.SignInResponse
@@ -100,13 +101,13 @@ class AuthController(
   )
   @PostMapping("/refresh")
   fun refreshAccessToken(
-    @CurrentUser securityUserItem: SecurityUserItem
+    @RequestBody @Valid refreshAccessTokenRequest: RefreshAccessTokenRequest
   ): ResponseEntity<RefreshAccessTokenResponse> =
     ResponseEntity
       .status(HttpStatus.CREATED)
       .body(
         authService.refreshAccessToken(
-          securityUserItem
+          refreshAccessTokenRequest
         )
       )
 }

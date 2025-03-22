@@ -4,6 +4,7 @@ import com.example.demo.security.SecurityUserItem
 import com.example.demo.security.UserAdapter
 import com.example.demo.security.service.impl.UserDetailsServiceImpl
 import io.jsonwebtoken.Claims
+import io.jsonwebtoken.ExpiredJwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import jakarta.servlet.http.HttpServletRequest
@@ -59,13 +60,13 @@ class JWTProvider(
     securityUserItem: SecurityUserItem,
     refreshToken: String
   ): String {
-    generateClaims(refreshToken)
+    getAuthentication(refreshToken)
     return createAccessToken(securityUserItem)
   }
 
   fun validateToken(token: String): Boolean {
-    val claims: Claims = generateClaims(token)
-    return !claims.isEmpty()
+    val usernamePasswordAuthenticationToken = getAuthentication(token)
+    return usernamePasswordAuthenticationToken.isAuthenticated
   }
 
   fun generateRequestToken(request: HttpServletRequest): String? {
@@ -78,8 +79,13 @@ class JWTProvider(
     return token
   }
 
-  fun getAuthentication(token: String): UsernamePasswordAuthenticationToken {
-    val claims: Claims = generateClaims(token)
+  fun getAuthentication(token: String): UsernamePasswordAuthenticationToken = getAuthentication(token, false)
+
+  fun getAuthentication(
+    token: String,
+    isRefresh: Boolean
+  ): UsernamePasswordAuthenticationToken {
+    val claims: Claims = generateClaims(token, isRefresh)
     val userAdapter: UserAdapter =
       userDetailsServiceImpl.loadUserByUsername(
         claims.subject
@@ -92,10 +98,17 @@ class JWTProvider(
     )
   }
 
-  private fun generateClaims(token: String): Claims =
-    Jwts
-      .parser()
-      .setSigningKey(secretKey)
-      .parseClaimsJws(token)
-      .body
+  private fun generateClaims(
+    token: String,
+    isRefresh: Boolean
+  ): Claims =
+    runCatching {
+      Jwts
+        .parser()
+        .setSigningKey(secretKey)
+        .parseClaimsJws(token)
+        .body
+    }.getOrElse {
+      if (it is ExpiredJwtException && isRefresh) it.claims else throw it
+    }
 }

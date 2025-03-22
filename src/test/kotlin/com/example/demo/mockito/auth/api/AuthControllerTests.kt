@@ -2,6 +2,7 @@ package com.example.demo.mockito.auth.api
 
 import com.example.demo.auth.api.AuthController
 import com.example.demo.auth.application.AuthService
+import com.example.demo.auth.dto.serve.request.RefreshAccessTokenRequest
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
 import com.example.demo.auth.dto.serve.response.SignInResponse
@@ -92,18 +93,18 @@ class AuthControllerTests {
   @Test
   @DisplayName("Refresh access token")
   fun should_AssertRefreshAccessTokenResponse_when_GivenSecurityUserItem() {
-    val securityUserItem =
+    val refreshAccessTokenRequest =
       Instancio.create(
-        SecurityUserItem::class.java
+        RefreshAccessTokenRequest::class.java
       )
 
     Mockito
-      .`when`(authService.refreshAccessToken(any<SecurityUserItem>()))
+      .`when`(authService.refreshAccessToken(any<RefreshAccessTokenRequest>()))
       .thenReturn(RefreshAccessTokenResponse.of(defaultAccessToken))
 
     val response =
       authController.refreshAccessToken(
-        securityUserItem
+        refreshAccessTokenRequest
       )
 
     assertNotNull(response)
