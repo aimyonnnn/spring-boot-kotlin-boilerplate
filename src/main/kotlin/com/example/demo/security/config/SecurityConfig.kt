@@ -19,7 +19,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Profile("dev", "prod")
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
+@EnableMethodSecurity
 class SecurityConfig(
   private val authProvider: AuthProvider,
   private val customAuthenticationEntryPoint: CustomAuthenticationEntryPoint,
