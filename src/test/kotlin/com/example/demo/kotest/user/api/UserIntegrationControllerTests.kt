@@ -5,6 +5,7 @@ import com.example.demo.kotest.common.security.SecurityListenerFactory
 import com.example.demo.user.api.UserController
 import com.example.demo.user.application.ChangeUserService
 import com.example.demo.user.application.GetUserService
+import com.example.demo.user.constant.UserRole
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
 import com.example.demo.user.dto.serve.response.CreateUserResponse
@@ -247,9 +248,9 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 
 		Given("PATCH /api/v1/users/{userId}") {
 			val updateUserRequest: UpdateUserRequest =
-				Instancio.create(
-					UpdateUserRequest::class.java
-				)
+				Instancio
+					.create(UpdateUserRequest::class.java)
+					.copy(role = UserRole.USER.name)
 
 			When("Success PATCH /api/v1/users/{userId}") {
 
@@ -330,9 +331,12 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 
 		Given("PATCH /api/v1/users") {
 			val updateUserRequest: UpdateUserRequest =
-				Instancio.create(
-					UpdateUserRequest::class.java
-				)
+				Instancio
+					.create(
+						UpdateUserRequest::class.java
+					).copy(
+						role = UserRole.USER.name
+					)
 
 			When("Success PATCH /api/v1/users") {
 

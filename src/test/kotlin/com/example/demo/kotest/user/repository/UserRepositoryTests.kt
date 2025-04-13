@@ -58,16 +58,17 @@ class UserRepositoryTests(
 
 			context("Save user") {
 				val updateUserRequest =
-					Instancio.create(
-						UpdateUserRequest::class.java
-					)
+					Instancio
+						.create(UpdateUserRequest::class.java)
+						.copy(role = UserRole.USER.name)
 
 				val beforeUpdateUser = userRepository.save(userEntity)
+				val userRole = UserRole.valueOf(updateUserRequest.role)
 
 				userRepository.save(
 					beforeUpdateUser.update(
 						updateUserRequest.name,
-						updateUserRequest.role
+						userRole
 					)
 				)
 
@@ -81,7 +82,7 @@ class UserRepositoryTests(
 
 				it("Assert User Entity") {
 					afterUpdateUser.name shouldBe updateUserRequest.name
-					afterUpdateUser.role shouldBe updateUserRequest.role
+					afterUpdateUser.role shouldBe userRole
 				}
 			}
 		}

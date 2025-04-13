@@ -60,16 +60,17 @@ class UserRepositoryTests(
 	@DisplayName("Update user")
 	fun should_AssertUpdatedUserEntity_when_GivenUserIdAndUpdateUserRequest() {
 		val updateUserRequest =
-			Instancio.create(
-				UpdateUserRequest::class.java
-			)
+			Instancio
+				.create(UpdateUserRequest::class.java)
+				.copy(role = UserRole.USER.name)
 
 		val beforeUpdateUser = userRepository.save(userEntity)
+		val userRole = UserRole.valueOf(updateUserRequest.role)
 
 		userRepository.save(
 			beforeUpdateUser.update(
 				updateUserRequest.name,
-				updateUserRequest.role
+				userRole
 			)
 		)
 
@@ -82,7 +83,7 @@ class UserRepositoryTests(
 			}
 
 		assertEquals(afterUpdateUser.name, updateUserRequest.name)
-		assertEquals(afterUpdateUser.role, updateUserRequest.role)
+		assertEquals(afterUpdateUser.role, userRole)
 	}
 
 	@Test

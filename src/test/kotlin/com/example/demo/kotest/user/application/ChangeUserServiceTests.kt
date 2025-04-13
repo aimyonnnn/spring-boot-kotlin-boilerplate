@@ -3,6 +3,7 @@ package com.example.demo.kotest.user.application
 import com.example.demo.security.component.provider.TokenProvider
 import com.example.demo.user.application.ChangeUserService
 import com.example.demo.user.application.UserService
+import com.example.demo.user.constant.UserRole
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
 import com.example.demo.user.dto.serve.response.CreateUserResponse
@@ -70,9 +71,10 @@ class ChangeUserServiceTests :
 
 		Given("Update User") {
 			val updateUserRequest: UpdateUserRequest =
-				Instancio.create(
-					UpdateUserRequest::class.java
-				)
+				Instancio
+					.create(UpdateUserRequest::class.java)
+					.copy(role = UserRole.USER.name)
+			val userRole = UserRole.valueOf(updateUserRequest.role)
 
 			When("Success Update User") {
 
@@ -87,7 +89,7 @@ class ChangeUserServiceTests :
 					UpdateUserResponse.from(
 						user.apply {
 							name = updateUserRequest.name
-							role = updateUserRequest.role
+							role = userRole
 						}
 					)
 
@@ -100,7 +102,7 @@ class ChangeUserServiceTests :
 				Then("Assert User Entity") {
 					updateUserResponse shouldNotBeNull {
 						name shouldBe updateUserRequest.name
-						role shouldBe updateUserRequest.role
+						role shouldBe userRole
 					}
 				}
 			}

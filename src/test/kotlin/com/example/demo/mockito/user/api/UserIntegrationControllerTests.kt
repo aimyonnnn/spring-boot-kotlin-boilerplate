@@ -5,6 +5,7 @@ import com.example.demo.mockito.common.security.WithMockCustomUser
 import com.example.demo.user.api.UserController
 import com.example.demo.user.application.impl.ChangeUserServiceImpl
 import com.example.demo.user.application.impl.GetUserServiceImpl
+import com.example.demo.user.constant.UserRole
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
 import com.example.demo.user.dto.serve.response.CreateUserResponse.Companion.from
@@ -324,9 +325,12 @@ class UserIntegrationControllerTests : SecurityItem() {
 	@DisplayName("PATCH /api/v1/users/{userId} Test")
 	inner class UpdateUserTest {
 		private val updateUserRequest: UpdateUserRequest =
-			Instancio.create(
-				UpdateUserRequest::class.java
-			)
+			Instancio
+				.create(
+					UpdateUserRequest::class.java
+				).copy(
+					role = UserRole.USER.name
+				)
 
 		@Test
 		@DisplayName("PATCH /api/v1/users/{userId} Response")
@@ -434,9 +438,9 @@ class UserIntegrationControllerTests : SecurityItem() {
 	@DisplayName("PATCH /api/v1/users Test")
 	inner class UpdateMeTest {
 		private val updateUserRequest: UpdateUserRequest =
-			Instancio.create(
-				UpdateUserRequest::class.java
-			)
+			Instancio
+				.create(UpdateUserRequest::class.java)
+				.copy(role = UserRole.USER.name)
 
 		@Test
 		@DisplayName("PATCH /api/v1/users Response")

@@ -3,6 +3,7 @@ package com.example.demo.mockito.user.application
 import com.example.demo.security.component.provider.TokenProvider
 import com.example.demo.user.application.impl.ChangeUserServiceImpl
 import com.example.demo.user.application.impl.UserServiceImpl
+import com.example.demo.user.constant.UserRole
 import com.example.demo.user.dto.serve.request.CreateUserRequest
 import com.example.demo.user.dto.serve.request.UpdateUserRequest
 import com.example.demo.user.entity.User
@@ -74,9 +75,12 @@ class ChangeUserServiceTests {
 	@DisplayName("Update User Test")
 	inner class UpdateTest {
 		private val updateUserRequest: UpdateUserRequest =
-			Instancio.create(
-				UpdateUserRequest::class.java
-			)
+			Instancio
+				.create(
+					UpdateUserRequest::class.java
+				).copy(
+					role = UserRole.USER.name
+				)
 
 		@Test
 		@DisplayName("Success update user")
