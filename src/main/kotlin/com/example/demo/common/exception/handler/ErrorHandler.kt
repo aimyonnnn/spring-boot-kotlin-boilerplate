@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity
 import org.springframework.security.access.AccessDeniedException
 import org.springframework.security.core.AuthenticationException
 import org.springframework.validation.BindException
+import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
 import org.springframework.web.servlet.NoHandlerFoundException
@@ -114,8 +115,32 @@ class ErrorHandler {
 	}
 
 	@ExceptionHandler(BindException::class)
-	private fun handleMethodArgumentNotValidException(
+	private fun handleBindException(
 		exception: BindException,
+		httpServletRequest: HttpServletRequest
+	): ResponseEntity<ErrorResponse> {
+		val exceptionMessage =
+			exception.bindingResult.fieldErrors.joinToString(", ") {
+				"${it.field}: ${it.defaultMessage}"
+			}
+
+		val response =
+			ErrorResponse.of(
+				HttpStatus.BAD_REQUEST.value(),
+				exceptionMessage,
+				exception.fieldErrors
+			)
+
+		logger.error {
+			"handleBindException Error - ${httpServletRequest.method} ${httpServletRequest.requestURI} $exceptionMessage"
+		}
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response)
+	}
+
+	@ExceptionHandler(MethodArgumentNotValidException::class)
+	private fun handleMethodArgumentNotValidException(
+		exception: MethodArgumentNotValidException,
 		httpServletRequest: HttpServletRequest
 	): ResponseEntity<ErrorResponse> {
 		val exceptionMessage =

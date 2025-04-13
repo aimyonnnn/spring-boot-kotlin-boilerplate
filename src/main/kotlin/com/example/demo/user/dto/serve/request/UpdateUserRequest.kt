@@ -10,6 +10,6 @@ data class UpdateUserRequest(
 	@field:NotBlank(message = "field name is blank")
 	val name: String,
 	@field:Schema(description = "User Role", nullable = false, implementation = UserRole::class)
-	@field:ValidEnum(enumClass = UserRole::class, message = "field role is invalid")
-	val role: UserRole
+	@field:ValidEnum(enumClass = UserRole::class, message = "field role is invalid", ignoreCase = true)
+	val role: String
 )

@@ -52,7 +52,7 @@ class ChangeUserServiceImpl(
 		val user: User =
 			userService
 				.validateReturnUser(userId)
-				.update(name = updateUserRequest.name, role = updateUserRequest.role)
+				.update(name = updateUserRequest.name, role = UserRole.valueOf(updateUserRequest.role))
 
 		return user.let(UpdateUserResponse::from)
 	}
@@ -64,7 +64,7 @@ class ChangeUserServiceImpl(
 		val user: User =
 			userService
 				.validateReturnUser(userId)
-				.update(name = updateUserRequest.name, role = updateUserRequest.role)
+				.update(name = updateUserRequest.name, role = UserRole.valueOf(updateUserRequest.role))
 
 		return UpdateMeResponse.from(user, tokenProvider.createFullTokens(user))
 	}

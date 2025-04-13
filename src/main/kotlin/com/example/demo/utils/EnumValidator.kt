@@ -4,27 +4,28 @@ import com.example.demo.common.annotaction.ValidEnum
 import jakarta.validation.ConstraintValidator
 import jakarta.validation.ConstraintValidatorContext
 
-class EnumValidator : ConstraintValidator<ValidEnum?, Enum<*>> {
-	private var annotation: ValidEnum? = null
+class EnumValidator : ConstraintValidator<ValidEnum, String> {
+	private lateinit var acceptedValues: Set<String>
+	private var ignoreCase: Boolean = false
 
-	override fun initialize(constraintAnnotation: ValidEnum?) {
-		this.annotation = constraintAnnotation
+	override fun initialize(constraintAnnotation: ValidEnum) {
+		ignoreCase = constraintAnnotation.ignoreCase
+		acceptedValues =
+			constraintAnnotation
+				.enumClass
+				.java
+				.enumConstants
+				.map { it.name }
+				.toSet()
 	}
 
 	override fun isValid(
-		value: Enum<*>,
-		context: ConstraintValidatorContext
-	): Boolean {
-		var result = false
-		val enumValues: Array<out Enum<*>>? = annotation!!.enumClass.java.enumConstants
-
-		enumValues?.forEach {
-			if (value === it) {
-				result = true
-				return@forEach
-			}
+		value: String,
+		constraintValidatorContext: ConstraintValidatorContext
+	): Boolean =
+		if (ignoreCase) {
+			acceptedValues.any { it.equals(value, ignoreCase = true) }
+		} else {
+			value in acceptedValues
 		}
-
-		return result
-	}
 }

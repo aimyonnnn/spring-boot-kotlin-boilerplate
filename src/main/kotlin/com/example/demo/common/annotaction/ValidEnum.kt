@@ -20,5 +20,6 @@ annotation class ValidEnum(
 	val message: String = "Invalid value.",
 	val groups: Array<KClass<*>> = [],
 	val payload: Array<KClass<out Payload>> = [],
-	val enumClass: KClass<out Enum<*>>
+	val enumClass: KClass<out Enum<*>>,
+	val ignoreCase: Boolean = false
 )
