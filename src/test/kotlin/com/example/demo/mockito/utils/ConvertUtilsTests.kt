@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.junit.jupiter.MockitoExtension
 import org.springframework.test.context.ActiveProfiles
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.format.DateTimeParseException
 
 @ActiveProfiles("test")
@@ -28,7 +29,10 @@ class ConvertUtilsTests {
 		@Test
 		@DisplayName("Convert current string datetime & current pattern to LocalDateTime")
 		fun should_AssertLocalDateTime_when_GivenCurrentStringDateTimeAndCurrentPattern() {
-			val stringDateTime = LocalDateTime.now().withNano(0).toString()
+			val stringDateTime =
+				DateTimeFormatter
+					.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
+					.format(LocalDateTime.now().withNano(0))
 
 			val localDateTime =
 				convertStringToLocalDateTimeFormat(
