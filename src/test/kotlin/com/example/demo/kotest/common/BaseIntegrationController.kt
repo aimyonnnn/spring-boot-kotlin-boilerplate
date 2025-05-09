@@ -1,7 +1,10 @@
 package com.example.demo.kotest.common
 
+import com.example.demo.common.aop.SendSlackSignalRequestBodyAdvice
 import com.example.demo.kotest.common.security.SecurityListenerFactory
+import com.example.demo.utils.SlackUtils
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -21,6 +24,13 @@ abstract class BaseIntegrationController : BehaviorSpec() {
 
 	@Autowired
 	protected lateinit var objectMapper: ObjectMapper
+
+	@Suppress("unused")
+	@Autowired
+	protected lateinit var sendSlackSignalRequestBodyAdvice: SendSlackSignalRequestBodyAdvice
+
+	@MockkBean
+	protected lateinit var slackUtils: SlackUtils
 
 	/**
 	 * ResponseAdvice Status

@@ -1,5 +1,6 @@
 package com.example.demo.user.api
 
+import com.example.demo.common.annotaction.SendSlackSignalRequest
 import com.example.demo.common.response.ErrorResponse
 import com.example.demo.security.SecurityUserItem
 import com.example.demo.security.annotation.CurrentUser
@@ -140,7 +141,7 @@ class UserController(
 	)
 	@PatchMapping("/{userId}")
 	fun updateUser(
-		@RequestBody @Valid updateUserRequest: UpdateUserRequest,
+		@RequestBody @Valid @SendSlackSignalRequest updateUserRequest: UpdateUserRequest,
 		@PathVariable("userId", required = true) userId: Long
 	): ResponseEntity<UpdateUserResponse> =
 		ResponseEntity.ok(
@@ -174,7 +175,7 @@ class UserController(
 	)
 	@PatchMapping
 	fun updateMe(
-		@RequestBody @Valid updateUserRequest: UpdateUserRequest,
+		@RequestBody @Valid @SendSlackSignalRequest updateUserRequest: UpdateUserRequest,
 		@CurrentUser securityUserItem: SecurityUserItem
 	): ResponseEntity<UpdateMeResponse> =
 		ResponseEntity.ok(

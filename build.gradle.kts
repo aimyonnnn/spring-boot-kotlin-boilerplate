@@ -98,6 +98,9 @@ dependencies {
 	// jackson
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
+	// slack
+	implementation("com.slack.api:slack-api-client:1.45.3")
+
 	// test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
