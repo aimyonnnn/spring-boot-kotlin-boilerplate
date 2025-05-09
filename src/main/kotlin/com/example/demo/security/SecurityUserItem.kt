@@ -11,11 +11,13 @@ data class SecurityUserItem(
 ) {
 	companion object {
 		fun from(user: User): SecurityUserItem =
-			SecurityUserItem(
-				userId = user.id,
-				role = user.role,
-				name = user.name,
-				email = user.email
-			)
+			with(user) {
+				SecurityUserItem(
+					userId = id,
+					role = role,
+					name = name,
+					email = email
+				)
+			}
 	}
 }
