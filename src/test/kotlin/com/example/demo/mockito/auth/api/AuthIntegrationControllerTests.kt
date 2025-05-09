@@ -6,7 +6,7 @@ import com.example.demo.auth.dto.serve.request.RefreshAccessTokenRequest
 import com.example.demo.auth.dto.serve.request.SignInRequest
 import com.example.demo.auth.dto.serve.response.RefreshAccessTokenResponse
 import com.example.demo.auth.dto.serve.response.SignInResponse.Companion.from
-import com.example.demo.mockito.common.security.SecurityItem
+import com.example.demo.mockito.common.BaseIntegrationController
 import com.example.demo.mockito.common.security.WithMockCustomUser
 import com.example.demo.security.exception.RefreshTokenNotFoundException
 import com.example.demo.user.entity.User
@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 	AuthController::class
 )
 @ExtendWith(MockitoExtension::class)
-class AuthIntegrationControllerTests : SecurityItem() {
+class AuthIntegrationControllerTests : BaseIntegrationController() {
 	@MockitoBean
 	private lateinit var authService: AuthService
 

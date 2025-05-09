@@ -1,6 +1,6 @@
 package com.example.demo.mockito.post.api
 
-import com.example.demo.mockito.common.security.SecurityItem
+import com.example.demo.mockito.common.BaseIntegrationController
 import com.example.demo.mockito.common.security.WithMockCustomUser
 import com.example.demo.post.api.PostController
 import com.example.demo.post.application.impl.ChangePostServiceImpl
@@ -45,7 +45,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 	PostController::class
 )
 @ExtendWith(MockitoExtension::class)
-class PostIntegrationControllerTests : SecurityItem() {
+class PostIntegrationControllerTests : BaseIntegrationController() {
 	@MockitoBean
 	private lateinit var getPostServiceImpl: GetPostServiceImpl
 

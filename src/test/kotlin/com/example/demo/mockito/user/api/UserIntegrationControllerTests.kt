@@ -1,6 +1,6 @@
 package com.example.demo.mockito.user.api
 
-import com.example.demo.mockito.common.security.SecurityItem
+import com.example.demo.mockito.common.BaseIntegrationController
 import com.example.demo.mockito.common.security.WithMockCustomUser
 import com.example.demo.user.api.UserController
 import com.example.demo.user.application.impl.ChangeUserServiceImpl
@@ -47,7 +47,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders
 	UserController::class
 )
 @ExtendWith(MockitoExtension::class)
-class UserIntegrationControllerTests : SecurityItem() {
+class UserIntegrationControllerTests : BaseIntegrationController() {
 	@MockitoBean
 	private lateinit var getUserServiceImpl: GetUserServiceImpl
 
