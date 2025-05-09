@@ -21,7 +21,7 @@ import org.springframework.web.servlet.NoHandlerFoundException
 private val logger = KotlinLogging.logger {}
 
 @RestControllerAdvice
-class ErrorHandler {
+class ExceptionHandler {
 	@ExceptionHandler(CustomRuntimeException::class)
 	private fun handleCustomRuntimeException(
 		exception: CustomRuntimeException,
