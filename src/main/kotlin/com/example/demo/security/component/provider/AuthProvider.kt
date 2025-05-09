@@ -21,7 +21,7 @@ class AuthProvider(
 	private val jwtProvider: JWTProvider
 ) {
 	@Value("\${auth.x-api-key}")
-	lateinit var apiKey: String
+	private lateinit var apiKey: String
 
 	fun ignoreListDefaultEndpoints(): Array<String> =
 		arrayOf(

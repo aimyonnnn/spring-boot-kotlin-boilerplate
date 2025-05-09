@@ -20,10 +20,10 @@ class JWTProvider(
 	private val userDetailsServiceImpl: UserDetailsServiceImpl
 ) {
 	@Value("\${auth.jwt.secret}")
-	lateinit var secretKey: String
+	private lateinit var secretKey: String
 
 	@Value("\${auth.jwt.access-expire}")
-	val accessExpireTime: Long = 0L
+	private val accessExpireTime: Long = 0L
 
 	@Value("\${auth.jwt.refresh-expire}")
 	val refreshExpireTime: Long = 0L
