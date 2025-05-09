@@ -22,7 +22,7 @@ import java.io.StringWriter
 @ExtendWith(
 	MockitoExtension::class
 )
-class SecurityUtilsTest {
+class SecurityUtilsTests {
 	@Mock
 	private lateinit var mockHttpServletRequest: MockHttpServletRequest
 

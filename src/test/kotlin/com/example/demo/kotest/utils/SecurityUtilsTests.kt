@@ -15,7 +15,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
 @Tags("kotest-unit-test")
-class SecurityUtilsTest :
+class SecurityUtilsTests :
 	DescribeSpec({
 		val mockHttpServletRequest = mockk<MockHttpServletRequest>(relaxed = true)
 		val mockHttpServletResponse = mockk<MockHttpServletResponse>(relaxed = true)
