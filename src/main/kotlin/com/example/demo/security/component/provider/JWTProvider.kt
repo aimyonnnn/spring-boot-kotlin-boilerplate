@@ -17,17 +17,11 @@ import java.util.concurrent.TimeUnit
 
 @Component
 class JWTProvider(
-	private val userDetailsServiceImpl: UserDetailsServiceImpl
+	private val userDetailsServiceImpl: UserDetailsServiceImpl,
+	@Value("\${auth.jwt.secret}") private val secretKey: String,
+	@Value("\${auth.jwt.access-expire}") private val accessExpireTime: Long,
+	@Value("\${auth.jwt.refresh-expire}") val refreshExpireTime: Long = 0L
 ) {
-	@Value("\${auth.jwt.secret}")
-	private lateinit var secretKey: String
-
-	@Value("\${auth.jwt.access-expire}")
-	private val accessExpireTime: Long = 0L
-
-	@Value("\${auth.jwt.refresh-expire}")
-	val refreshExpireTime: Long = 0L
-
 	fun createAccessToken(securityUserItem: SecurityUserItem): String = createToken(securityUserItem, true)
 
 	fun createRefreshToken(securityUserItem: SecurityUserItem): String = createToken(securityUserItem, false)

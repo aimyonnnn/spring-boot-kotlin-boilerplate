@@ -1,4 +1,4 @@
-package com.example.demo.common.config
+package com.example.demo.infrastructure.redis
 
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
@@ -12,13 +12,10 @@ import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSeriali
 import org.springframework.data.redis.serializer.StringRedisSerializer
 
 @Configuration
-class RedisConfig {
-	@Value("\${spring.data.redis.port}")
-	private var port: Int = 0
-
-	@Value("\${spring.data.redis.host}")
-	private lateinit var host: String
-
+class RedisConfig(
+	@Value("\${spring.data.redis.port}") private val port: Int,
+	@Value("\${spring.data.redis.host}") private val host: String
+) {
 	@Bean
 	fun redisConnectionFactory(): RedisConnectionFactory = LettuceConnectionFactory(RedisStandaloneConfiguration(host, port))
 

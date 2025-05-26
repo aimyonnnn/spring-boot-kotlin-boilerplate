@@ -18,11 +18,9 @@ import org.springframework.stereotype.Component
 @Component
 class AuthProvider(
 	private val corsConfig: CorsConfig,
-	private val jwtProvider: JWTProvider
+	private val jwtProvider: JWTProvider,
+	@Value("\${auth.x-api-key}") private val apiKey: String
 ) {
-	@Value("\${auth.x-api-key}")
-	private lateinit var apiKey: String
-
 	fun ignoreListDefaultEndpoints(): Array<String> =
 		arrayOf(
 			"/api-docs/**",
