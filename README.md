@@ -22,6 +22,8 @@
 	- Flyway
 	- Webhook
 		- Slack
+		- Discord(not yet)
+	- Kafka
 
 - `Test`
 	- Spring Boot Starter Test
@@ -39,22 +41,70 @@
 	- Pgadmin
 	- Ktlint
 	- Detekt
+	- Mailhog
 
 ### Project Guide
 
 - common
 - domain (post, user, auth)
+- example
+	- WelcomeSignUpConsumer: Kafka Consumer(SignUp Event) Example
+- infrastructure (kafka, redis, webhook, mail)
 - security
 	- spring security + jwt logic
 - utils
 - resources
-	- prod, dev, local, common, test, secret-{environment}
+	- db
+		- migration: flyway sql
+		- sql: spring batch postgresql metadata sql
+	- application.yml
+		- prod, dev, local, common, test, secret-{environment}
 		- common: Write common variables for the project.
 		- test: Create the variables needed for your test environment.
 		- secret-{environment}: auth (jwt, api key), database information
 
+### Local Installation
+
+To use the application, the following two services must be installed and running:
+
+- kafka
+- redis
+- mailhog
+
 ### Description
 
+- webhook
+	- [enable & route endpoint](src/main/resources/application-common.yml)
+		- default enable true
+	- [webhook](src/main/kotlin/com/example/demo/infrastructure/webhook)
+		- slack
+		- discord (not yet)
+	- test code
+		- [kotest](src/test/kotlin/com/example/demo/kotest/infrastructure/webhook)
+		- [mockito](src/test/kotlin/com/example/demo/mockito/infrastructure/webhook)
+
+```kotlin
+// example
+
+// 1. all
+webHookProvider.sendAll(
+	"Subscription request received from method ${parameter.method?.name}.",
+	mutableListOf("Request Body: $body")
+)
+
+// 2. target webhook
+webHookProvider.sendSlack(
+	"Failed to send message to Kafka (handleWelcomeSignUpEvent)",
+	mutableListOf("Failed to send message to Kafka: ${exception.message} / $welcomeSignUpEvent")
+)
+```
+
+- mailhog
+	- mailhog is a tool for testing email sending.
+	- [If you want to use MailHog, the default SMTP port is 1025.
+		Of course, if you already have your own preferred setup, you can freely adjust the port as needed.](docker-compose.yml)
+	- dashboard: http://localhost:8025
+	- Please check the settings in application-local.yml and application-secret-local.yml.
 - lint
 	- ktlint
 		- [using the official lint rules by default.](gradle.properties)
@@ -76,19 +126,31 @@
 			- [application-test.yml](src/main/resources/application-test.yml)
 - two types of tests
 	- [mockito](src/test/kotlin/com/example/demo/mockito)
+		- [BaseIntegrationController](src/test/kotlin/com/example/demo/mockito/common/BaseIntegrationController.kt)
 	- [kotest & mockk](src/test/kotlin/com/example/demo/kotest)
 		- **if you want to bypass Spring Security authentication issues.**
 			- [SecurityListenerFactory](src/test/kotlin/com/example/demo/kotest/common/security/SecurityListenerFactory.kt)
 			- [BaseIntegrationController](src/test/kotlin/com/example/demo/kotest/common/BaseIntegrationController.kt)
 				```kotlin
 				// example
-
 				listeners(SecurityListenerFactory())
 
 				Then("Call DELETE /api/v1/users/{userId}").config(tags = setOf(SecurityListenerFactory.NonSecurityOption)) {
 					// ...
 				}
 				```
+- kafka
+	- [KafkaTopicMetaProvider](src/main/kotlin/com/example/demo/infrastructure/kafka/provider/KafkaTopicMetaProvider.kt)
+		- Manage metadata related to topics
+	- DLQ
+		- [DLQs are dynamically created in this project.](src/main/kotlin/com/example/demo/infrastructure/kafka/provider/KafkaConsumerFactoryProvider.kt)
+		- [default fallback partition: 1](src/main/kotlin/com/example/demo/infrastructure/kafka/DlqHelper.kt) (if the
+			topic
+			partition
+			does not exist)
+- [example](src/main/kotlin/com/example/demo/example/WelcomeSignUpConsumer.kt)
+	- [When a user signs up, an event is generated to send an email to the recipient.](src/main/kotlin/com/example/demo/user/event/UserEventHandler.kt)
+		- You can test this flow by referring to the MailHog and Kafka sections.
 
 ### Author
 
