@@ -31,6 +31,7 @@
 	- Spring Batch
 	- Junit 5
 	- Mockito Kotlin
+	- Mockito Inline
 	- Kotest
 	- Mockk
 	- Instancio
@@ -76,7 +77,7 @@ To use the application, the following two services must be installed and running
 - webhook
 	- [enable & route endpoint](src/main/resources/application-common.yml)
 		- default enable true
-	- [webhook](src/main/kotlin/com/example/demo/infrastructure/webhook)
+	- [types](src/main/kotlin/com/example/demo/infrastructure/webhook)
 		- slack
 		- discord (not yet)
 	- test code
