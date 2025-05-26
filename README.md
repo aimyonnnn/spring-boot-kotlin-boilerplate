@@ -25,6 +25,7 @@
 		- Discord(not yet)
 	- Kafka
 
+
 - `Test`
 	- Spring Boot Starter Test
 	- Spring Security
@@ -38,11 +39,14 @@
 	- h2 database (PostgreSQL mode)
 	- Flyway
 
+
 - `Etc`
 	- Pgadmin
 	- Ktlint
 	- Detekt
 	- Mailhog
+
+---
 
 ### Project Guide
 
@@ -62,7 +66,9 @@
 		- prod, dev, local, common, test, secret-{environment}
 		- common: Write common variables for the project.
 		- test: Create the variables needed for your test environment.
-		- secret-{environment}: auth (jwt, api key), database information
+		- secret-{environment}: your secret variables for each environment.
+
+---
 
 ### Local Installation
 
@@ -72,9 +78,11 @@ To use the application, the following two services must be installed and running
 - redis
 - mailhog
 
+---
+
 ### Description
 
-- webhook
+1. webhook
 	- [enable & route endpoint](src/main/resources/application-common.yml)
 		- default enable true
 	- [types](src/main/kotlin/com/example/demo/infrastructure/webhook)
@@ -100,13 +108,15 @@ webHookProvider.sendSlack(
 )
 ```
 
-- mailhog
+2. mailhog
 	- mailhog is a tool for testing email sending.
 	- [If you want to use MailHog, the default SMTP port is 1025.
 		Of course, if you already have your own preferred setup, you can freely adjust the port as needed.](docker-compose.yml)
 	- dashboard: http://localhost:8025
 	- Please check the settings in application-local.yml and application-secret-local.yml.
-- lint
+
+
+3. lint
 	- ktlint
 		- [using the official lint rules by default.](gradle.properties)
 			- [Please refer to the lint rules for this project here.](.editorconfig)
@@ -116,16 +126,22 @@ webHookProvider.sendSlack(
 		- [using rules](detekt.yml)
 		- report output
 			- build/reports/detekt
-- docker-compose
+
+
+4. docker-compose
 	- If you plan to use it, you need to check the environment variables.
-- create spring batch metadata table (localhost, development and production environments.)
+
+
+5. create spring batch metadata table (localhost, development and production environments.)
 	- Run your ddl script or Please refer
 		to [github - spring batch](https://github.com/spring-projects/spring-batch/blob/5.0.x/spring-batch-core/src/main/resources/org/springframework/batch/core/schema-postgresql.sql)
 		- Since this project uses postgresql, the spring.batch.jdbc.initialize-schema: always option does not work.
 		- localhost & test environment,
 			generating [batch-postgresql-metadata-schema.sql](src/main/resources/db/sql/batch-postgresql-metadata-schema.sql).
 			- [application-test.yml](src/main/resources/application-test.yml)
-- two types of tests
+
+
+6. two types of tests
 	- [mockito](src/test/kotlin/com/example/demo/mockito)
 		- [BaseIntegrationController](src/test/kotlin/com/example/demo/mockito/common/BaseIntegrationController.kt)
 	- [kotest & mockk](src/test/kotlin/com/example/demo/kotest)
@@ -140,7 +156,8 @@ webHookProvider.sendSlack(
 					// ...
 				}
 				```
-- kafka
+
+7. kafka
 	- [KafkaTopicMetaProvider](src/main/kotlin/com/example/demo/infrastructure/kafka/provider/KafkaTopicMetaProvider.kt)
 		- Manage metadata related to topics
 	- DLQ
@@ -149,10 +166,17 @@ webHookProvider.sendSlack(
 			topic
 			partition
 			does not exist)
-- [example](src/main/kotlin/com/example/demo/example/WelcomeSignUpConsumer.kt)
+
+
+8. [example](src/main/kotlin/com/example/demo/example/WelcomeSignUpConsumer.kt)
 	- [When a user signs up, an event is generated to send an email to the recipient.](src/main/kotlin/com/example/demo/user/event/UserEventHandler.kt)
 		- You can test this flow by referring to the MailHog and Kafka sections.
+
+---
 
 ### Author
 
 Hyunwoo Park
+
+
+---
