@@ -1,6 +1,5 @@
 package com.example.demo.kotest.user.api
 
-import com.example.demo.common.dto.SlackMessage
 import com.example.demo.kotest.common.BaseIntegrationController
 import com.example.demo.kotest.common.security.SecurityListenerFactory
 import com.example.demo.user.api.UserController
@@ -253,7 +252,12 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 					.create(UpdateUserRequest::class.java)
 					.copy(role = UserRole.USER.name)
 
-			justRun { slackUtils.send(any<List<SlackMessage>>()) }
+			justRun {
+				webHookProvider.sendAll(
+					any<String>(),
+					any<List<String>>()
+				)
+			}
 
 			When("Success PATCH /api/v1/users/{userId}") {
 
@@ -341,8 +345,13 @@ class UserIntegrationControllerTests : BaseIntegrationController() {
 						role = UserRole.USER.name
 					)
 
-			justRun { slackUtils.send(any<List<SlackMessage>>()) }
-			
+			justRun {
+				webHookProvider.sendAll(
+					any<String>(),
+					any<List<String>>()
+				)
+			}
+
 			When("Success PATCH /api/v1/users") {
 
 				every { changeUserService.updateMe(any<Long>(), any<UpdateUserRequest>()) } returns

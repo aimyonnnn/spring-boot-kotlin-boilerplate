@@ -1,7 +1,7 @@
 package com.example.demo.mockito.common
 
-import com.example.demo.common.aop.SendSlackSignalRequestBodyAdvice
-import com.example.demo.utils.SlackUtils
+import com.example.demo.common.aop.SendWebHookSignalRequestBodyAdvice
+import com.example.demo.infrastructure.webhook.WebHookProvider
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -18,11 +18,11 @@ abstract class BaseIntegrationController {
 
 	@Suppress("Unused")
 	@Autowired
-	protected lateinit var sendSlackSignalRequestBodyAdvice: SendSlackSignalRequestBodyAdvice
+	protected lateinit var sendWebHookSignalRequestBodyAdvice: SendWebHookSignalRequestBodyAdvice
 
 	@Suppress("Unused")
 	@MockitoBean
-	protected lateinit var slackUtils: SlackUtils
+	protected lateinit var webHookProvider: WebHookProvider
 
 	protected lateinit var mockMvc: MockMvc
 

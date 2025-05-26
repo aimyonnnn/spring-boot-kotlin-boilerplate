@@ -1,8 +1,8 @@
 package com.example.demo.kotest.common
 
-import com.example.demo.common.aop.SendSlackSignalRequestBodyAdvice
+import com.example.demo.common.aop.SendWebHookSignalRequestBodyAdvice
+import com.example.demo.infrastructure.webhook.WebHookProvider
 import com.example.demo.kotest.common.security.SecurityListenerFactory
-import com.example.demo.utils.SlackUtils
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.ninjasquad.springmockk.MockkBean
 import io.kotest.core.spec.style.BehaviorSpec
@@ -27,10 +27,10 @@ abstract class BaseIntegrationController : BehaviorSpec() {
 
 	@Suppress("unused")
 	@Autowired
-	protected lateinit var sendSlackSignalRequestBodyAdvice: SendSlackSignalRequestBodyAdvice
+	protected lateinit var sendWebHookSignalRequestBodyAdvice: SendWebHookSignalRequestBodyAdvice
 
 	@MockkBean
-	protected lateinit var slackUtils: SlackUtils
+	protected lateinit var webHookProvider: WebHookProvider
 
 	/**
 	 * ResponseAdvice Status

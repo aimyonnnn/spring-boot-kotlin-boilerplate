@@ -9,6 +9,7 @@ import com.example.demo.user.dto.serve.request.UpdateUserRequest
 import com.example.demo.user.dto.serve.response.CreateUserResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
 import com.example.demo.user.entity.User
+import com.example.demo.user.event.WelcomeSignUpEvent
 import com.example.demo.user.exception.AlreadyUserExistException
 import com.example.demo.user.exception.UserNotFoundException
 import com.example.demo.user.repository.UserRepository
@@ -22,6 +23,7 @@ import io.mockk.justRun
 import io.mockk.mockk
 import io.mockk.verify
 import org.instancio.Instancio
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 
@@ -30,6 +32,7 @@ import org.springframework.test.context.ActiveProfiles
 class ChangeUserServiceTests :
 	BehaviorSpec({
 		val userRepository = mockk<UserRepository>()
+		val eventPublisher = mockk<ApplicationEventPublisher>(relaxed = true)
 		val bCryptPasswordEncoder = mockk<BCryptPasswordEncoder>()
 		val tokenProvider = mockk<TokenProvider>()
 		val userService = mockk<UserService>()
@@ -134,6 +137,8 @@ class ChangeUserServiceTests :
 
 				every { userRepository.save(any<User>()) } returns user
 
+				justRun { eventPublisher.publishEvent(any<WelcomeSignUpEvent>()) }
+
 				every { tokenProvider.createFullTokens(any<User>()) } returns defaultAccessToken
 
 				every {
@@ -147,7 +152,7 @@ class ChangeUserServiceTests :
 						createUserRequest
 					)
 
-				Then("Assert User Entity") {
+				Then("Assert User Entity & Verify Call Publish Event") {
 					createUserResponse shouldNotBeNull {
 						email shouldBe user.email
 						name shouldBe user.name

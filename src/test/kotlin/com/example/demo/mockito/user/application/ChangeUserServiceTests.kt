@@ -24,6 +24,7 @@ import org.mockito.Mock
 import org.mockito.Mockito
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.any
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 
@@ -45,6 +46,10 @@ class ChangeUserServiceTests {
 
 	@Mock
 	private lateinit var userServiceImpl: UserServiceImpl
+
+	@Suppress("unused")
+	@Mock
+	private lateinit var applicationEventPublisher: ApplicationEventPublisher
 
 	@InjectMocks
 	private lateinit var changeUserServiceImpl: ChangeUserServiceImpl
