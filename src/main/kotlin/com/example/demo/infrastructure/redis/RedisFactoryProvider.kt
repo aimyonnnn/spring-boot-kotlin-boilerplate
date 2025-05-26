@@ -1,4 +1,4 @@
-package com.example.demo.utils
+package com.example.demo.infrastructure.redis
 
 import org.springframework.data.redis.core.StringRedisTemplate
 import org.springframework.data.redis.core.ValueOperations
@@ -7,7 +7,7 @@ import java.time.Duration
 import java.util.concurrent.TimeUnit
 
 @Component
-class RedisUtils(
+class RedisFactoryProvider(
 	private val stringRedisTemplate: StringRedisTemplate
 ) {
 	fun get(key: String): String? {

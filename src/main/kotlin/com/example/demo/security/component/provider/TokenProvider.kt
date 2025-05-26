@@ -1,34 +1,34 @@
 package com.example.demo.security.component.provider
 
+import com.example.demo.infrastructure.redis.RedisFactoryProvider
 import com.example.demo.security.SecurityUserItem
 import com.example.demo.security.exception.RefreshTokenNotFoundException
 import com.example.demo.user.entity.User
-import com.example.demo.utils.RedisUtils
 import org.springframework.stereotype.Component
 import java.util.concurrent.TimeUnit
 
 @Component
 class TokenProvider(
 	private val jwtProvider: JWTProvider,
-	private val redisUtils: RedisUtils
+	private val redisFactoryProvider: RedisFactoryProvider
 ) {
 	fun getRefreshToken(userId: Long): String {
-		val redisKey: String = redisUtils.generateSessionKey(userId)
-		val refreshToken: String = redisUtils.get(redisKey) ?: throw RefreshTokenNotFoundException(userId)
+		val redisKey: String = redisFactoryProvider.generateSessionKey(userId)
+		val refreshToken: String = redisFactoryProvider.get(redisKey) ?: throw RefreshTokenNotFoundException(userId)
 
 		return refreshToken
 	}
 
 	fun deleteRefreshToken(userId: Long) {
-		val redisKey: String = redisUtils.generateSessionKey(userId)
+		val redisKey: String = redisFactoryProvider.generateSessionKey(userId)
 
-		redisUtils.delete(redisKey)
+		redisFactoryProvider.delete(redisKey)
 	}
 
 	fun createRefreshToken(user: User) {
-		val redisKey: String = redisUtils.generateSessionKey(user.id)
+		val redisKey: String = redisFactoryProvider.generateSessionKey(user.id)
 
-		redisUtils.set(
+		redisFactoryProvider.set(
 			redisKey,
 			jwtProvider.createRefreshToken(SecurityUserItem.from(user)),
 			jwtProvider.refreshExpireTime,
