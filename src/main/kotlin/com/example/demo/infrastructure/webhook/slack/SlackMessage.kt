@@ -1,4 +1,4 @@
-package com.example.demo.common.dto
+package com.example.demo.infrastructure.webhook.slack
 
 data class SlackMessage(
 	val title: String,

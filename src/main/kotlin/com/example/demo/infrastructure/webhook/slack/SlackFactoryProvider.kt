@@ -1,6 +1,5 @@
-package com.example.demo.utils
+package com.example.demo.infrastructure.webhook.slack
 
-import com.example.demo.common.dto.SlackMessage
 import com.slack.api.Slack
 import com.slack.api.model.block.DividerBlock
 import com.slack.api.model.block.LayoutBlock
@@ -15,10 +14,9 @@ import org.springframework.stereotype.Component
 private val logger = KotlinLogging.logger {}
 
 @Component
-class SlackUtils {
-	@Value("\${webhook.slack.url}")
-	private lateinit var url: String
-
+class SlackFactoryProvider(
+	@Value("\${webhook.slack.url}") private val url: String
+) {
 	private val slackClient: Slack = Slack.getInstance()
 
 	@Async("webhookExecutor")
@@ -63,7 +61,7 @@ class SlackUtils {
 			add(sectionBlock("*:rotating_light: ${dto.title}*"))
 			add(dividerBlock())
 			addAll(dto.messages.map { sectionBlock("• $it") })
-			
+
 			if (!isLast) add(dividerBlock())
 		}
 
