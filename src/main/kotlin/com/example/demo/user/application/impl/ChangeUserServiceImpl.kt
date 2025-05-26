@@ -10,8 +10,10 @@ import com.example.demo.user.dto.serve.response.CreateUserResponse
 import com.example.demo.user.dto.serve.response.UpdateMeResponse
 import com.example.demo.user.dto.serve.response.UpdateUserResponse
 import com.example.demo.user.entity.User
+import com.example.demo.user.event.WelcomeSignUpEvent
 import com.example.demo.user.exception.AlreadyUserExistException
 import com.example.demo.user.repository.UserRepository
+import org.springframework.context.ApplicationEventPublisher
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +24,8 @@ class ChangeUserServiceImpl(
 	private val tokenProvider: TokenProvider,
 	private val userService: UserService,
 	private val userRepository: UserRepository,
-	private val bCryptPasswordEncoder: BCryptPasswordEncoder
+	private val bCryptPasswordEncoder: BCryptPasswordEncoder,
+	private val applicationEventPublisher: ApplicationEventPublisher
 ) : ChangeUserService {
 	override fun createUser(createUserRequest: CreateUserRequest): CreateUserResponse {
 		userRepository
@@ -32,15 +35,19 @@ class ChangeUserServiceImpl(
 			}
 
 		val user: User =
-			User(
-				name = createUserRequest.name,
-				email = createUserRequest.email,
-				password = createUserRequest.password,
-				role = UserRole.USER
-			).encodePassword(bCryptPasswordEncoder)
+			userRepository.save(
+				User(
+					name = createUserRequest.name,
+					email = createUserRequest.email,
+					password = createUserRequest.password,
+					role = UserRole.USER
+				).encodePassword(bCryptPasswordEncoder)
+			)
+
+		applicationEventPublisher.publishEvent(WelcomeSignUpEvent.from(user))
 
 		return CreateUserResponse.from(
-			userRepository.save(user),
+			user,
 			tokenProvider.createFullTokens(user)
 		)
 	}
