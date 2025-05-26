@@ -82,6 +82,12 @@ dependencies {
 	// redis
 	implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
+	// kafka
+	implementation("org.springframework.kafka:spring-kafka")
+
+	// mail
+	implementation("org.springframework.boot:spring-boot-starter-mail")
+
 	// swagger
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0")
 
@@ -109,6 +115,7 @@ dependencies {
 
 	// test - mockito
 	testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0")
+	testImplementation("org.mockito:mockito-inline:5.2.0")
 
 	// test - kotest & mockk
 	testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")

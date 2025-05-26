@@ -27,6 +27,15 @@ spring:
       name: ${job.name:NONE}
     jdbc:
       initialize-schema: never
+  mail:
+    host: localhost
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
 logging:
   level:
     "[org.hibernate.SQL]": debug
