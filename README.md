@@ -1,11 +1,13 @@
-## Spring Boot Boilerplate (Kotlin)
+# Spring Boot Boilerplate (Kotlin)
 
-### Environment & Skills
+## Environment & Skills
 
-- `Application`
+- Application
 	- Kotlin 2.0
 	- Jdk 21
 	- Spring boot 3.4.0
+		- mvc
+		- reactive
 	- Gradle 8.10
 	- Spring Security
 	- Spring Batch
@@ -22,11 +24,11 @@
 	- Flyway
 	- Webhook
 		- Slack
-		- Discord(not yet)
+		- Discord
 	- Kafka
 
 
-- `Test`
+- Test
 	- Spring Boot Starter Test
 	- Spring Security
 	- Spring Batch
@@ -40,15 +42,14 @@
 	- Flyway
 
 
-- `Etc`
+- Etc
 	- Pgadmin
 	- Ktlint
 	- Detekt
 	- Mailhog
+	- Netty resolver dns native macos
 
----
-
-### Project Guide
+## Project Guide
 
 - common
 - domain (post, user, auth)
@@ -68,9 +69,7 @@
 		- test: Create the variables needed for your test environment.
 		- secret-{environment}: your secret variables for each environment.
 
----
-
-### Local Installation
+## Local Installation
 
 To use the application, the following two services must be installed and running:
 
@@ -78,19 +77,14 @@ To use the application, the following two services must be installed and running
 - redis
 - mailhog
 
----
-
-### Description
+## Description
 
 1. webhook
 	- [enable & route endpoint](src/main/resources/application-common.yml)
 		- default enable true
 	- [types](src/main/kotlin/com/example/demo/infrastructure/webhook)
 		- slack
-		- discord (not yet)
-	- test code
-		- [kotest](src/test/kotlin/com/example/demo/kotest/infrastructure/webhook)
-		- [mockito](src/test/kotlin/com/example/demo/mockito/infrastructure/webhook)
+		- discord
 
 ```kotlin
 // example
@@ -101,10 +95,16 @@ webHookProvider.sendAll(
 	mutableListOf("Request Body: $body")
 )
 
-// 2. target webhook
+// 2. target slack
 webHookProvider.sendSlack(
-	"Failed to send message to Kafka (handleWelcomeSignUpEvent)",
-	mutableListOf("Failed to send message to Kafka: ${exception.message} / $welcomeSignUpEvent")
+	"Failed to send message to Kafka (foo)",
+	mutableListOf("Failed to send message to Kafka: ${exception.message} / $foo")
+)
+
+// 3. target discord
+webHookProvider.sendDiscord(
+	"Failed to send message to Kafka (bar)",
+	mutableListOf("Failed to send message to Kafka: ${exception.message} / $bar")
 )
 ```
 
@@ -162,21 +162,14 @@ webHookProvider.sendSlack(
 		- Manage metadata related to topics
 	- DLQ
 		- [DLQs are dynamically created in this project.](src/main/kotlin/com/example/demo/infrastructure/kafka/provider/KafkaConsumerFactoryProvider.kt)
-		- [default fallback partition: 1](src/main/kotlin/com/example/demo/infrastructure/kafka/DlqHelper.kt) (if the
-			topic
-			partition
-			does not exist)
+		- [default fallback partition: 1](src/main/kotlin/com/example/demo/infrastructure/kafka/DlqHelper.kt) (if the topic
+			partition does not exist)
 
 
 8. [example](src/main/kotlin/com/example/demo/example/WelcomeSignUpConsumer.kt)
 	- [When a user signs up, an event is generated to send an email to the recipient.](src/main/kotlin/com/example/demo/user/event/UserEventHandler.kt)
 		- You can test this flow by referring to the MailHog and Kafka sections.
 
----
-
-### Author
+## Author
 
 Hyunwoo Park
-
-
----
