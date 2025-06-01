@@ -18,6 +18,15 @@ spring:
       name: ${job.name:NONE}
     jdbc:
       initialize-schema: never
+  mail:
+    host:
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 sentry:
   dsn:
   logging:
