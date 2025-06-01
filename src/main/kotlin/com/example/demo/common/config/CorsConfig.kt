@@ -14,9 +14,9 @@ class CorsConfig {
 			registerCorsConfiguration(
 				"/**",
 				CorsConfiguration().apply {
-					allowedOrigins = listOf("*")
-					allowedMethods = listOf("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")
-					allowedHeaders = listOf("Authorization", "Cache-Control", "Content-Type")
+					allowedOrigins = mutableListOf("*")
+					allowedMethods = mutableListOf("HEAD", "GET", "POST", "PUT", "DELETE", "PATCH")
+					allowedHeaders = mutableListOf("Authorization", "Cache-Control", "Content-Type")
 					allowCredentials = true
 				}
 			)
