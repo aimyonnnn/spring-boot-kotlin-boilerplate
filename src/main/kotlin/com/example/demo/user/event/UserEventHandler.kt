@@ -3,6 +3,7 @@ package com.example.demo.user.event
 import com.example.demo.infrastructure.kafka.provider.KafkaTopicMetaProvider
 import com.example.demo.infrastructure.mail.MailPayload
 import com.example.demo.infrastructure.webhook.WebHookProvider
+import com.example.demo.user.dto.event.WelcomeSignUpEvent
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.scheduling.annotation.Async
@@ -32,7 +33,7 @@ class UserEventHandler(
 		}.onFailure { exception ->
 			logger.error(exception) { "Failed to send message to Kafka" }
 
-			webHookProvider.sendSlack(
+			webHookProvider.sendAll(
 				title = "Failed to send message to Kafka (handleWelcomeSignUpEvent)",
 				lines = mutableListOf("Failed to send message to Kafka: ${exception.message} / $welcomeSignUpEvent")
 			)

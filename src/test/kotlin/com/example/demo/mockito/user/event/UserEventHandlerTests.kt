@@ -3,8 +3,8 @@ package com.example.demo.mockito.user.event
 import com.example.demo.infrastructure.kafka.provider.KafkaTopicMetaProvider
 import com.example.demo.infrastructure.mail.MailPayload
 import com.example.demo.infrastructure.webhook.WebHookProvider
+import com.example.demo.user.dto.event.WelcomeSignUpEvent
 import com.example.demo.user.event.UserEventHandler
-import com.example.demo.user.event.WelcomeSignUpEvent
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.BeforeEach
@@ -60,7 +60,7 @@ class UserEventHandlerTests {
 	}
 
 	@Test
-	fun `should send slack message and rethrow if kafka send fails`() {
+	fun `should send all message and rethrow if kafka send fails`() {
 		val event = WelcomeSignUpEvent("fail@example.com", "Failer")
 		val exception = RuntimeException("Kafka send failed")
 
@@ -73,7 +73,7 @@ class UserEventHandlerTests {
 
 		assertEquals("Kafka send failed", thrown.message)
 
-		verify(webHookProvider).sendSlack(
+		verify(webHookProvider).sendAll(
 			contains("handleWelcomeSignUpEvent"),
 			argThat { any { it.contains("Kafka send failed") } }
 		)

@@ -3,8 +3,8 @@ package com.example.demo.kotest.user.event
 import com.example.demo.infrastructure.kafka.provider.KafkaTopicMetaProvider
 import com.example.demo.infrastructure.mail.MailPayload
 import com.example.demo.infrastructure.webhook.WebHookProvider
+import com.example.demo.user.dto.event.WelcomeSignUpEvent
 import com.example.demo.user.event.UserEventHandler
-import com.example.demo.user.event.WelcomeSignUpEvent
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.annotation.Tags
 import io.kotest.core.spec.style.StringSpec
@@ -49,7 +49,7 @@ class UserEventHandlerTests :
 			confirmVerified(kafkaTemplate)
 		}
 
-		"should send slack message and rethrow if kafka send fails" {
+		"should send all message and rethrow if kafka send fails" {
 			val event =
 				WelcomeSignUpEvent(
 					email = "fail@example.com",
@@ -68,7 +68,7 @@ class UserEventHandlerTests :
 			exception.message shouldBe "Kafka send failed"
 
 			verify {
-				webHookProvider.sendSlack(
+				webHookProvider.sendAll(
 					match { it.contains("handleWelcomeSignUpEvent") },
 					withArg {
 						it.any { msg -> msg.contains("Kafka send failed") }

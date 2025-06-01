@@ -1,4 +1,4 @@
-package com.example.demo.user.event
+package com.example.demo.user.dto.event
 
 import com.example.demo.user.entity.User
 
