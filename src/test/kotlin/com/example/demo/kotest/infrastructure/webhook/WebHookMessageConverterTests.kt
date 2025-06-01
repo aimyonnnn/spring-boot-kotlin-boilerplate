@@ -5,6 +5,9 @@ import com.example.demo.infrastructure.webhook.WebHookMessageConverter
 import com.example.demo.infrastructure.webhook.common.CommonWebHookMessage
 import com.example.demo.infrastructure.webhook.common.WebHookMessage
 import com.example.demo.infrastructure.webhook.constant.WebHookTarget
+import com.example.demo.infrastructure.webhook.discord.DiscordMessage
+import com.example.demo.infrastructure.webhook.discord.DiscordMessageConverter
+import com.example.demo.infrastructure.webhook.discord.DiscordWebHookMessage
 import com.example.demo.infrastructure.webhook.slack.SlackMessage
 import com.example.demo.infrastructure.webhook.slack.SlackMessageConverter
 import com.example.demo.infrastructure.webhook.slack.SlackWebHookMessage
@@ -23,11 +26,16 @@ import org.springframework.test.context.ActiveProfiles
 class WebHookMessageConverterTests :
 	FunSpec({
 		val slackConverter = mockk<SlackMessageConverter>()
-		val converter = WebHookMessageConverter(slackConverter)
+		val discordConverter = mockk<DiscordMessageConverter>()
+		val converter = WebHookMessageConverter(slackConverter, discordConverter)
 
 		val slackMessage = SlackWebHookMessage(mutableListOf(SlackMessage("line1", mutableListOf("line2"))))
-		val commonMessage = CommonWebHookMessage("title", listOf("line1", "line2"))
 		val convertedSlackMessage = SlackWebHookMessage(mutableListOf(SlackMessage("converted line", mutableListOf("converted line2"))))
+
+		val discordMessage = DiscordWebHookMessage(mutableListOf(DiscordMessage("line1", mutableListOf("line2"))))
+		val convertedDiscordMessage = DiscordWebHookMessage(mutableListOf(DiscordMessage("converted line", mutableListOf("converted line2"))))
+
+		val commonMessage = CommonWebHookMessage("title", mutableListOf("line1", "line2"))
 
 		context("convert()") {
 
@@ -39,12 +47,28 @@ class WebHookMessageConverterTests :
 				result shouldBe convertedSlackMessage
 			}
 
+			test("should convert DiscordWebHookMessage when target is DISCORD") {
+				every { discordConverter.convertToDiscordMessage(discordMessage) } returns convertedDiscordMessage
+
+				val result = converter.convert(WebHookTarget.DISCORD, discordMessage)
+
+				result shouldBe convertedDiscordMessage
+			}
+
 			test("should convert CommonWebHookMessage to Slack message when target is SLACK") {
 				every { slackConverter.convertCommonToSlackMessage(commonMessage) } returns convertedSlackMessage
 
 				val result = converter.convert(WebHookTarget.SLACK, commonMessage)
 
 				result shouldBe convertedSlackMessage
+			}
+
+			test("should convert CommonWebHookMessage to Discord message when target is Discord") {
+				every { discordConverter.convertCommonToDiscordMessage(commonMessage) } returns convertedDiscordMessage
+
+				val result = converter.convert(WebHookTarget.DISCORD, commonMessage)
+
+				result shouldBe convertedDiscordMessage
 			}
 
 			test("should throw exception when unknown message type is passed for SLACK") {
@@ -59,13 +83,16 @@ class WebHookMessageConverterTests :
 				exception.message shouldEndWith ("for Slack")
 			}
 
-			test("should throw exception when target is unsupported") {
+			test("should throw exception when unknown message type is passed for DISCORD") {
+				val unknownMessage = object : WebHookMessage {}
+
 				val exception =
 					shouldThrow<CustomRuntimeException> {
-						converter.convert(WebHookTarget.DISCORD, commonMessage)
+						converter.convert(WebHookTarget.DISCORD, unknownMessage)
 					}
 
-				exception.message shouldBe "Unsupported target: DISCORD"
+				exception.message shouldStartWith "Unsupported message type: class"
+				exception.message shouldEndWith ("for Discord")
 			}
 		}
 	})

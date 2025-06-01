@@ -1,15 +1,14 @@
 package com.example.demo.mockito.infrastructure.webhook
 
-import com.example.demo.common.exception.CustomRuntimeException
 import com.example.demo.infrastructure.webhook.WebHookRouter
 import com.example.demo.infrastructure.webhook.constant.WebHookTarget
+import com.example.demo.infrastructure.webhook.discord.DiscordWebHookSender
 import com.example.demo.infrastructure.webhook.slack.SlackWebHookSender
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Tag
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
@@ -25,12 +24,15 @@ import org.springframework.test.context.ActiveProfiles
 class WebHookRouterTests {
 	@Mock
 	private lateinit var slackSender: SlackWebHookSender
+
+	@Mock
+	private lateinit var discordSender: DiscordWebHookSender
 	private lateinit var router: WebHookRouter
 
 	@BeforeEach
 	fun setUp() {
 		MockitoAnnotations.openMocks(this)
-		router = WebHookRouter(slackSender)
+		router = WebHookRouter(slackSender, discordSender)
 	}
 
 	@Test
@@ -40,18 +42,14 @@ class WebHookRouterTests {
 	}
 
 	@Test
-	fun `should throw CustomRuntimeException when target is DISCORD`() {
-		val exception =
-			assertThrows<CustomRuntimeException> {
-				router.route(WebHookTarget.DISCORD)
-			}
-
-		assertEquals("The target is not implemented yet: DISCORD", exception.message)
+	fun `should return discordSender when target is DISCORD`() {
+		val result = router.route(WebHookTarget.DISCORD)
+		assertEquals(discordSender, result)
 	}
 
 	@Test
 	fun `should return all supported senders`() {
 		val result = router.all()
-		assertEquals(listOf(slackSender), result)
+		assertEquals(listOf(slackSender, discordSender), result)
 	}
 }

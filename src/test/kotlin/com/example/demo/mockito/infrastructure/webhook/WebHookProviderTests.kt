@@ -7,6 +7,7 @@ import com.example.demo.infrastructure.webhook.common.CommonWebHookMessage
 import com.example.demo.infrastructure.webhook.common.WebHookMessage
 import com.example.demo.infrastructure.webhook.common.WebHookSender
 import com.example.demo.infrastructure.webhook.constant.WebHookTarget
+import com.example.demo.infrastructure.webhook.discord.DiscordWebHookMessage
 import com.example.demo.infrastructure.webhook.slack.SlackWebHookMessage
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertThrows
@@ -36,9 +37,13 @@ class WebHookProviderTests {
 	private lateinit var converter: WebHookMessageConverter
 	private lateinit var sender: WebHookSender
 	private lateinit var provider: WebHookProvider
-	
+
 	private val slackTarget = WebHookTarget.SLACK
+	private val discordTarget = WebHookTarget.DISCORD
+
 	private val slackMessage = SlackWebHookMessage(listOf())
+	private val discordMessage = DiscordWebHookMessage(listOf())
+
 	private val commonMessage = CommonWebHookMessage("Title", listOf("Line1", "Line2"))
 
 	@BeforeEach
@@ -64,14 +69,29 @@ class WebHookProviderTests {
 		}
 
 		@Test
+		fun sendDiscord_shouldConvertAndSendMessageForDiscordTarget() {
+			`when`(router.route(discordTarget)).thenReturn(sender)
+			`when`(converter.convert(eq(discordTarget), any<WebHookMessage>())).thenReturn(discordMessage)
+
+			provider.sendDiscord("Title", listOf("Line1", "Line2"))
+
+			verify(router).route(discordTarget)
+			verify(converter).convert(eq(discordTarget), any<WebHookMessage>())
+			verify(sender).send(discordMessage)
+		}
+
+		@Test
 		fun sendAll_shouldConvertAndSendMessageToAllTargets() {
 			val sender1: WebHookSender = mock(WebHookSender::class.java)
 			val sender2: WebHookSender = mock(WebHookSender::class.java)
 
 			`when`(router.all()).thenReturn(listOf(sender1, sender2))
+
 			`when`(sender1.target()).thenReturn(WebHookTarget.SLACK)
 			`when`(sender2.target()).thenReturn(WebHookTarget.DISCORD)
-			`when`(converter.convert(any<WebHookTarget>(), any<WebHookMessage>())).thenReturn(slackMessage)
+
+			`when`(converter.convert(eq(WebHookTarget.SLACK), any())).thenReturn(slackMessage)
+			`when`(converter.convert(eq(WebHookTarget.DISCORD), any())).thenReturn(discordMessage)
 
 			provider.sendAll("Title", listOf("Line1", "Line2"))
 
@@ -83,8 +103,16 @@ class WebHookProviderTests {
 				}
 			)
 
+			verify(converter).convert(
+				eq(WebHookTarget.DISCORD),
+				argThat { msg ->
+					val commonMsg = msg as? CommonWebHookMessage ?: return@argThat false
+					commonMsg.title == commonMessage.title && commonMsg.contents == commonMessage.contents
+				}
+			)
+
 			verify(sender1).send(slackMessage)
-			verify(sender2).send(slackMessage)
+			verify(sender2).send(discordMessage)
 		}
 	}
 
