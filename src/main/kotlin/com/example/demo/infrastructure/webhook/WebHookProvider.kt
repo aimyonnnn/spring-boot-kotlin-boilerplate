@@ -3,6 +3,9 @@ package com.example.demo.infrastructure.webhook
 import com.example.demo.infrastructure.webhook.common.CommonWebHookMessage
 import com.example.demo.infrastructure.webhook.common.WebHookMessage
 import com.example.demo.infrastructure.webhook.constant.WebHookTarget
+import com.example.demo.infrastructure.webhook.discord.DiscordEmbed
+import com.example.demo.infrastructure.webhook.discord.DiscordMessage
+import com.example.demo.infrastructure.webhook.discord.DiscordWebHookMessage
 import com.example.demo.infrastructure.webhook.slack.SlackMessage
 import com.example.demo.infrastructure.webhook.slack.SlackWebHookMessage
 import org.springframework.beans.factory.annotation.Value
@@ -18,16 +21,29 @@ class WebHookProvider(
 		title: String,
 		lines: List<String>
 	) {
-		val commonMessage = createCommonMessage(title, lines)
-		this.send(WebHookTarget.ALL, commonMessage)
+		validateEnabled()
+
+		val message = CommonWebHookMessage(title, lines)
+
+		webhookRouter.all().forEach { sender ->
+			val converted = webhookMessageConverter.convert(sender.target(), message)
+			sender.send(converted)
+		}
 	}
 
 	fun sendSlack(
 		title: String,
 		lines: List<String>
 	) {
-		val slackMessage = createSlackMessage(title, lines)
-		this.send(WebHookTarget.SLACK, slackMessage)
+		send(WebHookTarget.SLACK, SlackWebHookMessage(mutableListOf(SlackMessage.of(title, lines))))
+	}
+
+	fun sendDiscord(
+		title: String,
+		lines: List<String>,
+		embeds: List<DiscordEmbed>? = null
+	) {
+		send(WebHookTarget.DISCORD, DiscordWebHookMessage(mutableListOf(DiscordMessage.of(title, lines, embeds))))
 	}
 
 	private fun send(
@@ -35,16 +51,17 @@ class WebHookProvider(
 		message: WebHookMessage
 	) {
 		validateEnabled()
-
-		if (target == WebHookTarget.ALL) {
-			require(message is CommonWebHookMessage) {
-				"When using WebHookTarget.ALL, message must be of type CommonWebHookMessage"
+		
+		when (target) {
+			WebHookTarget.ALL -> {
+				require(message is CommonWebHookMessage) {
+					"When using WebHookTarget.ALL, message must be of type CommonWebHookMessage"
+				}
+				sendAll(message)
 			}
-			sendToAllChannels(message)
-			return
-		}
 
-		sendToTarget(target, message)
+			else -> sendToTarget(target, message)
+		}
 	}
 
 	private fun sendToTarget(
@@ -56,7 +73,7 @@ class WebHookProvider(
 		sender.send(converted)
 	}
 
-	private fun sendToAllChannels(message: CommonWebHookMessage) {
+	private fun sendAll(message: CommonWebHookMessage) {
 		webhookRouter.all().forEach { sender ->
 			val converted = webhookMessageConverter.convert(sender.target(), message)
 			sender.send(converted)
@@ -66,17 +83,4 @@ class WebHookProvider(
 	private fun validateEnabled() {
 		check(enabled) { "Webhook is not enabled" }
 	}
-
-	private fun createSlackMessage(
-		title: String,
-		lines: List<String>
-	): SlackWebHookMessage =
-		SlackWebHookMessage(
-			mutableListOf(SlackMessage.of(title, lines))
-		)
-
-	private fun createCommonMessage(
-		title: String,
-		lines: List<String>
-	): CommonWebHookMessage = CommonWebHookMessage(title, lines)
 }
