@@ -7,7 +7,7 @@
 	- Jdk 21
 	- Spring boot 3.4.0
 		- mvc
-		- reactive
+		- webflux
 	- Gradle 8.10
 	- Spring Security
 	- Spring Batch
@@ -26,7 +26,7 @@
 		- Slack
 		- Discord
 	- Kafka
-
+	- WebClient
 
 - Test
 	- Spring Boot Starter Test
