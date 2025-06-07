@@ -1,5 +1,7 @@
 package com.example.demo.infrastructure.webhook.slack
 
+import com.example.demo.infrastructure.webhook.common.EmojiResolver.resolveLineEmoji
+import com.example.demo.infrastructure.webhook.common.EmojiResolver.resolveTitleEmoji
 import com.slack.api.Slack
 import com.slack.api.model.block.DividerBlock
 import com.slack.api.model.block.LayoutBlock
@@ -58,9 +60,9 @@ class SlackFactoryProvider(
 		isLast: Boolean
 	): List<LayoutBlock> =
 		mutableListOf<LayoutBlock>().apply {
-			add(sectionBlock("*:rotating_light: ${dto.title}*"))
+			add(sectionBlock(resolveTitleEmoji(dto.title) + " *${dto.title}*"))
 			add(dividerBlock())
-			addAll(dto.messages.map { sectionBlock("• $it") })
+			addAll(dto.messages.map { sectionBlock(resolveLineEmoji(it) + " $it") })
 
 			if (!isLast) add(dividerBlock())
 		}
