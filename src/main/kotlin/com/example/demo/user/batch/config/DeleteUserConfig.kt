@@ -1,7 +1,9 @@
 package com.example.demo.user.batch.config
 
 import com.example.demo.user.batch.mapper.DeleteUserItem
-import com.example.demo.user.batch.mapper.DeleteUserItemRowMapper
+import com.example.demo.user.batch.processor.DeleteUserItemProcessor
+import com.example.demo.user.batch.reader.DeleteUserItemReader
+import com.example.demo.user.batch.writer.DeleteUserItemWriter
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.batch.core.Job
 import org.springframework.batch.core.Step
@@ -11,28 +13,20 @@ import org.springframework.batch.core.configuration.support.DefaultBatchConfigur
 import org.springframework.batch.core.job.builder.JobBuilder
 import org.springframework.batch.core.repository.JobRepository
 import org.springframework.batch.core.step.builder.StepBuilder
-import org.springframework.batch.item.Chunk
-import org.springframework.batch.item.ItemWriter
 import org.springframework.batch.item.database.JdbcPagingItemReader
-import org.springframework.batch.item.database.Order
-import org.springframework.batch.item.database.PagingQueryProvider
-import org.springframework.batch.item.database.builder.JdbcPagingItemReaderBuilder
-import org.springframework.batch.item.database.support.SqlPagingQueryProviderFactoryBean
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.transaction.PlatformTransactionManager
 import java.time.LocalDateTime
-import java.util.Collections
-import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {}
 
 @Configuration
 class DeleteUserConfig(
-	private val jdbcTemplate: JdbcTemplate,
-	private val dataSource: DataSource
+	private val deleteUserItemReader: DeleteUserItemReader,
+	private val deleteUserItemProcessor: DeleteUserItemProcessor,
+	private val deleteUserItemWriter: DeleteUserItemWriter
 ) : DefaultBatchConfiguration() {
 	private val chunkSize = 10
 
@@ -42,76 +36,37 @@ class DeleteUserConfig(
 		transactionManager: PlatformTransactionManager
 	): Job =
 		JobBuilder("deleteUserJob", jobRepository)
-			.flow(generateStep(jobRepository, transactionManager))
-			.end()
+			.start(deleteUserStep(jobRepository, transactionManager))
 			.build()
 
 	@Bean
 	@JobScope
-	@Throws(
-		Exception::class
-	)
-	fun generateStep(
+	fun deleteUserStep(
 		jobRepository: JobRepository,
 		transactionManager: PlatformTransactionManager
 	): Step =
 		StepBuilder("deleteUserStep", jobRepository)
 			.chunk<DeleteUserItem, DeleteUserItem>(chunkSize, transactionManager)
-			.allowStartIfComplete(true)
-			.reader(reader(null))
-			.writer(writer())
+			.reader(deleteUserReader(null))
+			.processor(deleteUserProcessor())
+			.writer(deleteUserWriter())
 			.build()
 
 	@Bean
 	@StepScope
-	fun reader(
+	fun deleteUserReader(
 		@Value("#{jobParameters[now]}") now: LocalDateTime?
 	): JdbcPagingItemReader<DeleteUserItem> {
 		val nowDateTime = checkNotNull(now) { "now parameter is required" }
 
-		return JdbcPagingItemReaderBuilder<DeleteUserItem>()
-			.name("DeletedUsersYearAgoReader")
-			.dataSource(dataSource)
-			.pageSize(chunkSize)
-			.fetchSize(chunkSize)
-			.queryProvider(pagingQueryProvider())
-			.parameterValues(
-				Collections.singletonMap<String, Any>("oneYearBeforeNow", nowDateTime.minusYears(1))
-			).rowMapper(DeleteUserItemRowMapper())
-			.build()
+		return deleteUserItemReader.reader(chunkSize, nowDateTime)
 	}
 
 	@Bean
 	@StepScope
-	fun writer(): ItemWriter<DeleteUserItem> =
-		ItemWriter<DeleteUserItem> { items: Chunk<out DeleteUserItem> ->
-			items.map {
-				logger.info {
-					"Hard Deleted User By = ${it.name} ${it.email} ${it.role} ${it.deletedDt}"
-				}
-
-				jdbcTemplate.update(
-					"DELETE FROM \"user\" WHERE user_id = ?",
-					it.id
-				)
-			}
-		}
+	fun deleteUserProcessor(): DeleteUserItemProcessor = deleteUserItemProcessor
 
 	@Bean
-	@Throws(Exception::class)
-	fun pagingQueryProvider(): PagingQueryProvider {
-		val queryProvider = SqlPagingQueryProviderFactoryBean()
-
-		queryProvider.setDataSource(dataSource)
-		queryProvider.setSelectClause("select *")
-		queryProvider.setFromClause("from \"user\"")
-		queryProvider.setWhereClause("where deleted_dt <= :oneYearBeforeNow")
-
-		val sortKeys: MutableMap<String, Order> = HashMap(1)
-		sortKeys["user_id"] = Order.ASCENDING
-
-		queryProvider.setSortKeys(sortKeys)
-
-		return queryProvider.getObject()
-	}
+	@StepScope
+	fun deleteUserWriter(): DeleteUserItemWriter = deleteUserItemWriter
 }
