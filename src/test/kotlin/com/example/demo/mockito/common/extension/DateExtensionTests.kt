@@ -1,7 +1,8 @@
-package com.example.demo.mockito.utils
+package com.example.demo.mockito.common.extension
 
-import com.example.demo.utils.ConvertUtils.convertLocalDateTimeToStringFormat
-import com.example.demo.utils.ConvertUtils.convertStringToLocalDateTimeFormat
+import com.example.demo.common.extension.formatTo
+import com.example.demo.common.extension.toFlexibleLocalDateTime
+import com.example.demo.common.extension.toLocalDateTime
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Nested
@@ -16,11 +17,11 @@ import java.time.format.DateTimeParseException
 
 @ActiveProfiles("test")
 @Tag("mockito-unit-test")
-@DisplayName("Mockito Unit - Convert Utils Test")
+@DisplayName("Mockito Unit - Date Extension Test")
 @ExtendWith(
 	MockitoExtension::class
 )
-class ConvertUtilsTests {
+class DateExtensionTests {
 	private val defaultWrongPattern = "wrong_pattern"
 
 	@Nested
@@ -34,11 +35,7 @@ class ConvertUtilsTests {
 					.ofPattern("yyyy-MM-dd'T'HH:mm:ss")
 					.format(LocalDateTime.now().withNano(0))
 
-			val localDateTime =
-				convertStringToLocalDateTimeFormat(
-					stringDateTime,
-					"yyyy-MM-dd'T'HH:mm:ss"
-				)
+			val localDateTime = stringDateTime.toLocalDateTime("yyyy-MM-dd'T'HH:mm:ss")
 
 			Assertions.assertEquals(localDateTime.javaClass, LocalDateTime::class.java)
 		}
@@ -49,10 +46,7 @@ class ConvertUtilsTests {
 			Assertions.assertThrows(
 				IllegalArgumentException::class.java
 			) {
-				convertStringToLocalDateTimeFormat(
-					LocalDateTime.now().toString(),
-					defaultWrongPattern
-				)
+				LocalDateTime.now().toString().toLocalDateTime(defaultWrongPattern)
 			}
 		}
 
@@ -62,10 +56,7 @@ class ConvertUtilsTests {
 			Assertions.assertThrows(
 				DateTimeParseException::class.java
 			) {
-				convertStringToLocalDateTimeFormat(
-					"",
-					"yyyy-MM-dd'T'HH:mm:ss"
-				)
+				"".toLocalDateTime("yyyy-MM-dd'T'HH:mm:ss")
 			}
 		}
 	}
@@ -76,11 +67,7 @@ class ConvertUtilsTests {
 		@Test
 		@DisplayName("Convert current local datetime & current pattern to string datetime")
 		fun should_AssertStringDateTime_when_GivenCurrentLocalDateTimeAndCurrentPattern() {
-			val stringDateTime =
-				convertLocalDateTimeToStringFormat(
-					LocalDateTime.now().withNano(0),
-					"yyyy-MM-dd'T'HH:mm:ss"
-				)
+			val stringDateTime = LocalDateTime.now().withNano(0).formatTo("yyyy-MM-dd'T'HH:mm:ss")
 
 			Assertions.assertEquals(stringDateTime.javaClass, String::class.java)
 		}
@@ -91,10 +78,39 @@ class ConvertUtilsTests {
 			Assertions.assertThrows(
 				IllegalArgumentException::class.java
 			) {
-				convertLocalDateTimeToStringFormat(
-					LocalDateTime.now(),
-					defaultWrongPattern
-				)
+				LocalDateTime.now().formatTo(defaultWrongPattern)
+			}
+		}
+	}
+
+	@Nested
+	@DisplayName("Convert Flexible String to LocalDateTime Test")
+	inner class ConvertFlexibleStringToLocalDateTimeFormatTest {
+		@Test
+		@DisplayName("Convert string with microseconds to LocalDateTime")
+		fun should_AssertLocalDateTime_when_StringContainsMicroseconds() {
+			val datetimeWithMicros = "2023-06-13 17:42:55.440101"
+			val result = datetimeWithMicros.toFlexibleLocalDateTime()
+
+			Assertions.assertEquals(result.javaClass, LocalDateTime::class.java)
+		}
+
+		@Test
+		@DisplayName("Convert string without microseconds to LocalDateTime")
+		fun should_AssertLocalDateTime_when_StringHasNoMicroseconds() {
+			val datetimeWithoutMicros = "2023-06-13 17:42:55"
+			val result = datetimeWithoutMicros.toFlexibleLocalDateTime()
+
+			Assertions.assertEquals(result.javaClass, LocalDateTime::class.java)
+		}
+
+		@Test
+		@DisplayName("Failed to convert blank string to LocalDateTime")
+		fun should_ThrowDateTimeParseException_when_BlankStringUsedWithFlexibleConverter() {
+			Assertions.assertThrows(
+				DateTimeParseException::class.java
+			) {
+				"".toFlexibleLocalDateTime()
 			}
 		}
 	}
